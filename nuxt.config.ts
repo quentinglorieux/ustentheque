@@ -4,9 +4,10 @@ export default defineNuxtConfig({
       '@pinia/nuxt'],
     ssr: false,
     css: [
-      "primevue/resources/themes/saga-blue/theme.css",
+      "@/assets/styles.scss",
+      "primevue/resources/themes/tailwind-light/theme.css",
       "primevue/resources/primevue.css",
-      "~/assets/styles.scss",
+      "primeicons/primeicons.css"      
     ],
     build: {
       transpile: ["primevue"],

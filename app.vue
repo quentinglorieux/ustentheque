@@ -1,6 +1,3 @@
-
-import MyComponent from './components/myComponent.vue';
-
 <template>
   <div>
     <NuxtLayout>
