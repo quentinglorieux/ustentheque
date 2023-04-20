@@ -1,25 +1,36 @@
 <template>
+    <div class="flex gap-10 justify-content-between">
     <div class="flex">
     <div class=" mb-2 lg:mb-0 mr-2">
-                        <span class="p-input-icon-right">
-                            <InputText v-model="searchKey" type="text" placeholder="Search" />
+                       Normal search:  <span class="p-input-icon-right">
+                            <InputText 
+                                @keyup="getSearchData(searchKey)"
+                                @keyup.delete="getSearchData(searchKey)" 
+                                v-model="searchKey" 
+                                type="text" 
+                                placeholder="Search" 
+                            />
                             <i class="pi pi-search" />
                         </span>
                     </div>
-                    <Button @click="getSearchData" label="Filtre" class="mr-2 mb-2"></Button>
-                    <Button @click="getAllData" label="Reset Filtre" class="mr-2 mb-2"></Button>
+                    <Button @click="getSearchData(searchKey)" label="Filtre" class="mr-2 mb-2"></Button>
+                    <Button @click="getAllData()" label="Reset Filtre" class="mr-2 mb-2"></Button>
                 </div>
 
-                <h5>AutoComplete</h5>
-                <AutoComplete 
+                <div>
+                Autocomplete search : <AutoComplete 
                 placeholder="Search" 
-                id="dd" :dropdown="true" 
+                id="dd" 
+                :dropdown="true" 
                 :multiple="false" 
                 v-model="selectedAutoValue" 
-                :suggestions="autoFilteredValue" 
+                :suggestions="suggestions" 
                 @complete="searchOutil($event)" 
+                @item-select="getSearchData(selectedAutoValue.nom)"
+                @clear="getAllData()"
                 field="nom" />
-
+            </div>
+        </div>
                     
      <div class="card">
         
@@ -106,44 +117,46 @@ const productService = new ProductService();
 
 onMounted(() => {
     // productService.getProducts().then((data) => (products.value = data.slice(0, 12)));
-    productService.getTools().then((data) => (outils.value = data));
-    // productService.getTools().then((data) => (autoValue.value = data));
-
-    console.log(outils.value)
+    productService.getTools().then((data) => { 
+        outils.value = data;
+        fullList.value = data;
+     } );
 });
 
 
 
 const layout = ref('grid');
 const outils = ref('');
+const fullList = ref('');
 const searchKey = ref('');
 
 const selectedAutoValue = ref(null);
-const autoFilteredValue = ref([]);
+const suggestions = ref([]);
 
 
 
-const getSearchData = () => {
- if  (searchKey.value) {   productService.getToolsFilter(searchKey.value).then((data) => (outils.value = data)); };
- if  (!searchKey.value) {   productService.getTools().then((data) => (outils.value = data));};
+const getSearchData = (a) => {
+ if  (a) {   productService.getToolsFilter(a).then((data) => (outils.value = data)); };
+ if  (!a) {   productService.getTools().then((data) => (outils.value = data));};
+ console.log(a)
 }
 
 const getAllData = () => {
  productService.getTools().then((data) => (outils.value = data));
+ searchKey.value=''
 }
 
 const searchOutil = (event) => {
     setTimeout(() => {
         if (!event.query.trim().length) {
-            autoFilteredValue.value = [...outils.value];
+            suggestions.value = [...fullList.value];
         } else {
-            autoFilteredValue.value = outils.value.filter((outil) => {
+            suggestions.value = fullList.value.filter((outil) => {
                 return outil.nom.toLowerCase().startsWith(event.query.toLowerCase());
             });
         }
     }, 250);
 };
-
 
 
 const getSeverity = (outil) => {
