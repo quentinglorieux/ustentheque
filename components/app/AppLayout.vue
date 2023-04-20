@@ -2,7 +2,7 @@
 import AppTopbar from './AppTopbar.vue';
 import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
-import AppConfig from './AppConfig.vue';
+// import AppConfig from './AppConfig.vue';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
