@@ -35,11 +35,11 @@ const proprio =ref('')
 async function retrieveOneObjet() {
   const publicData = await directus.items("objet").readOne(route.params.id, 
   {fields: [
-          "*,proprietaire.*"
+          "*,directus_users.*"
         ]
   });
   objet.value = publicData;
-  proprio.value = publicData.proprietaire;
+  proprio.value = publicData.directus_users;
 }
 
 onMounted(() => {

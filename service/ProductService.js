@@ -4,17 +4,6 @@ const contextPath = import.meta.env.BASE_URL;
 
 const directus = new Directus("https://devdirectus.rubidiumweb.eu");
 
-// const listItems = ref([]);
-// async function retrieveSources() {
-//   const publicData = await directus.items("sources").readByQuery({
-//     fields: [
-//       "titre,type,meta,content,commentaires.id,commentaires.titre,commentaires.content,commentaires.keywords_id.keywords_id.titre,theme_id.titre",
-//     ],
-//   });
-//   var L = publicData.data;
-//   listItems.value = L;
-// }
-// retrieveSources();
 
 export default class ProductService {
   getProductsSmall() {
