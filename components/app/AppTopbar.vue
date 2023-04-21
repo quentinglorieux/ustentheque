@@ -1,12 +1,26 @@
 <script setup>
+import { Directus } from "@directus/sdk";
+
 const { layoutConfig, onMenuToggle, contextPath } = useLayout();
 
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
 const router = useRouter();
 
+
+const directus = new Directus("https://devdirectus.rubidiumweb.eu");
+
+const me = ref('')
+
+async function myProfile() {
+    me.value = await directus.users.me.read();
+}
+
+
+
 onMounted(() => {
     bindOutsideClickListener();
+    myProfile();
 });
 
 onBeforeUnmount(() => {
@@ -59,8 +73,8 @@ const isOutsideClicked = (event) => {
 <template>
     <div class="layout-topbar">
         <router-link to="/" class="layout-topbar-logo">
-            <img :src="logoUrl" alt="logo" />
-            <span>SAKAI</span>
+            <img :src="logoUrl" alt="" />
+            <span>Ustentheque v0.1</span>
         </router-link>
 
         <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
@@ -77,11 +91,14 @@ const isOutsideClicked = (event) => {
                 <span>Calendar</span>
             </button>
             <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
-                <i class="pi pi-user"></i>
+                <i v-if="!me.avatar" class="pi pi-user"></i>
+                <Avatar v-if="me.avatar" :image="`https://devdirectus.rubidiumweb.eu/assets/${me.avatar}`" class="hover:border-2" size="large" shape="circle" />
                 <span>Profile</span>
             </button>
+            
+        
             <button @click="onSettingsClick()" class="p-link layout-topbar-button">
-                <i class="pi pi-cog"></i>
+                <i  class="pi pi-cog"></i>
                 <span>Settings</span>
             </button>
         </div>

@@ -9,26 +9,35 @@ const email = ref('');
 const password = ref('');
 const checked = ref(false);
 const authenticated = ref(false);
+const token = ref();
 
 const directus = new Directus("https://devdirectus.rubidiumweb.eu");
 
-async function loginDirectus(em,pas) {
-	// AUTHENTICATION
-	// await directus.auth
-	// 	.refresh()
-	// 	.then(() => {
-	// 		authenticated.value = true;
-	// 	})
-	// 	.catch(() => {});
+onMounted(() => {
+    checkLogin()
+});
 
+
+async function checkLogin() {
+	// AUTHENTICATION
+	await directus.auth.token
+		.then((a) => {
+			authenticated.value = true;
+            token.value=a;
+		})
+		.catch(() => {});
+    }
+
+    async function logoutDirectus() {
+	// AUTHENTICATION
+	directus.auth.logout()} 
     
-	// Let's login in case we don't have token or it is invalid / expired
+
+async function loginDirectus() {
 	if (!authenticated.value) {
-        console.log(em)
-        console.log(pas)
         await directus.auth.login({ 
-                email: em,
-                password : pas,
+                email: email.value,
+                password : password.value,
              })
 			.then(() => {
 				authenticated.value = true;
@@ -43,7 +52,10 @@ async function loginDirectus(em,pas) {
 </script>
 
 <template>
-  <div  v-if="authenticated" > Connecté </div>
+{{ token }}
+  <div  v-if="authenticated" > 
+    <Button @click="logoutDirectus()" label="Log out" class="w-4 p-3 text-xl"></Button>
+ </div>
 
     <div v-if="!authenticated" class="flex align-items-center min-h-screen min-w-screen overflow-hidden">
         <div class="flex flex-column align-items-center justify-content-center">
@@ -67,7 +79,7 @@ async function loginDirectus(em,pas) {
                             </div>
                             <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Mot de passe oublié?</a>
                         </div>
-                        <Button @click="loginDirectus(email,password)" label="Connexion" class="w-full p-3 text-xl"></Button>
+                        <Button @click="loginDirectus()" label="Connexion" class="w-full p-3 text-xl"></Button>
                     </div>
                 </div>
             </div>
