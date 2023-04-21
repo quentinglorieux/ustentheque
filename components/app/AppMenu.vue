@@ -15,6 +15,11 @@ const model = ref([
         to: "/catalogue",
       },
       {
+        label: "Login",
+        icon: "pi pi-fw pi-sign-in",
+        to: "/auth/login",
+      },
+      {
         label: "Mes outlis",
         icon: "pi pi-fw pi-wrench",
         to: "/mesoutils",
