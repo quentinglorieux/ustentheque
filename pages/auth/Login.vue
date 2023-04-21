@@ -12,19 +12,24 @@ const authenticated = ref(false);
 
 const directus = new Directus("https://devdirectus.rubidiumweb.eu");
 
-async function loginDirectus(email,password) {
+async function loginDirectus(em,pas) {
 	// AUTHENTICATION
-	await directus.auth
-		.refresh()
-		.then(() => {
-			authenticated.value = true;
-		})
-		.catch(() => {});
+	// await directus.auth
+	// 	.refresh()
+	// 	.then(() => {
+	// 		authenticated.value = true;
+	// 	})
+	// 	.catch(() => {});
 
+    
 	// Let's login in case we don't have token or it is invalid / expired
 	if (!authenticated.value) {
-		await directus.auth
-			.login({ email, password })
+        console.log(em)
+        console.log(pas)
+        await directus.auth.login({ 
+                email: em,
+                password : pas,
+             })
 			.then(() => {
 				authenticated.value = true;
                 console.log("log in");

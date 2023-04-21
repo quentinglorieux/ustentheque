@@ -3,7 +3,7 @@
         <div className="col-12">
             <div className="card">
                 <h5>Mes outils</h5>
-                {{ me`` }}
+                {{ me }}
                 <p>Use this page to start from scratch and place your custom content.</p>
             </div>
         </div>

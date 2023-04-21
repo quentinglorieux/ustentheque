@@ -1,6 +1,5 @@
 <script setup>
 import RadioButton from 'primevue/radiobutton';
-import Button from 'primevue/button';
 import InputSwitch from 'primevue/inputswitch';
 import Sidebar from 'primevue/sidebar';
 

@@ -66,7 +66,6 @@ import ProgressBar from "primevue/progressbar";
 import ProgressSpinner from "primevue/progressspinner";
 import Rating from "primevue/rating";
 import RadioButton from "primevue/radiobutton";
-import Ripple from "primevue/ripple";
 import Row from "primevue/row";
 import SelectButton from "primevue/selectbutton";
 import ScrollPanel from "primevue/scrollpanel";
