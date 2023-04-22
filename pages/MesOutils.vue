@@ -47,41 +47,30 @@
     
 
     <template #expansion="slotProps">
-                <div class="p-3">
-                    <h5> Réservations </h5>
+                <div class="p-3 bg-slate-100">
+                    <h6> Réservations </h6>
                     <DataTable :value="slotProps.data.reservation">
                         <!-- {{ slotProps.data.reservation }} -->
-                        <Column field="user_created.first_name" header="Nom" sortable> 
+                        <Column field="user_created.first_name" header="Nom" > 
                             </Column>
-                        <Column field="debut" header="Debut" sortable></Column>
-                        <Column field="fin" header="Fin" sortable></Column>
-                        <Column field="statut" header="Statut" sortable>
+                        <Column field="debut" header="Debut" >
+                            <template #body="slotProps">
+                                {{ formatDate(slotProps.data.debut) }}
+                             </template>
+                        </Column>
+                        <Column field="fin" header="Fin" >
+                            <template #body="slotProps">
+                                {{ formatDate(slotProps.data.fin) }}
+                             </template>
+                        </Column>
+                        <Column field="statut" header="Statut" >
                          <template #body="slotProps">
                         <Tag class="px-4 py-2 text-sm" :value="slotProps.data.statut" :severity="getSeverity(slotProps.data)" />
                         </template>
                         </Column>
 
                     </DataTable>
-                    <!-- <DataTable :value="slotProps.data.orders">
-                        <Column field="id" header="Id" sortable></Column>
-                        <Column field="customer" header="Customer" sortable></Column>
-                        <Column field="date" header="Date" sortable></Column>
-                        <Column field="amount" header="Amount" sortable>
-                            <template #body="slotProps">
-                                {{ formatCurrency(slotProps.data.amount) }}
-                            </template>
-                        </Column>
-                        <Column field="status" header="Status" sortable>
-                            <template #body="slotProps">
-                                <Tag :value="slotProps.data.status.toLowerCase()" :severity="getOrderSeverity(slotProps.data)" />
-                            </template>
-                        </Column>
-                        <Column headerStyle="width:4rem">
-                            <template #body>
-                                <Button icon="pi pi-search" />
-                            </template>
-                        </Column>
-                    </DataTable> -->
+    
                 </div>
             </template>
 
@@ -99,11 +88,24 @@
 
 <script setup>
 import { Directus } from "@directus/sdk";
+import moment from 'moment'
+import 'moment/locale/fr';
+
 const directus = new Directus("https://devdirectus.rubidiumweb.eu");
 const me = ref('')
 const reservation = ref('')
-const expandedRows=ref('null')
+const expandedRows=ref([])
 
+const formatDate = (val) => {
+    var  mydate = new Date(val);
+    var mom = moment(mydate);
+
+    mom.locale('fr');
+    const formattedDate = mom.fromNow();     
+
+    return formattedDate
+    // return mydate.toLocaleString('fr-FR', { style: 'date' });
+}
 
 const formatCurrency = (val) => {
     return val.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
@@ -131,21 +133,6 @@ const convertToGrade = (etat) => {
     }
 
 }
-const getSeverity2 = (product) => {
-    switch (product.inventoryStatus) {
-        case 'INSTOCK':
-            return 'success';
-
-        case 'LOWSTOCK':
-            return 'warning';
-
-        case 'OUTOFSTOCK':
-            return 'danger';
-
-        default:
-            return null;
-    }
-};
 
 const getSeverity = (resa) => {
     switch (resa.statut) {

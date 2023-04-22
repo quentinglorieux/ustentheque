@@ -16,13 +16,14 @@
   },
   "dependencies": {
     "@directus/sdk": "^10.3.1",
-    "chart.js": "3.3.2",
     "@pinia/nuxt": "^0.4.8",
+    "chart.js": "3.3.2",
     "marked": "^4.2.12",
+    "moment": "^2.29.4",
     "pinia": "^2.0.34",
-    "primevue": "^3.23.0",
     "primeflex": "^3.3.0",
-    "primeicons": "^6.0.1"
+    "primeicons": "^6.0.1",
+    "primevue": "^3.23.0"
   },
   "overrides": {
     "vue": "latest"
