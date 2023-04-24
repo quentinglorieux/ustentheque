@@ -7,9 +7,10 @@
     />
    
   </div>
-  <div class="flex items-center mb-4 gap-2"> Propriétaire: {{ proprio.first_name }} {{proprio.last_name }} - {{ proprio.telephone }}  -
-    <Avatar :image="`https://devdirectus.rubidiumweb.eu/assets/${proprio.avatar}`" class="mr-2" size="large" shape="circle" />
-  </div>
+  <div class="flex content-center gap-2"> 
+        <div class="mt-1" > Propiétaire: </div>
+      <Chip class="mb-1 bg-slate-50" :label="proprio.first_name + ' ' + proprio.last_name" :image="`https://devdirectus.rubidiumweb.eu/assets/${proprio.avatar}`" />
+      </div>
  
 
   <div class="mb-10">  

@@ -6,8 +6,14 @@
                 <!-- res----- {{ reservation }} -->
                 
                 <div>
+<div v-if="!me.objet">
+ <div> Vous n'etes pas connécté.</div> 
+ <NuxtLink to="/auth/login"> 
+            <Button label="Connectez vous ici" icon="pi pi-sign-in"  severity="info" class="font-bold mt-5 px-5 py-3 p-button-raised  white-space-nowrap"></Button>
+          </NuxtLink>
+</div>
 
-<DataTable :value="me.objet" v-model:expandedRows="expandedRows" sortField="nom" :sortOrder="1"  tableStyle="min-width: 50rem">
+<DataTable v-if="me.objet" :value="me.objet" v-model:expandedRows="expandedRows" sortField="nom" :sortOrder="1"  tableStyle="min-width: 50rem">
     <template #header>
         <div class="flex flex-wrap align-items-center justify-content-between gap-2">
             <span class="text-xl text-900 font-bold">Outils</span>
@@ -15,7 +21,17 @@
         </div>
     </template>
     <Column expander style="width: 5rem" />
-    <Column field="nom" header="Objet" sortable></Column>
+    <Column field="nom" header="Objet" sortable> 
+        <template #body="slotProps">
+            <div > 
+                <NuxtLink :to="`/edit/outil-${slotProps.data.id}`" class="flex align-items-center gap-2"> 
+                        {{ slotProps.data.nom}}
+                        <Button icon="pi pi-pencil" class="py-0" text rounded  />
+                </NuxtLink>
+         </div>
+        </template>
+    </Column>
+
     <!-- <Column header="Image">
         <template #body="slotProps">
             <img :src="`https://primefaces.org/cdn/primevue/images/product/${slotProps.data.image}`" :alt="slotProps.data.image" class="w-6rem shadow-2 border-round" />

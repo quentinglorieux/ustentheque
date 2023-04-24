@@ -1,9 +1,19 @@
 <template>
+
+    
     <div className="grid">
         <div className="col-12">
             <div className="card">
+                <h5>Mes réservations</h5>
+
+    <div v-if="!resa.data">
+        <div> Vous n'etes pas connécté.</div> 
+        <NuxtLink to="/auth/login"> 
+            <Button label="Connectez vous ici" icon="pi pi-sign-in"  severity="info" class="font-bold mt-5 px-5 py-3 p-button-raised  white-space-nowrap"></Button>
+        </NuxtLink>
+    </div>
          
-    <DataTable :value="resa.data" tableStyle="min-width: 50rem">
+    <DataTable v-if="resa.data" :value="resa.data" tableStyle="min-width: 50rem">
     <template #header>
         <div class="flex flex-wrap align-items-center justify-content-between gap-2">
             <span class="text-xl text-900 font-bold">Mes réservations</span>
