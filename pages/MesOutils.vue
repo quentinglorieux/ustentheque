@@ -17,7 +17,11 @@
     <template #header>
         <div class="flex flex-wrap align-items-center justify-content-between gap-2">
             <span class="text-xl text-900 font-bold">Outils</span>
-            <Button icon="pi pi-refresh" rounded raised />
+            <div class="flex items-center gap-2"> Nouvel outil 
+                <NuxtLink :to="`/edit/outil-add`">
+                    <Button icon="pi pi-plus" rounded raised /> 
+                </NuxtLink>
+            </div>
         </div>
     </template>
     <Column expander style="width: 5rem" />

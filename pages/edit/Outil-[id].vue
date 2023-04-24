@@ -3,7 +3,7 @@
     <div class="col-9">
       <div class="card">
         <h4>Editer : {{ objet.nom }} {{ objet.marque }}</h4>
-        <div class="flex content-center gap-2">
+        <div v-if="proprio" class="flex content-center gap-2">
           <div class="mt-1">Propiétaire:</div>
           <Chip
             class="mb-1 bg-slate-50"
@@ -55,13 +55,30 @@
               cols="30"
             />
           </div>
-          <div class="field col-6 md:col-4 md:col-offset-4">
+          <div v-if="addMode" class="field col-6 md:col-4 md:col-offset-4">
             <Button
-              @click="updateOneObjet()"
-              label="Update"
+              @click="createOneObjet()"
+              label="Créer un objet"
               class="w-full p-3 text-xl"
             ></Button>
           </div>
+          <div v-if="!addMode" class="field col-8 md:col-6 md:col-offset-3">
+            <div class="flex gap-2"> <Button
+              v-if="!addMode"
+              @click="updateOneObjet()"
+              label="Mettre à jour"
+              class="w-full p-3 text-xl"
+            ></Button>
+            <Button
+              v-if="!addMode"
+              @click="deleteOneObjet()"
+              label="Supprimer"
+              class="w-full p-3 text-xl"
+              severity="warning"
+            ></Button>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -72,6 +89,7 @@
         <div><h4>Editer l'image</h4></div>
         <div v-if="objet" class="flex flex-column gap-1">
           <img
+            v-if="!addMode"
             class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem object-contain block xl:block border-round"
             :src="`https://devdirectus.rubidiumweb.eu/assets/${objet.photo}`"
           />
@@ -95,6 +113,10 @@
 <script setup>
 import { Directus } from "@directus/sdk";
 import { useToast } from "primevue/usetoast";
+import { useAuthStore } from "@/stores/auth";
+
+const store = useAuthStore();
+const id = computed(() => store.id);
 
 const toast = useToast();
 const directus = new Directus("https://devdirectus.rubidiumweb.eu");
@@ -103,10 +125,20 @@ const users = directus.items("directus_users");
 const objetD = directus.items("objet");
 
 const succes = ref(false);
+const addMode = ref(false);
 
 const route = useRoute();
-const objet = ref("");
+const objet = ref({});
 const proprio = ref("");
+
+const isAddMode = () => {
+if (route.params.id == 'add' )
+{
+  addMode.value = true;
+}
+}
+
+
 
 // L'objet
 async function retrieveOneObjet() {
@@ -116,6 +148,42 @@ async function retrieveOneObjet() {
   objet.value = publicData;
   proprio.value = publicData.proprietaire;
 }
+
+
+// Création de l outil
+async function createOneObjet() {
+  await objetD
+    .createOne( {
+      nom: nom.value,
+      marque: marque.value,
+      etat: etat.value,
+      prix_indicatif: prix_indicatif.value,
+      duree_max: duree.value,
+      consommable: consommable.value,
+      conseils: conseils.value,
+      proprietaire: store.id,
+    })
+    .then(() => {
+      succes.value = true;
+      addMode.value =false;
+      toast.add({
+        severity: "success",
+        summary: "Merci",
+        detail: "Outil ajouté.",
+        life: 3000,
+      });
+    })
+    .catch(() => {
+      console.log("Erreur");
+      toast.add({
+        severity: "error",
+        summary: "Erreur",
+        detail: "Veuillez vous reconnecter.",
+        life: 3000,
+      });
+    });
+}
+
 
 // Mise a jour de l outil
 async function updateOneObjet() {
@@ -149,6 +217,35 @@ async function updateOneObjet() {
     });
 }
 
+
+// Mise a jour de l outil
+async function deleteOneObjet() {
+  await objetD
+    .deleteOne(route.params.id)
+    .then(() => {
+      succes.value = true;
+      objet.value={};
+      proprio.value="";
+      toast.add({
+        severity: "success",
+        summary: "Merci",
+        detail: "Supprimé.",
+        life: 3000,
+      });
+    })
+    .catch(() => {
+      console.log("Erreur");
+      toast.add({
+        severity: "error",
+        summary: "Erreur",
+        detail: "Veuillez vous reconnecter.",
+        life: 3000,
+      });
+    });
+}
+
+
+
 async function uploadAvatar() {
   await directus.files.createOne(
     form,
@@ -172,5 +269,6 @@ async function uploadAvatar() {
 
 onMounted(() => {
   retrieveOneObjet();
+  isAddMode();
 });
 </script>

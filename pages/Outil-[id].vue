@@ -7,7 +7,7 @@
     />
    
   </div>
-  <div class="flex content-center gap-2"> 
+  <div  class="flex content-center gap-2"> 
         <div class="mt-1" > Propiétaire: </div>
       <Chip class="mb-1 bg-slate-50" :label="proprio.first_name + ' ' + proprio.last_name" :image="`https://devdirectus.rubidiumweb.eu/assets/${proprio.avatar}`" />
       </div>

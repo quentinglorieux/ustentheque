@@ -4,16 +4,9 @@ import { useAuthStore } from "@/stores/auth";
 const store = useAuthStore();
 const authenticated = computed(() => store.authenticated);
 
-
-// import Checkbox from 'primevue/checkbox';
-// import Password from 'primevue/password';
-
-
-// const { layoutConfig, contextPath } = useLayout();
 const email = ref('');
 const password = ref('');
 const checked = ref(false);
-// const authenticated = ref(false);
 const token = ref();
 const me = ref();
 
@@ -32,6 +25,7 @@ async function myProfile() {
 	me.value =  profileData;
     store.first_name = profileData.first_name
     store.last_name = profileData.last_name
+    store.id = profileData.id
     store.avatar = profileData.avatar
 		
 }
