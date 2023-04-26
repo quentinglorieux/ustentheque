@@ -23,7 +23,7 @@
           <div class="flex justify-content-between mb-3">
             <div>
               <span class="block text-600 font-medium mb-3">Outils & objets</span>
-              <div class="text-900 font-medium text-xl">152</div>
+              <div class="text-900 font-medium text-xl">{{ outils }}</div>
             </div>
             <div
               class="flex align-items-center justify-content-center bg-blue-100 border-round"
@@ -40,7 +40,7 @@
           <div class="flex justify-content-between mb-3">
             <div>
               <span class="block text-600 font-medium mb-3">Membres</span>
-              <div class="text-900 font-medium text-xl">10</div>
+              <div class="text-900 font-medium text-xl">{{ members }}</div>
             </div>
             <div
               class="flex align-items-center justify-content-center bg-orange-100 border-round"
@@ -58,7 +58,7 @@
           <div class="flex justify-content-between mb-3">
             <div>
               <span class="block text-600 font-medium mb-3">Réservations et prêts</span>
-              <div class="text-900 font-medium text-xl">28441</div>
+              <div class="text-900 font-medium text-xl">{{resa}}</div>
             </div>
             <div
               class="flex align-items-center justify-content-center bg-cyan-100 border-round"
@@ -67,8 +67,8 @@
               <i class="pi pi-calendar text-cyan-500 text-xl"></i>
             </div>
           </div>
-          <span class="text-green-500 font-medium">520 </span>
-          <span class="text-500">depuis 2023</span>
+          <span class="text-green-500 font-medium">{{resa}}  </span>
+          <span class="text-500"> depuis 2023</span>
         </div>
       </div>
       <div class="col-12 lg:col-6 xl:col-3">
@@ -76,7 +76,7 @@
           <div class="flex justify-content-between mb-3">
             <div>
               <span class="block text-600 font-medium mb-3">Formations</span>
-              <div class="text-900 font-medium text-xl">152</div>
+              <div class="text-900 font-medium text-xl">2</div>
             </div>
             <div
               class="flex align-items-center justify-content-center bg-purple-100 border-round"
@@ -100,3 +100,45 @@
     </div>
   </div>
 </template>
+
+<script setup>
+import { Directus } from "@directus/sdk";
+const directus = new Directus("https://devdirectus.rubidiumweb.eu");
+
+const resa=ref();
+async function countResa() {
+    let count = await directus.items('objet').readByQuery({
+            meta: 'total_count'  
+    },
+    );
+    resa.value = count.meta.total_count;
+    
+}
+
+const members=ref();
+async function countMembers() {
+    let count = await directus.items('directus_users').readByQuery({
+            meta: 'total_count'  
+    },
+    );
+    members.value = count.meta.total_count;   
+}
+
+const outils=ref();
+async function countOutils() {
+    let count = await directus.items('objet').readByQuery({
+            meta: 'total_count'  
+    },
+    );
+    outils.value = count.meta.total_count;   
+}
+
+
+
+onMounted(() => {
+  countResa();
+  countMembers();
+  countOutils();
+});
+
+</script>

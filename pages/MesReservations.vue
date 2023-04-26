@@ -5,7 +5,7 @@
         <div className="col-12">
             <div className="card">
                 <h5>Mes réservations</h5>
-
+    <div v-if="completed">
     <div v-if="!resa.data">
         <div> Vous n'etes pas connécté.</div> 
         <NuxtLink to="/auth/login"> 
@@ -62,6 +62,8 @@
 </DataTable>
 
 
+            </div >
+            <div v-else> <ProgressSpinner /></div>
             </div>
         </div>
     </div>
@@ -72,9 +74,12 @@
 import { Directus } from "@directus/sdk";
 const directus = new Directus("https://devdirectus.rubidiumweb.eu");
 const resa = ref('')
+const completed=ref(false)
 
 
 async function mesResa() {
+    completed.value = false;
+
     resa.value = await directus.items('reservation').readByQuery({
             fields: ["debut,fin,statut,objet.id,objet.nom,objet.marque"],
             filter: {
@@ -84,6 +89,7 @@ async function mesResa() {
             },         
     },
     );
+    completed.value = true;
 }
 
 onMounted(() => {
