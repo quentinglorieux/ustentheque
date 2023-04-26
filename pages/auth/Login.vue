@@ -10,7 +10,16 @@ const checked = ref(false);
 const token = ref();
 const me = ref();
 
-const directus = new Directus("https://devdirectus.rubidiumweb.eu");
+const directus = new Directus("https://devdirectus.rubidiumweb.eu" ,
+     {
+        auth: {
+		mode: 'cookie', // 'json' in Node.js
+		autoRefresh: true,
+		msRefreshBeforeExpires: 30000,
+		staticToken: '',
+	}
+    }
+    ,);
 
 onMounted(() => {
   checkLogin();
@@ -39,7 +48,9 @@ async function checkLogin() {
 
 async function logoutDirectus() {
   // AUTHENTICATION
-  directus.auth.logout();
+  await directus.auth.logout(
+    {refresh_token : token}
+  ).then('logged out');
 }
 
 async function loginDirectus() {
