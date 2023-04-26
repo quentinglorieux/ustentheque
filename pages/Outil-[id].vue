@@ -3,13 +3,13 @@
     <span class="text-2xl"> {{ objet.nom }}</span>
     <img
       class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem object-contain block xl:block  border-round"
-      :src="`https://devdirectus.rubidiumweb.eu/assets/${objet.photo}`"
+      :src="`https://devdirectus.rubidiumweb.eu/assets/${objet.photo}?quality=50`"
     />
    
   </div>
   <div  class="flex content-center gap-2"> 
         <div class="mt-1" > Propiétaire: </div>
-      <Chip class="mb-1 bg-slate-50" :label="proprio.first_name + ' ' + proprio.last_name" :image="`https://devdirectus.rubidiumweb.eu/assets/${proprio.avatar}`" />
+      <Chip class="mb-1 bg-slate-50" :label="proprio.first_name + ' ' + proprio.last_name" :image="`https://devdirectus.rubidiumweb.eu/assets/${proprio.avatar}?fit=cover&width=50&height=50&quality=20`" />
       </div>
  
 
