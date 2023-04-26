@@ -17,13 +17,19 @@
     <template #header>
         <div class="flex flex-wrap align-items-center justify-content-between gap-2">
             <span class="text-xl text-900 font-bold">Mes réservations</span>
-            <Button icon="pi pi-refresh" rounded raised />
+            <NuxtLink :to="`/edit/resa-add`">
+                    <Button icon="pi pi-plus" rounded raised /> 
+                </NuxtLink>
         </div>
     </template>
 
     <Column field="objet.nom" header="Objet" sortable> 
         <template #body="slotProps">
-         {{ slotProps.data.objet.nom }}  {{ slotProps.data.objet.marque }}
+            <NuxtLink :to="`/edit/resa-${slotProps.data.objet.id}`" class="flex align-items-center gap-2"> 
+                {{ slotProps.data.objet.nom }}  {{ slotProps.data.objet.marque }}
+                <Button icon="pi pi-pencil" class="py-0" text rounded  />
+                </NuxtLink>
+               
         </template>
     </Column>
 
@@ -35,7 +41,7 @@
 
     <Column field="statut" header="Statut" sortable>
         <template #body="slotProps">
-            <Tag class="px-4 py-2 text-sm" :value="slotProps.data.statut" :severity="getSeverity(slotProps.data)" />
+            <Tag class="px-4 py-2 text-sm" :value="slotProps.data.statut" :severity="getStatus(slotProps.data)" />
         </template>
     </Column>
     <Column  header="Edit" >
@@ -96,7 +102,7 @@ onMounted(() => {
     mesResa();
 });
 
-const getSeverity = (resa) => {
+const getStatus = (resa) => {
     switch (resa.statut) {
         case 'En attente':
             return null;

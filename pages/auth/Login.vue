@@ -59,6 +59,7 @@ async function loginDirectus() {
       .login({
         email: email.value,
         password: password.value,
+        mode: 'cookie'
       })
       .then(() => {
         store.authenticated = true;
