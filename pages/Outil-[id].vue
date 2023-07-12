@@ -1,12 +1,11 @@
 <!-- Reservation sur un objet -->
 <template>
-  <div v-if="objet" class="flex flex-column gap-1 ">
+  <div v-if="objet" class="flex flex-column gap-1">
     <span class="text-2xl"> {{ objet.nom }}</span>
     <img
-      class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem object-contain block xl:block  border-round"
+      class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem object-contain block xl:block border-round"
       :src="`https://devdirectus.rubidiumweb.eu/assets/${objet.photo}?quality=50`"
     />
-   
   </div>
   <div  class="flex content-center gap-2"> 
         <div class="mt-1" > Propiétaire: </div>
@@ -43,13 +42,25 @@ const resaD = directus.items("reservation");
 
 
 async function retrieveOneObjet() {
-  const publicData = await directus.items("objet").readOne(route.params.id, 
-  {fields: [
-          "*,proprietaire.*"
-        ]
-  });
+  const publicData = await directus
+    .items("objet")
+    .readOne(route.params.id, { fields: ["*,proprietaire.*"] });
   objet.value = publicData;
-  proprio.value = publicData.proprietaire ;
+  proprio.value = publicData.proprietaire;
+}
+
+async function requestResa() {
+  const resa = await directus.items("reservation").createOne({
+    objet: route.params.id,
+    debut: dates.value[0],
+    fin: dates.value[1],
+    statut: "En attente",
+  });
+  if (resa.id) {
+    toast("Votre demande de réservation a bien été envoyée");
+  }else {
+    toast("Votre demande de réservation n'a pas pu être envoyée");
+  }
 }
 
 // Création de l outil
