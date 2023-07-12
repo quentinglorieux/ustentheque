@@ -2,7 +2,7 @@
     <div class="flex gap-10 justify-content-between">
     <div class="flex">
     <div class=" mb-2 lg:mb-0 mr-2">
-                       Normal search:  <span class="p-input-icon-right">
+                       Filtrer les objets par nom:  <span class="p-input-icon-right">
                             <InputText 
                                 @keyup="getSearchData(searchKey)"
                                 @keyup.delete="getSearchData(searchKey)" 
@@ -18,7 +18,7 @@
                 </div>
 
                 <div>
-                Autocomplete search : <AutoComplete 
+                ou commencez à taper pour chercher : <AutoComplete 
                 placeholder="Search" 
                 id="dd" 
                 :dropdown="true" 

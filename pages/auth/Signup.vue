@@ -67,9 +67,14 @@ async function registerDirectus() {
                         <InputText v-model="telephone" id="telephone" type="text" />
                     </div>
                     <div class="field col-12 md:col-6">
-                        <label for="ville">Ville</label>
-                        <InputText v-model="ville" id="ville" type="text" />
+                        <label for="v1">Ville</label>
+                        <InputText disabled placeholder="Larchant" />
                     </div>
+                    <div class="field col-12 md:col-12">
+                        <label for="ville">Adresse à Larchant (rue et numéro)</label>
+                        <InputText v-model="ville" id="ville"  />
+                    </div>
+                    
                     <div class="field col-12 md:col-6">
                         <label for="email">Email</label>
                         <InputText v-model="email" id="email" type="email" />

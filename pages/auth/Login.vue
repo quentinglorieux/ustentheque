@@ -10,20 +10,19 @@ const checked = ref(false);
 const token = ref();
 const me = ref();
 
-const directus = new Directus("https://devdirectus.rubidiumweb.eu" ,
-     {
-        auth: {
-		mode: 'cookie', // 'json' in Node.js
-		autoRefresh: true,
-		msRefreshBeforeExpires: 30000,
-		staticToken: '',
-	}
-    }
-    ,);
+const directus = new Directus("https://devdirectus.rubidiumweb.eu", {
+  auth: {
+    mode: "cookie", // 'json' in Node.js
+    autoRefresh: true,
+    msRefreshBeforeExpires: 60000,
+    staticToken: "",
+  },
+});
 
 onMounted(() => {
   checkLogin();
   myProfile();
+  mesPrets();
 });
 
 async function myProfile() {
@@ -35,6 +34,30 @@ async function myProfile() {
   store.id = profileData.id;
   store.avatar = profileData.avatar;
 }
+
+const resa = ref("");
+
+async function mesPrets() {
+  resa.value = await directus.items("reservation").readByQuery({
+    fields: [
+      "id,debut,fin,statut,objet.id,objet.nom,objet.marque,objet.proprietaire",
+    ],
+    filter: {
+        objet: {
+            proprietaire: {
+          _eq: "$CURRENT_USER",
+        },
+      },
+    },
+  });
+  store.resa=resa.value.data.length
+}
+
+onMounted(() => {
+  mesPrets();
+});
+
+
 
 async function checkLogin() {
   // AUTHENTICATION
@@ -48,9 +71,7 @@ async function checkLogin() {
 
 async function logoutDirectus() {
   // AUTHENTICATION
-  await directus.auth.logout(
-    {refresh_token : token}
-  ).then('logged out');
+  await directus.auth.logout({ refresh_token: token }).then("logged out");
 }
 
 async function loginDirectus() {
@@ -59,7 +80,7 @@ async function loginDirectus() {
       .login({
         email: email.value,
         password: password.value,
-        mode: 'cookie'
+        mode: "cookie",
       })
       .then(() => {
         store.authenticated = true;
@@ -96,7 +117,7 @@ async function loginDirectus() {
         >
           <div class="text-center mb-5">
             <div class="text-900 text-3xl font-medium mb-3">
-              Larchant Outilthèque 
+              Larchant Outilthèque
             </div>
           </div>
 

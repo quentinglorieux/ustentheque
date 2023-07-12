@@ -20,8 +20,8 @@
             <label for="etat">Nom</label>
             <InputText v-model="me.last_name" id="last_name" type="text" />
           </div>
-          <div class="field col-12 md:col-6 ">
-            <label for="nom">Ville</label>
+          <div class="field col-12 md:col-12 ">
+            <label for="nom">Adresse</label>
             <InputText v-model="me.location" id="location" type="text" />
           </div>
 

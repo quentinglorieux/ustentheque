@@ -9,67 +9,33 @@
       <!-- Main form -->
       <div class="card">
         <h4 v-if="addMode">Nouvelle réservation</h4>
-        <h4 v-else>Editer la réservation</h4>
+        <h4 v-else>Accepter le Pret ?</h4>
 
-        <div class="p-fluid formgrid grid">
-          <div v-if="resa" class="field col-12 md:col-12">
-            Objet : {{ resa.objet.nom }} - {{ resa.objet.marque }}
-          </div>
-          <div class="field col-12 md:col-6">
-            <label for="nom">Debut</label>
-            <InputText v-model="resa.debut" id="nom" type="text" disabled />
-          </div>
-
-          <div class="field col-12 md:col-6">
-            <label for="etat">Fin</label>
-            <InputText v-model="resa.fin" id="etat" type="text" disabled />
-          </div>
-
-          <div class="field col-12 md:col-6">
-            <Tag
-              class="px-4 py-2 text-sm"
-              :value="resa.statut"
-              :severity="getStatus(resa.statut)"
-            />
-          </div>
-
-          <div class="field col-12 md:col-12">
-            <Calendar
-              v-model="dates"
-              selectionMode="range"
-              :manualInput="false"
-              inline
-              :numberOfMonths="2"
-              dateFormat="dd/mm/yy"
-            />
-          </div>
-
-          <div v-if="addMode" class="field col-6 md:col-4 md:col-offset-4">
+        <div v-if="addMode" class="field col-6 md:col-4 md:col-offset-4">
+          <Button
+            @click="createOneResa()"
+            label="Créer une réservation"
+            class="w-full p-3 text-xl"
+          ></Button>
+        </div>
+        <div v-if="!addMode" class="field col-8 md:col-6 md:col-offset-3">
+          <div class="flex gap-2">
             <Button
-              @click="createOneResa()"
-              label="Créer une réservation"
+              v-if="!addMode"
+              @click="acceptOneResa()"
+              label="Accepter"
               class="w-full p-3 text-xl"
             ></Button>
-          </div>
-          <div v-if="!addMode" class="field col-8 md:col-6 md:col-offset-3">
-            <div class="flex gap-2">
+            <NuxtLink to="/catalogue">
               <Button
                 v-if="!addMode"
-                @click="updateOneResa()"
-                label="Mettre à jour"
+                @click="refuseOneResa()"
+                label="Refuser"
                 class="w-full p-3 text-xl"
+                severity="warning"
               ></Button>
-              <NuxtLink to="/catalogue">
-                <Button
-                  v-if="!addMode"
-                  @click="deleteOneResa()"
-                  label="Supprimer"
-                  class="w-full p-3 text-xl"
-                  severity="warning"
-                ></Button>
-              </NuxtLink>
-              <Toast></Toast>
-            </div>
+            </NuxtLink>
+            <Toast></Toast>
           </div>
         </div>
       </div>
@@ -83,12 +49,10 @@ import { useToast } from "primevue/usetoast";
 import { useAuthStore } from "@/stores/auth";
 
 const store = useAuthStore();
-const id = computed(() => store.id);
 
 const toast = useToast();
 const directus = new Directus("https://devdirectus.rubidiumweb.eu");
 
-const succes = ref(false);
 const addMode = ref(false);
 
 const route = useRoute();

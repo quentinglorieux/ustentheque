@@ -1,5 +1,10 @@
 <script setup>
 import AppMenuItem from "./AppMenuItem.vue";
+import { useAuthStore } from "@/stores/auth";
+const store = useAuthStore();
+const resa = computed(() => store.resa);
+
+
 
 const model = ref([
 {
@@ -20,7 +25,7 @@ const model = ref([
         to: "/mesoutils",
       },
       {
-        label: "Mes réservations",
+        label: "Mes emprunts",
         icon: "pi pi-fw pi-calendar",
         to: "/mesreservations",
       },
@@ -28,6 +33,7 @@ const model = ref([
         label: "Mes prets",
         icon: "pi pi-fw pi-external-link",
         to: "/mesprets",
+        val: resa,
       },
       {
         label: "Profil",
@@ -65,138 +71,3 @@ const model = ref([
 <style lang="scss" scoped></style>
 
 
-<!-- {
-  label: "UI Components",
-  items: [
-    {
-      label: "Form Layout",
-      icon: "pi pi-fw pi-id-card",
-      to: "/uikit/formlayout",
-    },
-    { label: "Input", icon: "pi pi-fw pi-check-square", to: "/uikit/input" },
-    {
-      label: "Float Label",
-      icon: "pi pi-fw pi-bookmark",
-      to: "/uikit/floatlabel",
-    },
-    {
-      label: "Invalid State",
-      icon: "pi pi-fw pi-exclamation-circle",
-      to: "/uikit/invalidstate",
-    },
-    {
-      label: "Button",
-      icon: "pi pi-fw pi-mobile",
-      to: "/uikit/button",
-      class: "rotated-icon",
-    },
-    { label: "Table", icon: "pi pi-fw pi-table", to: "/uikit/table" },
-    { label: "List", icon: "pi pi-fw pi-list", to: "/uikit/list" },
-    { label: "Tree", icon: "pi pi-fw pi-share-alt", to: "/uikit/tree" },
-    { label: "Panel", icon: "pi pi-fw pi-tablet", to: "/uikit/panels" },
-    { label: "Overlay", icon: "pi pi-fw pi-clone", to: "/uikit/overlay" },
-    { label: "Media", icon: "pi pi-fw pi-image", to: "/uikit/media" },
-    {
-      label: "Menu",
-      icon: "pi pi-fw pi-bars",
-      to: "/uikit/menu",
-      preventExact: true,
-    },
-    { label: "Message", icon: "pi pi-fw pi-comment", to: "/uikit/messages" },
-    { label: "File", icon: "pi pi-fw pi-file", to: "/uikit/file" },
-    { label: "Chart", icon: "pi pi-fw pi-chart-bar", to: "/uikit/chart" },
-    { label: "Misc", icon: "pi pi-fw pi-circle", to: "/uikit/misc" },
-  ],
-},
-{
-  label: "Pages",
-  icon: "pi pi-fw pi-briefcase",
-  to: "/pages",
-  items: [
-    {
-      label: "Auth",
-      icon: "pi pi-fw pi-user",
-      items: [
-        {
-          label: "Login",
-          icon: "pi pi-fw pi-sign-in",
-          to: "/auth/login",
-        },
-        {
-          label: "Error",
-          icon: "pi pi-fw pi-times-circle",
-          to: "/auth/error",
-        },
-        {
-          label: "Access Denied",
-          icon: "pi pi-fw pi-lock",
-          to: "/auth/access",
-        },
-      ],
-    },
-    {
-      label: "Crud",
-      icon: "pi pi-fw pi-pencil",
-      to: "/crud",
-    },
-    {
-      label: "Timeline",
-      icon: "pi pi-fw pi-calendar",
-      to: "/timeline",
-    },
-    {
-      label: "Not Found",
-      icon: "pi pi-fw pi-exclamation-circle",
-      to: "/notfound",
-    },
-    {
-      label: "Empty",
-      icon: "pi pi-fw pi-circle-off",
-      to: "/empty",
-    },
-  ],
-},
-{
-  label: "Hierarchy",
-  items: [
-    {
-      label: "Submenu 1",
-      icon: "pi pi-fw pi-bookmark",
-      items: [
-        {
-          label: "Submenu 1.1",
-          icon: "pi pi-fw pi-bookmark",
-          items: [
-            { label: "Submenu 1.1.1", icon: "pi pi-fw pi-bookmark" },
-            { label: "Submenu 1.1.2", icon: "pi pi-fw pi-bookmark" },
-            { label: "Submenu 1.1.3", icon: "pi pi-fw pi-bookmark" },
-          ],
-        },
-        {
-          label: "Submenu 1.2",
-          icon: "pi pi-fw pi-bookmark",
-          items: [{ label: "Submenu 1.2.1", icon: "pi pi-fw pi-bookmark" }],
-        },
-      ],
-    },
-    {
-      label: "Submenu 2",
-      icon: "pi pi-fw pi-bookmark",
-      items: [
-        {
-          label: "Submenu 2.1",
-          icon: "pi pi-fw pi-bookmark",
-          items: [
-            { label: "Submenu 2.1.1", icon: "pi pi-fw pi-bookmark" },
-            { label: "Submenu 2.1.2", icon: "pi pi-fw pi-bookmark" },
-          ],
-        },
-        {
-          label: "Submenu 2.2",
-          icon: "pi pi-fw pi-bookmark",
-          items: [{ label: "Submenu 2.2.1", icon: "pi pi-fw pi-bookmark" }],
-        },
-      ],
-    },
-  ],
-} -->

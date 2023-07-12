@@ -4,7 +4,7 @@
     <div className="grid">
         <div className="col-12">
             <div className="card">
-                <h5>Mes réservations</h5>
+                <h5>Mes emprunts</h5>
     <div v-if="completed">
     <div v-if="!resa.data">
         <div> Vous n'etes pas connécté.</div> 
@@ -16,7 +16,7 @@
     <DataTable v-if="resa.data" :value="resa.data" tableStyle="min-width: 50rem">
     <template #header>
         <div class="flex flex-wrap align-items-center justify-content-between gap-2">
-            <span class="text-xl text-900 font-bold">Mes réservations</span>
+            <span class="text-xl text-900 font-bold">Mes emprunts</span>
             <NuxtLink :to="`/edit/resa-add`">
                     <Button icon="pi pi-plus" rounded raised /> 
                 </NuxtLink>
@@ -25,7 +25,7 @@
 
     <Column field="objet.nom" header="Objet" sortable> 
         <template #body="slotProps">
-            <NuxtLink :to="`/edit/resa-${slotProps.data.objet.id}`" class="flex align-items-center gap-2"> 
+            <NuxtLink :to="`/edit/resa-${slotProps.data.id}`" class="flex align-items-center gap-2"> 
                 {{ slotProps.data.objet.nom }}  {{ slotProps.data.objet.marque }}
                 <Button icon="pi pi-pencil" class="py-0" text rounded  />
                 </NuxtLink>
@@ -46,10 +46,13 @@
     </Column>
     <Column  header="Edit" >
          <template #body="slotProps">
-            <Button icon="pi pi-pencil" class="p-button-rounded p-button-secondary mr-1 mb-1" />
+            
+            <NuxtLink :to="`/edit/resa-${slotProps.data.id}`" > 
+                <Button icon="pi pi-pencil" class="p-button-rounded p-button-secondary mr-1 mb-1" />
+            </NuxtLink>
     </template>
 </Column>
-    <template #footer> Vous avez {{ resa ? resa.data.length : 0 }} réservation(s) sur votre compte. </template>
+    <template #footer> Vous avez {{ resa ? resa.data.length : 0 }} demande(s) d'emprunt sur votre compte. </template>
     <!-- <Column field="marque" header="Marque" sortable> </Column>
 
     <Column field="etat" header="Etat" sortable>
@@ -87,7 +90,7 @@ async function mesResa() {
     completed.value = false;
 
     resa.value = await directus.items('reservation').readByQuery({
-            fields: ["debut,fin,statut,objet.id,objet.nom,objet.marque"],
+            fields: ["id,debut,fin,statut,objet.id,objet.nom,objet.marque"],
             filter: {
                 "user_created": {
 		        "_eq": "$CURRENT_USER"

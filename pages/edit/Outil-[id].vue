@@ -142,12 +142,12 @@ import { useToast } from "primevue/usetoast";
 import { useAuthStore } from "@/stores/auth";
 
 const store = useAuthStore();
-const id = computed(() => store.id);
+// const id = computed(() => store.id);
 
 const toast = useToast();
 const directus = new Directus("https://devdirectus.rubidiumweb.eu");
 
-const users = directus.items("directus_users");
+// const users = directus.items("directus_users");
 const objetD = directus.items("objet");
 
 const succes = ref(false);
@@ -205,7 +205,7 @@ async function createOneObjet() {
       toast.add({
         severity: "error",
         summary: "Erreur",
-        detail: "Veuillez vous reconnecter.",
+        detail: "Photo manquante ou hors connexion.",
         life: 3000,
       });
     });

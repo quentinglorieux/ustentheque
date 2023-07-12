@@ -8,6 +8,7 @@ export const useAuthStore = defineStore('auth', {
     id: '',
     first_name: '',
     avatar: '',
+    resa: '',
     me: {}
   }),
 })
