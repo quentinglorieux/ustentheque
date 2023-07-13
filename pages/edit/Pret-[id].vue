@@ -1,34 +1,20 @@
 <template>
-  <div class="mb-4">
-    <NuxtLink to="/mesreservations">
-      <Button label="Liste des réservations" class="px-4 py-3"> </Button
-    ></NuxtLink>
-  </div>
   <div class="grid">
     <div class="col-9">
       <!-- Main form -->
       <div class="card">
-        <h4 v-if="addMode">Nouvelle réservation</h4>
-        <h4 v-else>Accepter le Pret ?</h4>
+        <h4>Accepter le Pret ?</h4>
 
-        <div v-if="addMode" class="field col-6 md:col-4 md:col-offset-4">
-          <Button
-            @click="createOneResa()"
-            label="Créer une réservation"
-            class="w-full p-3 text-xl"
-          ></Button>
-        </div>
-        <div v-if="!addMode" class="field col-8 md:col-6 md:col-offset-3">
+        <div class="field col-8 md:col-6 md:col-offset-3">
           <div class="flex gap-2">
             <Button
-              v-if="!addMode"
               @click="acceptOneResa()"
               label="Accepter"
               class="w-full p-3 text-xl"
             ></Button>
             <NuxtLink to="/catalogue">
               <Button
-                v-if="!addMode"
+
                 @click="refuseOneResa()"
                 label="Refuser"
                 class="w-full p-3 text-xl"
@@ -37,6 +23,16 @@
             </NuxtLink>
             <Toast></Toast>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-3">
+      <!-- Main form -->
+      <div class="card ">
+        <div class="mb-4 ">
+          <NuxtLink  class=" flex justify-items-center " to="/mesprets">
+            <Button label="Liste des prets" class="px-4 py-3"> </Button
+          ></NuxtLink>
         </div>
       </div>
     </div>
@@ -62,14 +58,9 @@ const dates = ref("");
 
 const resaD = directus.items("reservation");
 
-// isAddMode (or editMode)
-const isAddMode = () => {
-  if (route.params.id == "add") {
-    addMode.value = true;
-  }
-};
 
-// L'objet
+
+// La resa
 async function retrieveOneResa() {
   let publicData = await directus
     .items("reservation")
@@ -77,57 +68,27 @@ async function retrieveOneResa() {
       fields: ["id,debut,fin,statut,objet.nom,objet.marque"],
     });
   resa.value = publicData;
-  // console.log(Date.parse(resa.value.debut))
-  // dates.value = [resa.value.debut + 'T22:00:00.000Z',resa.value.fin+ 'T22:00:00.000Z']
 }
 
-async function retrieveAllResa() {
-  let publicData = await directus.items("reservation").readByQuery({
-    fields: ["id,debut,fin,statut,objet.id,objet.nom,objet.marque"],
-    filter: {
-      user_created: {
-        _eq: "$CURRENT_USER",
-      },
-    },
-  });
-  resaList.value = publicData.data;
-}
+// async function retrieveAllResa() {
+//   let publicData = await directus.items("reservation").readByQuery({
+//     fields: ["id,debut,fin,statut,objet.id,objet.nom,objet.marque"],
+//     filter: {
+//       user_created: {
+//         _eq: "$CURRENT_USER",
+//       },
+//     },
+//   });
+//   resaList.value = publicData.data;
+// }
 
-// Création de l outil
-async function createOneResa() {
-  await resaD
-    .createOne({
-      debut: dates.value[0],
-      fin: dates.value[1],
-      statut: "a",
-      objet: objet.value.id,
-    })
-    .then(() => {
-      console.log("C");
-      toast.add({
-        severity: "success",
-        summary: "Merci",
-        detail: "Outil ajouté.",
-        life: 3000,
-      });
-    })
-    .catch(() => {
-      console.log("Erreur");
-      toast.add({
-        severity: "error",
-        summary: "Erreur",
-        detail: "Veuillez vous reconnecter.",
-        life: 3000,
-      });
-    });
-}
+
 
 // Mise a jour de l outil
-async function updateOneResa() {
+async function acceptOneResa() {
   await resaD
     .updateOne(route.params.id, {
-      debut: dates.value[0],
-      fin: dates.value[1],
+      statut: "Validé"
     })
     .then(() => {
       console.log("U");
@@ -135,7 +96,7 @@ async function updateOneResa() {
       toast.add({
         severity: "success",
         summary: "Merci",
-        detail: "Outil mis à jour.",
+        detail: "Reservation acceptée !",
         life: 3000,
       });
     })
@@ -150,32 +111,6 @@ async function updateOneResa() {
     });
 }
 
-// Suppression de l outil
-async function deleteOneResa() {
-  await resaD
-    .deleteOne(route.params.id)
-    .then(() => {
-      // succes.value = true;
-      // objet.value = {};
-      // proprio.value = "";
-      console.log("del");
-      toast.add({
-        severity: "success",
-        summary: "Merci",
-        detail: "Supprimé.",
-        life: 3000,
-      });
-    })
-    .catch(() => {
-      console.log("Erreur");
-      toast.add({
-        severity: "error",
-        summary: "Erreur",
-        detail: "Veuillez vous reconnecter.",
-        life: 3000,
-      });
-    });
-}
 
 const getStatus = (st) => {
   switch (st) {
@@ -196,11 +131,8 @@ const getStatus = (st) => {
 };
 
 onMounted(() => {
-  isAddMode();
-  retrieveAllResa();
-  if (!addMode.value) {
+  // retrieveAllResa();
     retrieveOneResa();
-  }
 });
 </script>
 

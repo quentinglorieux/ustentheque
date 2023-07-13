@@ -4,7 +4,6 @@
     <div className="grid">
         <div className="col-12">
             <div className="card">
-                <h5>Mes emprunts</h5>
     <div v-if="completed">
     <div v-if="!resa.data">
         <div> Vous n'etes pas connécté.</div> 

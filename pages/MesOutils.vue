@@ -2,7 +2,7 @@
     <div className="grid">
         <div className="col-12">
             <div className="card">
-                <h5>Mes outils</h5>
+
                 <!-- res----- {{ reservation }} -->
                 
 <div v-if="completed">
@@ -11,7 +11,7 @@
 <DataTable v-if="me.objet" :value="me.objet" v-model:expandedRows="expandedRows" sortField="nom" :sortOrder="1"  tableStyle="min-width: 50rem">
     <template #header>
         <div class="flex flex-wrap align-items-center justify-content-between gap-2">
-            <span class="text-xl text-900 font-bold">Outils</span>
+            <span class="text-xl text-900 font-bold">Mes outils</span>
             <div class="flex items-center gap-2"> Nouvel outil 
                 <NuxtLink :to="`/edit/outil-add`">
                     <Button icon="pi pi-plus" rounded raised /> 

@@ -1,9 +1,4 @@
 <template>
-  <div class="mb-4">
-    <NuxtLink to="/mesreservations">
-      <Button label="Liste des réservations" class="px-4 py-3"> </Button
-    ></NuxtLink>
-  </div>
   <div class="grid">
     <div class="col-9">
       <!-- Main form -->
@@ -71,6 +66,16 @@
               <Toast></Toast>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-3">
+      <!-- Main form -->
+      <div class="card ">
+        <div class="mb-4 ">
+          <NuxtLink  class=" flex justify-items-center " to="/mesreservations">
+            <Button label="Liste des réservations" class="px-4 py-3"> </Button
+          ></NuxtLink>
         </div>
       </div>
     </div>

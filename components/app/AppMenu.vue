@@ -20,7 +20,7 @@ const model = ref([
         to: "/catalogue",
       },
       {
-        label: "Mes outlis",
+        label: "Mes outils",
         icon: "pi pi-fw pi-wrench",
         to: "/mesoutils",
       },
