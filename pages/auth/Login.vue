@@ -50,12 +50,16 @@ async function mesPrets() {
       },
     },
   });
-  store.resa=resa.value.data.length
+  const countValidatedItems = resa.value.data.reduce((count, obj) => {
+    if (obj.statut === "En attente") {
+      return count + 1;
+    }
+    return count;
+  }, 0);
+
+  store.resa = countValidatedItems;
 }
 
-onMounted(() => {
-  mesPrets();
-});
 
 
 

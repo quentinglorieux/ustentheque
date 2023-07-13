@@ -68,7 +68,7 @@
               </template>
             </Column>
             <template #footer>
-              Vous avez {{ resa ? resa.data.length : 0 }} pret(s) en cours.
+              Vous avez {{ resa ? store.resa : 0 }} pret(s) en attente.
             </template>
           </DataTable>
         </div>
@@ -96,16 +96,23 @@ async function mesPrets() {
       "id,debut,fin,statut,objet.id,objet.nom,objet.marque,objet.proprietaire",
     ],
     filter: {
-        objet: {
-            proprietaire: {
+      objet: {
+        proprietaire: {
           _eq: "$CURRENT_USER",
         },
       },
     },
   });
   completed.value = true;
-  store.resa=resa.value.data.length
 
+  const countValidatedItems = resa.value.data.reduce((count, obj) => {
+    if (obj.statut === "En attente") {
+      return count + 1;
+    }
+    return count;
+  }, 0);
+
+  store.resa = countValidatedItems;
 }
 
 onMounted(() => {
@@ -115,7 +122,7 @@ onMounted(() => {
 const getStatus = (resa) => {
   switch (resa.statut) {
     case "En attente":
-      return null;
+      return "info";
     case "Validé":
       return "success";
 

@@ -107,7 +107,7 @@ onMounted(() => {
 const getStatus = (resa) => {
     switch (resa.statut) {
         case 'En attente':
-            return null;
+            return "info";
         case 'Validé':
             return 'success';
 

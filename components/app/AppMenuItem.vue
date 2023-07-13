@@ -77,7 +77,7 @@ const checkActiveRoute = (item) => {
             <i :class="item.icon" class="layout-menuitem-icon"></i>
             <span class="layout-menuitem-text">{{ item.label }}</span>
             <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i> 
-            <Badge v-if="item.val" class="ml-2" :value=item.val severity="danger"></Badge>
+            <Badge v-if="item.val" class="ml-2" :value=item.val severity="info"></Badge>
         </router-link>
         <Transition v-if="item.items && item.visible !== false" name="layout-submenu">
             <ul v-show="root ? true : isActiveMenu" class="layout-submenu">

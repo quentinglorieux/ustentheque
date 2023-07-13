@@ -125,19 +125,19 @@ async function retrieveOneObjet() {
   proprio.value = publicData.proprietaire;
 }
 
-async function requestResa() {
-  const resa = await directus.items("reservation").createOne({
-    objet: route.params.id,
-    debut: dates.value[0],
-    fin: dates.value[1],
-    statut: "En attente",
-  });
-  if (resa.id) {
-    toast("Votre demande de réservation a bien été envoyée");
-  } else {
-    toast("Votre demande de réservation n'a pas pu être envoyée");
-  }
-}
+// async function requestResa() {
+//   const resa = await directus.items("reservation").createOne({
+//     objet: route.params.id,
+//     debut: dates.value[0],
+//     fin: dates.value[1],
+//     statut: "En attente",
+//   });
+//   if (resa.id) {
+//     toast("Votre demande de réservation a bien été envoyée");
+//   } else {
+//     toast("Votre demande de réservation n'a pas pu être envoyée");
+//   }
+// }
 
 // Création de l outil
 async function createOneResa() {
