@@ -12,7 +12,7 @@ const model = ref([
     items: [{ label: "Dashboard", icon: "pi pi-fw pi-home", to: "/" }],
   },
   {
-    label: "Ustentheque",
+    label: "BibOB",
     items: [
       {
         label: "Catalogue",

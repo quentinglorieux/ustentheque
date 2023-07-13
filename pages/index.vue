@@ -3,12 +3,12 @@
 
     <div class="surface-section px-4 py-8 md:px-6 lg:px-8 mb-4  card">
       <div class="text-700 text-center">
-          <div class="text-blue-600 font-bold mb-3">SOUTENUE PAR&nbsp; <i class="pi pi-megaphone"></i></div>
-          <div class="text-900 font-bold text-5xl mb-3">Bienvenue sur l'outilthèque de Larchant</div>
+          <div class="text-blue-600 font-bold text-xl mb-3">La BibOB est soutenue par &nbsp; <i class="pi pi-megaphone"></i></div>
+          <div class="text-900 font-bold text-4xl mb-3">Bienvenue sur la Biblothèque des Objets de Larchant</div>
           <div class="text-700 text-2xl mb-5">Prêtez, empruntez, apprenez, réparez...</div>
           <div class="flex justify-center gap-10"> 
             <NuxtLink to="/auth/signup"> 
-          <Button label="Devenez membre" icon="pi pi-plus-circle" severity="info" class="font-bold px-5 py-3 p-button-raised  white-space-nowrap"></Button>
+          <Button label="Devenez membre de la BibOB" icon="pi pi-plus-circle" severity="info" class="font-bold px-5 py-3 p-button-raised  white-space-nowrap"></Button>
           </NuxtLink>
           <NuxtLink to="/auth/login"> 
             <Button label="Connexion" icon="pi pi-sign-in"  severity="info" class="font-bold px-5 py-3 p-button-raised  white-space-nowrap"></Button>
