@@ -12,9 +12,9 @@ const me = ref();
 
 const directus = new Directus("https://devdirectus.rubidiumweb.eu", {
   auth: {
-    mode: "json", // 'json' in Node.js
+    mode: "cookie", // 'json' in Node.js
     autoRefresh: true,
-    msRefreshBeforeExpires: 60000,
+    msRefreshBeforeExpires: 6000000,
     staticToken: "",
   },
 });
@@ -67,7 +67,7 @@ async function checkLogin() {
   // AUTHENTICATION
   await directus.auth.token
     .then((a) => {
-      authenticated.value = true;
+      // authenticated.value = true;
       token.value = a;
     })
     .catch(() => {});
