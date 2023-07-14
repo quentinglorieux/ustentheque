@@ -75,7 +75,7 @@ async function checkLogin() {
 
 async function logoutDirectus() {
   // AUTHENTICATION
-  await directus.auth.logout({ refresh_token: token }).then("logged out");
+  await directus.auth.logout();
 }
 
 async function loginDirectus() {
