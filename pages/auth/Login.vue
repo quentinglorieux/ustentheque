@@ -12,7 +12,7 @@ const me = ref();
 
 const directus = new Directus("https://devdirectus.rubidiumweb.eu", {
   auth: {
-    mode: "cookie", // 'json' in Node.js
+    mode: "json", // 'json' in Node.js
     autoRefresh: true,
     msRefreshBeforeExpires: 60000,
     staticToken: "",
