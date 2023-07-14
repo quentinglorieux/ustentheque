@@ -14,7 +14,7 @@ const directus = new Directus("https://devdirectus.rubidiumweb.eu", {
   auth: {
     mode: "cookie", // 'json' in Node.js
     autoRefresh: true,
-    msRefreshBeforeExpires: 6000000,
+    msRefreshBeforeExpires: 60000,
     staticToken: "",
   },
 });
@@ -67,7 +67,7 @@ async function checkLogin() {
   // AUTHENTICATION
   await directus.auth.token
     .then((a) => {
-      // authenticated.value = true;
+      //authenticated.value = true;
       token.value = a;
     })
     .catch(() => {});
@@ -75,7 +75,7 @@ async function checkLogin() {
 
 async function logoutDirectus() {
   // AUTHENTICATION
-  await directus.auth.logout();
+  await directus.auth.logout({ refresh_token: token }).then("logged out");
 }
 
 async function loginDirectus() {
