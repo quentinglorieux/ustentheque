@@ -67,7 +67,7 @@ async function checkLogin() {
   // AUTHENTICATION
   await directus.auth.token
     .then((a) => {
-      //authenticated.value = true;
+      authenticated.value = true;
       token.value = a;
     })
     .catch(() => {});
