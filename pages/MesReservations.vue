@@ -24,13 +24,15 @@
 
     <Column field="objet.nom" header="Objet" sortable> 
         <template #body="slotProps">
-            <NuxtLink :to="`/edit/resa-${slotProps.data.id}`" class="flex align-items-center gap-2"> 
-                {{ slotProps.data.objet.nom }}  {{ slotProps.data.objet.marque }}
+            <NuxtLink v-if="slotProps.data.objet" :to="`/edit/resa-${slotProps.data.id}`" class="flex align-items-center gap-2"> 
+                {{ slotProps.data.objet.nom }} 
+                 {{ slotProps.data.objet.marque }}
                 <Button icon="pi pi-pencil" class="py-0" text rounded  />
                 </NuxtLink>
                
         </template>
     </Column>
+    
 
     <Column field="debut" header="Debut" sortable></Column>
 
@@ -40,7 +42,7 @@
 
     <Column field="statut" header="Statut" sortable>
         <template #body="slotProps">
-            <Tag class="px-4 py-2 text-sm" :value="slotProps.data.statut" :severity="getStatus(slotProps.data)" />
+            <Tag v-if="slotProps.data" class="px-4 py-2 text-sm" :value="slotProps.data.statut" :severity="getStatus(slotProps.data)" />
         </template>
     </Column>
     <!-- <Column  header="Edit" >
@@ -54,7 +56,7 @@
 
 <Column field="objet.proprietaire.last_name" header="Propriétaire" sortable>
               <template #body="slotProps">
-                <Chip
+                <Chip v-if="slotProps.data.objet"
                   class="mb-1 bg-slate-50"
                   :label="slotProps.data.objet.proprietaire.first_name + ' ' + slotProps.data.objet.proprietaire.last_name"
                   :image="`https://devdirectus.rubidiumweb.eu/assets/${slotProps.data.objet.proprietaire.avatar}?fit=cover&width=50&height=50&quality=20`"
@@ -87,6 +89,7 @@
             </div>
         </div>
     </div>
+
 </template>
 
 <script setup>

@@ -1,5 +1,6 @@
 <!-- Reservation sur un objet -->
 <template>
+
   <div v-if="objet" class="flex items-stretch">
     <div class="col-12 sm:col-6 lg:col-4 xl:col-3 p-2 flex items-stretch">
       <div class="p-4 border-1 surface-border surface-card border-round">
@@ -37,23 +38,22 @@
           />
         </div>
         <div class="flex align-items-center justify-content-between">
-          <span class="text-m font-semibold"
-            >Conseils: </span> <span>{{ objet.conseils }}
-          </span>
+          <span class="text-m font-semibold">Conseils: </span>
+          <span>{{ objet.conseils }} </span>
         </div>
         <div class="flex align-items-center justify-content-between">
-          <span class="text-m font-semibold"
-            >Consommables: </span> <span> {{ objet.consommable }}
-          </span>
+          <span class="text-m font-semibold">Consommables: </span>
+          <span> {{ objet.consommable }} </span>
         </div>
       </div>
     </div>
-    <div v-if="authenticated" class="col-12 sm:col-6 lg:col-6 xl:col-6 p-2">
+    <div v-if="objet" class="col-12 sm:col-6 lg:col-6 xl:col-6 p-2">
       <div class="p-4 border-1 surface-border surface-card border-round">
         <div class="text-2xl font-bold text-center pb-4">Reservation</div>
         <div class="mb-2">
           <div class="mb-2">
-            <Calendar
+            <!-- {{ dates }} -->
+            <!-- <Calendar
               showIcon
               v-model="dates"
               selectOtherMonths = true
@@ -61,7 +61,32 @@
               selectionMode="range"
               :manualInput="false"
               inline
-            />
+              :disabledDates="disabledDates"
+            /> -->
+            <Calendar
+              showIcon
+              v-model="dates"
+              selectOtherMonths="true"
+              view="date"
+              selectionMode="range"
+              :manualInput="false"
+              inline
+              :disabledDates="disabledDates"
+              :minDate="minDate"
+            >
+              <template #date="slotProps">
+                <!-- v-if="isDateInArray(slotProps)" -->
+                <!--  v-if="isDateDisabled(slotProps.date)" -->
+
+                <strong
+                v-if="isDateInArray(slotProps)"
+                  style="text-decoration: line-through red"
+                  class="bg-red-100 p-10"
+                  >{{ slotProps.date.day }}
+                </strong>
+                <template v-else> {{ slotProps.date.day }}</template>
+              </template>
+            </Calendar>
           </div>
           <Button
             v-if="!dates"
@@ -100,9 +125,6 @@ import { Directus } from "@directus/sdk";
 import { useToast } from "primevue/usetoast";
 import { useAuthStore } from "@/stores/auth";
 
-
-
-
 const route = useRoute();
 const toast = useToast();
 
@@ -114,16 +136,89 @@ const directus = new Directus("https://devdirectus.rubidiumweb.eu");
 const objet = ref("");
 const dates = ref("");
 const proprio = ref("");
+const resaList = ref();
+const filteredResaList = ref();
+
+const disabledDates = ref([]);
+
+// Look for disabled Dates in the slot
+const isDateInArray = computed(() => {
+  return (slotProps) => {
+    const searchDate = slotProps.date;
+    const searchDateFormatted = new Date(
+      searchDate.year,
+      searchDate.month,
+      searchDate.day
+    );
+    // const dateArray = ref([new Date(2023, 6, 11), new Date(2023, 6, 12)]);
+    const dateArray=disabledDates
+    // return dateArray.value.some(
+    //   (date) => date.getTime() === searchDateFormatted.getTime()
+    // );
+    return dateArray.value.some((date) => {
+      const formattedDate = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+      );
+      return formattedDate.getTime() === searchDateFormatted.getTime();
+  });
+};
+});
+
+function isDateDisabled(date) {
+  const searchDate = date;
+  const searchDateFormatted = new Date(
+    searchDate.year,
+    searchDate.month,
+    searchDate.day
+  );
+  return disabledDates.value.some((d) => {
+    d.getTime() === searchDateFormatted.getTime();
+  });
+}
+
+// Start today
+const minDate = ref(new Date());
 
 const resaD = directus.items("reservation");
 
 async function retrieveOneObjet() {
   const publicData = await directus
     .items("objet")
-    .readOne(route.params.id, { fields: ["*,proprietaire.*"] });
+    .readOne(route.params.id, {
+      fields: [
+        "id,nom,marque,photo,prix_indicatif,conseils,etat,consommable,proprietaire.first_name,proprietaire.last_name,proprietaire.avatar, reservation.debut,reservation.fin,reservation.statut",
+      ],
+    });
   objet.value = publicData;
   proprio.value = publicData.proprietaire;
+  resaList.value = publicData.reservation;
+  filteredResaList.value = resaList.value.filter(
+    (obj) => obj.statut === "Validé" || obj.statut === "En attente"
+  );
+  disabledDates.value = generateDisabledDateArray(filteredResaList.value);
 }
+
+// Function to generate Disabled dates
+// Create an array of dates from debut/fin (reservations - filteredResaList)
+const generateDisabledDateArray = (array) => {
+  const dateArray = array.reduce((accumulator, obj) => {
+    const debutDate = new Date(obj.debut);
+    const finDate = new Date(obj.fin);
+
+    const currentArray = [];
+    const currentDate = new Date(debutDate);
+
+    while (currentDate <= finDate) {
+      currentArray.push(new Date(currentDate));
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return accumulator.concat(currentArray);
+  }, []);
+  return dateArray;
+};
 
 // async function requestResa() {
 //   const resa = await directus.items("reservation").createOne({
@@ -165,13 +260,11 @@ async function createOneResa() {
         life: 3000,
       });
     });
+    retrieveOneObjet();
 }
 
 onMounted(() => {
   retrieveOneObjet();
+  // disabledDatesList();
 });
-
-// watch(route, (newX) => {
-//   retrieve1Objet();
-// });
 </script>
