@@ -21,9 +21,9 @@ const directus = new Directus("https://devdirectus.rubidiumweb.eu", {
 
 onMounted(() => {
   checkLogin();
-  myProfile();
-  mesPrets();
-});
+    myProfile();
+  mesPrets();}
+);
 
 async function myProfile() {
   const profileData = await directus.users.me.read({ fields: ["*"] });
@@ -67,7 +67,7 @@ async function checkLogin() {
   // AUTHENTICATION
   await directus.auth.token
     .then((a) => {
-      //authenticated.value = true;
+      store.authenticated = true;
       token.value = a;
     })
     .catch(() => {});
@@ -75,7 +75,13 @@ async function checkLogin() {
 
 async function logoutDirectus() {
   // AUTHENTICATION
-  await directus.auth.logout({ refresh_token: token }).then("logged out");
+  // await directus.auth.logout({ refresh_token: token }).then("logged out");
+  store.authenticated = false
+  store.id=''
+  store.first_name=''
+  store.avatar=''
+  store.resa=''
+  store.me={}
 }
 
 async function loginDirectus() {
@@ -179,7 +185,7 @@ async function loginDirectus() {
       </div>
     </div>
   </div>
-
+<div v-if="store.authenticated"> 
   <div v-if="me">
     <div class="text-900 text-3xl font-medium mb-3">
       Bonjour {{ me.first_name }},
@@ -193,7 +199,7 @@ async function loginDirectus() {
       label="Se déconnecter"
       class="w-3 p-3 text-xl"
     ></Button>
-    (ne fait rien pour l instant)
+  </div>
   </div>
 </template>
 

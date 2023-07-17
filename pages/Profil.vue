@@ -2,7 +2,20 @@
     <div class="grid">
     <div class="col-12 md:col-9">
       <!-- Main form -->
-      <div class="card">
+      
+      <div v-if="!me.first_name" class="card">
+            <div>Vous n'etes pas connécté.</div>
+            <NuxtLink to="/auth/login">
+              <Button
+                label="Connectez vous ici"
+                icon="pi pi-sign-in"
+                severity="info"
+                class="font-bold mt-5 px-5 py-3 p-button-raised white-space-nowrap"
+              ></Button>
+            </NuxtLink>
+          </div>
+
+      <div v-if="me.first_name" class="card">
 
         <h3> Mon Profil</h3>
         
@@ -68,7 +81,7 @@
     <div class="col-12 sm:col-6 md:col-3">
     
       
-      <div class="card flex flex-col content-center">
+      <div  v-if="me.first_name" class="card flex flex-col content-center">
         <Toast />
         <h4 class="text-center">Ma photo</h4>
         <div v-if="me.avatar" class="flex justify-center" >

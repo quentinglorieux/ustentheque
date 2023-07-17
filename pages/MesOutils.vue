@@ -5,6 +5,18 @@
         <!-- res----- {{ reservation }} -->
 
         <div v-if="completed">
+            <div v-if="!me.objet">
+            <div>Vous n'etes pas connécté.</div>
+            <NuxtLink to="/auth/login">
+              <Button
+                label="Connectez vous ici"
+                icon="pi pi-sign-in"
+                severity="info"
+                class="font-bold mt-5 px-5 py-3 p-button-raised white-space-nowrap"
+              ></Button>
+            </NuxtLink>
+          </div>
+
           <DataTable
             v-if="me.objet"
             :value="me.objet"
@@ -130,7 +142,6 @@
             <template #footer>
               Vous avez {{ me.objet ? me.objet.length : 0 }} outils à prêter.
             </template>
-
           </DataTable>
         </div>
         <div v-if="!completed"><ProgressSpinner /></div>
@@ -179,11 +190,10 @@ const meStore = computed(() => store.me);
 // };
 
 const formatDate = (dateString) => {
-  const options = { day: 'numeric', month: 'long', year: 'numeric' };
+  const options = { day: "numeric", month: "long", year: "numeric" };
   const date = new Date(dateString);
-  return date.toLocaleDateString('fr-FR', options);
+  return date.toLocaleDateString("fr-FR", options);
 };
-
 
 const formatCurrency = (val) => {
   return val.toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
@@ -230,6 +240,10 @@ const getSeverity = (resa) => {
 };
 
 async function mesObjets() {
+  if (!store.authenticated) {
+    completed.value = true;
+    return;
+  }
   completed.value = false;
   me.value = await directus.users.me.read({
     fields: [
@@ -241,14 +255,18 @@ async function mesObjets() {
 }
 
 const checkAvailabilityForToday = (reservations) => {
-  const currentDate = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+  const currentDate = new Date().toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
 
   for (const reservation of reservations) {
     const { debut, fin } = reservation;
     if (debut <= currentDate && currentDate <= fin) {
-        if (reservation.statut == "Validé" || reservation.statut == "En attente") { return false;} // Overlapping reservation found}
+      if (
+        reservation.statut == "Validé" ||
+        reservation.statut == "En attente"
+      ) {
+        return false;
+      } // Overlapping reservation found}
       return true; // Overlapping reservation found but not validated
-      
     }
   }
   return true; // No overlapping reservation for today found

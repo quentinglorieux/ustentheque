@@ -99,6 +99,11 @@ const resa = ref("");
 const completed = ref(false);
 
 async function mesPrets() {
+  if (!store.authenticated) {
+    completed.value = true;
+    return;
+  }
+  
   completed.value = false;
 
   resa.value = await directus.items("reservation").readByQuery({
