@@ -31,7 +31,7 @@
               class="w-full"
             />
           </div>
-
+          
           <div class="field col-12 md:col-4">
             <label for="etat">Etat</label>
             <Dropdown
@@ -42,10 +42,6 @@
               placeholder="Dans quel état ?"
               class="w-full"
             />
-
-            <!-- <Rating v-model="objet.etat" id="etat" :cancel="false" /> -->
-
-            <!-- <InputText v-model="objet.etat" id="etat" type="text" /> -->
           </div>
           <div class="field col-12 md:col-4">
             <label for="prix_indicatif">Prix</label>
@@ -307,7 +303,14 @@ async function retrieveMarque() {
 }
 
 //retrieveEtat
-const fieldsEtat = [{ etat: "Neuf"}, {etat:"Excellent"}, {etat:"Bon"}, {etat:"Moyen"}, {etat:"Mauvais"}, {etat:"En panne"}];
+const fieldsEtat = [
+  { etat: "Neuf" },
+  { etat: "Excellent" },
+  { etat: "Bon" },
+  { etat: "Moyen" },
+  { etat: "Mauvais" },
+  { etat: "En panne" },
+];
 
 onMounted(() => {
   isAddMode();
