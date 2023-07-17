@@ -26,7 +26,7 @@
               v-model="selectedMarque"
               editable
               :options="fieldsMarque"
-              optionLabel="text"
+              optionLabel="marque"
               placeholder="Choisissez une marque existante ou créez une nouvelle"
               class="w-full"
             />
@@ -174,6 +174,8 @@ async function retrieveOneObjet() {
   objet.value = publicData;
   image.value = publicData.photo;
   proprio.value = publicData.proprietaire;
+  console.log(publicData.marque)
+  selectedMarque.value = publicData.marque;
 }
 
 // Création de l outil
@@ -216,7 +218,7 @@ async function updateOneObjet() {
   await objetD
     .updateOne(route.params.id, {
       nom: nom.value,
-      marque: selectedMarque.value,
+      marque: selectedMarque.value.marque,
       etat: etat.value,
       prix_indicatif: prix_indicatif.value,
       duree_max: duree.value,
@@ -315,9 +317,20 @@ const onFailed = () => {
 //retrieveMaque
 const fieldsMarque = ref([]);
 async function retrieveMaque() {
-  const publicdata = await directus.fields.readMany("objet");
-  const temp = publicdata.data[8];
-  fieldsMarque.value = temp.meta.options.choices;
+  const publicdata = await directus.items("objet").readByQuery({limit:-1});
+  const temp = publicdata.data;
+  // fieldsMarque.value = temp.map(obj => obj.marque);
+  // fieldsMarque.value = temp.meta.options.choices;
+  
+  
+
+  const uniqueMarqueArray = Array.from(new Set(temp.map(obj => obj.marque)))
+  .map(marque => ({ marque }));
+  console.log(uniqueMarqueArray)
+
+  fieldsMarque.value = uniqueMarqueArray;
+
+
 }
 
 
