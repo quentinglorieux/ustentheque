@@ -221,7 +221,6 @@ const verifyAvailability = (selectedDates, disabledDates) => {
 // Création de l outil
 async function createOneResa() {
   dates.value[1] = dates.value[1] ? dates.value[1] : dates.value[0];
-  console.log(dates.value[1])
   await resaD
     .createOne({
       debut: dates.value[0],

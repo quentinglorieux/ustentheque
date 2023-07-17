@@ -246,12 +246,11 @@ const checkAvailabilityForToday = (reservations) => {
   for (const reservation of reservations) {
     const { debut, fin } = reservation;
     if (debut <= currentDate && currentDate <= fin) {
-        console.log('fa')
-      return false; // Overlapping reservation found
+        if (reservation.statut == "Validé" || reservation.statut == "En attente") { return false;} // Overlapping reservation found}
+      return true; // Overlapping reservation found but not validated
       
     }
   }
-  console.log('t')
   return true; // No overlapping reservation for today found
 };
 
