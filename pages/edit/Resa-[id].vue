@@ -140,11 +140,10 @@ async function createOneResa() {
     .createOne({
       debut: dates.value[0],
       fin: dates.value[1],
-      statut: "a",
+      statut: "En attente",
       objet: objet.value.id,
     })
     .then(() => {
-      console.log("C");
       toast.add({
         severity: "success",
         summary: "Merci",

@@ -25,9 +25,9 @@
                 class="flex flex-wrap align-items-center justify-content-between gap-2"
               >
                 <span class="text-xl text-900 font-bold">Mes prets</span>
-                <NuxtLink :to="`/edit/resa-add`">
+                <!-- <NuxtLink :to="`/edit/resa-add`">
                   <Button icon="pi pi-plus" rounded raised />
-                </NuxtLink>
+                </NuxtLink> -->
               </div>
             </template>
 
@@ -57,7 +57,7 @@
                 />
               </template>
             </Column>
-            <Column header="Edit">
+            <!-- <Column header="Edit">
               <template #body="slotProps">
                 <NuxtLink :to="`/edit/pret-${slotProps.data.id}`">
                   <Button
@@ -66,7 +66,17 @@
                   />
                 </NuxtLink>
               </template>
+            </Column> -->
+            <Column field="user_created.last_name" header="A qui ?" sortable>
+              <template #body="slotProps">
+                <Chip
+                  class="mb-1 bg-slate-50"
+                  :label="slotProps.data.user_created.first_name + ' ' + slotProps.data.user_created.last_name"
+                  :image="`https://devdirectus.rubidiumweb.eu/assets/${slotProps.data.user_created.avatar}?fit=cover&width=50&height=50&quality=20`"
+                />
+              </template>
             </Column>
+
             <template #footer>
               Vous avez {{ resa ? store.resa : 0 }} pret(s) en attente.
             </template>
@@ -93,7 +103,7 @@ async function mesPrets() {
 
   resa.value = await directus.items("reservation").readByQuery({
     fields: [
-      "id,debut,fin,statut,objet.id,objet.nom,objet.marque,objet.proprietaire",
+      "id,debut,fin,statut,user_created.last_name,user_created.first_name,user_created.avatar,objet.id,objet.nom,objet.marque,objet.proprietaire",
     ],
     filter: {
       objet: {

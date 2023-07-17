@@ -43,14 +43,26 @@
             <Tag class="px-4 py-2 text-sm" :value="slotProps.data.statut" :severity="getStatus(slotProps.data)" />
         </template>
     </Column>
-    <Column  header="Edit" >
+    <!-- <Column  header="Edit" >
          <template #body="slotProps">
             
             <NuxtLink :to="`/edit/resa-${slotProps.data.id}`" > 
                 <Button icon="pi pi-pencil" class="p-button-rounded p-button-secondary mr-1 mb-1" />
             </NuxtLink>
     </template>
-</Column>
+</Column> -->
+
+<Column field="objet.proprietaire.last_name" header="Propriétaire" sortable>
+              <template #body="slotProps">
+                <Chip
+                  class="mb-1 bg-slate-50"
+                  :label="slotProps.data.objet.proprietaire.first_name + ' ' + slotProps.data.objet.proprietaire.last_name"
+                  :image="`https://devdirectus.rubidiumweb.eu/assets/${slotProps.data.objet.proprietaire.avatar}?fit=cover&width=50&height=50&quality=20`"
+                />
+              </template>
+            </Column>
+
+
     <template #footer> Vous avez {{ resa ? resa.data.length : 0 }} demande(s) d'emprunt sur votre compte. </template>
     <!-- <Column field="marque" header="Marque" sortable> </Column>
 
@@ -89,7 +101,7 @@ async function mesResa() {
     completed.value = false;
 
     resa.value = await directus.items('reservation').readByQuery({
-            fields: ["id,debut,fin,statut,objet.id,objet.nom,objet.marque"],
+            fields: ["id,debut,fin,statut,objet.id,objet.nom,objet.marque,objet.proprietaire.first_name,objet.proprietaire.last_name,objet.proprietaire.avatar"],
             filter: {
                 "user_created": {
 		        "_eq": "$CURRENT_USER"

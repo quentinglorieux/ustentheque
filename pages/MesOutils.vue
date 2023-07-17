@@ -64,11 +64,17 @@
 
     <template #expansion="slotProps">
                 <div class="p-3 bg-slate-100">
-                    <h6> Réservations </h6>
+                    <h6> Réservations et prets </h6>
                     <DataTable :value="slotProps.data.reservation">
                         <!-- {{ slotProps.data.reservation }} -->
-                        <Column field="user_created.first_name" header="Nom" > 
+
+                        <Column field="user_created" header="Nom" > 
+                            <template #body="slotProps">
+                                 {{slotProps.data.user_created.first_name }}  {{slotProps.data.user_created.last_name }}
+                             </template>
                             </Column>
+
+
                         <Column field="debut" header="Debut" >
                             <template #body="slotProps">
                                 {{ formatDate(slotProps.data.debut) }}
@@ -84,6 +90,17 @@
                         <Tag class="px-4 py-2 text-sm" :value="slotProps.data.statut" :severity="getSeverity(slotProps.data)" />
                         </template>
                         </Column>
+
+                        <Column header="Edit">
+              <template #body="slotProps">
+                <NuxtLink :to="`/edit/pret-${slotProps.data.id}`">
+                  <Button
+                    icon="pi pi-pencil"
+                    class="p-button-rounded p-button-secondary mr-1 mb-1"
+                  />
+                </NuxtLink>
+              </template>
+            </Column>
 
                     </DataTable>
     
@@ -196,6 +213,7 @@ async function mesObjets() {
     );
     completed.value = true;
     reservation.value = me.value.objet;
+    
 }
 
 
