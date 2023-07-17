@@ -10,7 +10,7 @@ const last_name = computed(() => store.last_name);
 const avatar = computed(() => store.avatar);
 
 
-const version = "0.8"
+const version = "0.9"
 
 
 const outsideClickListener = ref(null);
