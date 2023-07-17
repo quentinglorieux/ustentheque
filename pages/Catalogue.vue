@@ -168,10 +168,9 @@ const getSeverity = (outil) => {
             return 'success';
         case 'Moyen':
             return 'warning';
-
         case 'Mauvais':
             return 'danger';
-        case 'En Panne':
+        case 'En panne':
             return 'danger';
 
         default:

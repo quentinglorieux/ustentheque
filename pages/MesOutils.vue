@@ -157,6 +157,8 @@ const convertToGrade = (etat) => {
             return 3;
         case 'Moyen':
             return 2;
+        case 'Mauvais':
+            return 1;
         case 'En Panne':
             return 0;
 
