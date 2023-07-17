@@ -10,6 +10,9 @@ const last_name = computed(() => store.last_name);
 const avatar = computed(() => store.avatar);
 
 
+const version = "0.7"
+
+
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
 const router = useRouter();
@@ -81,7 +84,7 @@ const isOutsideClicked = (event) => {
     <div class="layout-topbar">
         <router-link to="/" class="layout-topbar-logo">
             <img :src="logoUrl" alt="" />
-            <span>BibOB v0.6</span>
+            <span>BibOB {{ version }}</span>
         </router-link>
 
         <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">

@@ -1,5 +1,7 @@
 <!-- Reservation sur un objet -->
 <template>
+
+  {{ dates }}
   <div v-if="objet" class="flex items-stretch">
     <div class="col-12 sm:col-6 lg:col-4 xl:col-3 p-2 flex items-stretch">
       <div class="p-4 border-1 surface-border surface-card border-round">
@@ -61,6 +63,7 @@
               inline
               :disabledDates="disabledDates"
               :minDate="minDate"
+              @date-select=verifyAvailability(dates,disabledDates)
             >
               <template #date="slotProps">
                 <strong
@@ -117,13 +120,13 @@ const store = useAuthStore();
 const authenticated = computed(() => store.authenticated);
 
 const directus = new Directus("https://devdirectus.rubidiumweb.eu");
+const resaD = directus.items("reservation");
 
 const objet = ref("");
 const dates = ref("");
 const proprio = ref("");
 const resaList = ref();
 const filteredResaList = ref();
-
 const disabledDates = ref([]);
 
 // Look for disabled Dates in the slot
@@ -148,23 +151,11 @@ const isDateInArray = computed(() => {
   };
 });
 
-// function isDateDisabled(date) {
-//   const searchDate = date;
-//   const searchDateFormatted = new Date(
-//     searchDate.year,
-//     searchDate.month,
-//     searchDate.day
-//   );
-//   return disabledDates.value.some((d) => {
-//     d.getTime() === searchDateFormatted.getTime();
-//   });
-// }
-
 // Start today
 const minDate = ref(new Date());
 
-const resaD = directus.items("reservation");
 
+//retrieveOneObjet()
 async function retrieveOneObjet() {
   const publicData = await directus.items("objet").readOne(route.params.id, {
     fields: [
@@ -200,22 +191,36 @@ const generateDisabledDateArray = (array) => {
   return dateArray;
 };
 
-// async function requestResa() {
-//   const resa = await directus.items("reservation").createOne({
-//     objet: route.params.id,
-//     debut: dates.value[0],
-//     fin: dates.value[1],
-//     statut: "En attente",
-//   });
-//   if (resa.id) {
-//     toast("Votre demande de réservation a bien été envoyée");
-//   } else {
-//     toast("Votre demande de réservation n'a pas pu être envoyée");
-//   }
-// }
+
+// Function to check if the selected range overlaps with disabled dates
+const verifyAvailability = (selectedDates, disabledDates) => {
+  if (!selectedDates[1]) {return;}
+  const [startDate, endDate] = selectedDates;
+
+  for (const disabledDate of disabledDates) {
+    const disabledDateTime = new Date(disabledDate).setHours(0, 0, 0, 0);
+
+    if (
+      startDate.getTime() <= disabledDateTime &&
+      endDate.getTime() >= disabledDateTime
+    ) {
+      dates.value ='';
+      toast.add({
+        severity: "error",
+        summary: "Objet non disponible.",
+        detail: "Veuillez faire plusieurs réservations.",
+        life: 3000,
+      });
+      return false; // Selected range overlaps with a disabled date
+    }
+  }
+  return true; // No overlapping dates found
+};
 
 // Création de l outil
 async function createOneResa() {
+  dates.value[1] = dates.value[1] ? dates.value[1] : dates.value[0];
+  console.log(dates.value[1])
   await resaD
     .createOne({
       debut: dates.value[0],
@@ -245,6 +250,5 @@ async function createOneResa() {
 
 onMounted(() => {
   retrieveOneObjet();
-  // disabledDatesList();
 });
 </script>
