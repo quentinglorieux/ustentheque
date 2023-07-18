@@ -21,9 +21,11 @@ const directus = new Directus("https://devdirectus.rubidiumweb.eu", {
 
 onMounted(() => {
   checkLogin();
+  if (store.authenticated) {
     myProfile();
-  mesPrets();}
-);
+    mesPrets();
+  }
+});
 
 async function myProfile() {
   const profileData = await directus.users.me.read({ fields: ["*"] });
@@ -43,8 +45,8 @@ async function mesPrets() {
       "id,debut,fin,statut,objet.id,objet.nom,objet.marque,objet.proprietaire",
     ],
     filter: {
-        objet: {
-            proprietaire: {
+      objet: {
+        proprietaire: {
           _eq: "$CURRENT_USER",
         },
       },
@@ -60,28 +62,33 @@ async function mesPrets() {
   store.resa = countValidatedItems;
 }
 
-
-
-
 async function checkLogin() {
+  store.authenticated = false;
   // AUTHENTICATION
   await directus.auth.token
     .then((a) => {
-      store.authenticated = true;
+      if (a) {
+        store.authenticated = true;
+        myProfile();
+        mesPrets();
+      }
+      //
       token.value = a;
     })
-    .catch(() => {});
+    .catch(() => {
+      console.log("error");
+    });
 }
 
 async function logoutDirectus() {
   // AUTHENTICATION
   // await directus.auth.logout({ refresh_token: token }).then("logged out");
-  store.authenticated = false
-  store.id=''
-  store.first_name=''
-  store.avatar=''
-  store.resa=''
-  store.me={}
+  store.authenticated = false;
+  store.id = "";
+  store.first_name = "";
+  store.avatar = "";
+  store.resa = "";
+  store.me = {};
 }
 
 async function loginDirectus() {
@@ -185,21 +192,21 @@ async function loginDirectus() {
       </div>
     </div>
   </div>
-<div v-if="store.authenticated"> 
-  <div v-if="me">
-    <div class="text-900 text-3xl font-medium mb-3">
-      Bonjour {{ me.first_name }},
+  <div v-if="store.authenticated">
+    <div v-if="store.me.first_name">
+      <div class="text-900 text-3xl font-medium mb-3">
+        Bonjour {{ store.me.first_name }},
+      </div>
+      <div class="text-700 text-xl font-medium mb-3">
+        Merci de preter
+        <span class="text-orange-500">{{ store.me.objet.length }} </span> objets
+      </div>
+      <Button
+        @click="logoutDirectus()"
+        label="Se déconnecter"
+        class="w-3 p-3 text-xl"
+      ></Button>
     </div>
-    <div class="text-700 text-xl font-medium mb-3">
-      Merci de preter
-      <span class="text-orange-500">{{ me.objet.length }} </span> objets
-    </div>
-    <Button
-      @click="logoutDirectus()"
-      label="Se déconnecter"
-      class="w-3 p-3 text-xl"
-    ></Button>
-  </div>
   </div>
 </template>
 

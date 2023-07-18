@@ -45,9 +45,16 @@
               </template>
             </Column>
 
-            <Column field="debut" header="Debut" sortable></Column>
+            <Column field="debut" header="Debut" sortable>
+                <template #body="slotProps">
+                      {{ formatDate(slotProps.data.debut) }}
+                    </template>
+                </Column>
 
-            <Column field="fin" header="Fin" sortable> </Column>
+            <Column field="fin" header="Fin" sortable> 
+                <template #body="slotProps">
+                      {{ formatDate(slotProps.data.fin) }}
+                    </template></Column>
 
             <Column field="statut" header="Statut" sortable>
               <template #body="slotProps">
@@ -59,15 +66,7 @@
                 />
               </template>
             </Column>
-            <!-- <Column  header="Edit" >
-         <template #body="slotProps">
             
-            <NuxtLink :to="`/edit/resa-${slotProps.data.id}`" > 
-                <Button icon="pi pi-pencil" class="p-button-rounded p-button-secondary mr-1 mb-1" />
-            </NuxtLink>
-    </template>
-</Column> -->
-
             <Column
               field="objet.proprietaire.last_name"
               header="Propriétaire"
@@ -91,21 +90,6 @@
               Vous avez {{ resa ? resa.data.length : 0 }} demande(s) d'emprunt
               sur votre compte.
             </template>
-            <!-- <Column field="marque" header="Marque" sortable> </Column>
-
-    <Column field="etat" header="Etat" sortable>
-        <template #body="slotProps">
-         <Rating :modelValue="convertToGrade(slotProps.data.etat)" readonly :cancel="false" />
-        </template>
-    </Column>
-
- 
-    <Column expander style="width: 5rem">
-         <template #body="slotProps">
-           <Button @click="onRowExpand"> Réservations</Button>
-        </template>
-    </Column> 
-    <template #footer> Vous avez {{ me.objet ? me.objet.length : 0 }} outils à prêter. </template> -->
           </DataTable>
         </div>
         <div v-else><ProgressSpinner /></div>
@@ -117,6 +101,9 @@
 <script setup>
 import { Directus } from "@directus/sdk";
 import { useAuthStore } from "@/stores/auth";
+import { formatDate } from '@/utils/dateUtils';
+
+
 const store = useAuthStore();
 const directus = new Directus("https://devdirectus.rubidiumweb.eu");
 const resa = ref("");

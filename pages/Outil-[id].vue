@@ -1,9 +1,7 @@
 <!-- Reservation sur un objet -->
 <template>
-
-  {{ dates }}
-  <div v-if="objet" class="flex items-stretch">
-    <div class="col-12 sm:col-6 lg:col-4 xl:col-3 p-2 flex items-stretch">
+  <div v-if="objet" class="xl:flex  items-stretch">
+    <div class="col-12 sm:col-12 lg:col-12 xl:col-3 p-2  items-stretch">
       <div class="p-4 border-1 surface-border surface-card border-round">
         <div class="text-2xl font-bold text-center pb-4">{{ objet.nom }}</div>
         <div
@@ -48,12 +46,23 @@
           <span> {{ objet.consommable }} </span>
         </div>
       </div>
+           <!-- Retour -->
+           <div class=" hidden xl:flex justify-center p-4 mt-3 border-1 surface-border surface-card border-round">
+        <NuxtLink to="/catalogue" class="flex justify-center">
+          <Button label="Retour au Catalogue" class="mr-2 mb-2"></Button
+        ></NuxtLink>
+      </div>
     </div>
-    <div v-if="authenticated" class="col-12 sm:col-6 lg:col-6 xl:col-6 p-2">
+
+
+
+
+    <!-- Reservation form -->
+    <div v-if="authenticated" class="col-12 sm:col-12 lg:col-12 xl:col-6 p-2">
       <div class="p-4 border-1 surface-border surface-card border-round">
         <div class="text-2xl font-bold text-center pb-4">Reservation</div>
         <div class="mb-2">
-          <div class="mb-2">
+          <div class="mb-2 flex justify-center">
             <Calendar
               showIcon
               v-model="dates"
@@ -77,12 +86,13 @@
               </template>
             </Calendar>
           </div>
-          <Button
+          <div class="flex justify-center pt-3"> 
+          <Button 
             v-if="!dates"
             disabled
             label="Envoyer une demande d'emprunt"
             severity="info"
-            class="mr-2 mb-2"
+            class="mr-2 mb-2 "
           ></Button>
           <Button
             v-if="dates"
@@ -92,18 +102,27 @@
             class="mr-2 mb-2"
           ></Button>
         </div>
+        </div>
       </div>
     </div>
-    <div class="col-12 sm:col-6 lg:col-2 xl:col-3 p-2">
+    
+
+ 
+    <div class="col-12 sm:col-12 lg:col-12 xl:col-3 p-2">
+      
+
+       
       <div class="p-4 border-1 surface-border surface-card border-round">
         <div class="text-2xl font-bold text-center pb-4">
-          Retour au catalogue
+          Ajouter un message de demande
         </div>
-        <NuxtLink to="/catalogue">
-          <Button label="Catalogue" class="mr-2 mb-2"></Button
-        ></NuxtLink>
+        <span class="p-float-label">
+    <Textarea v-model="value" rows="20" autoResize />
+    <label>Votre demande ici</label>
+</span>
       </div>
     </div>
+
   </div>
 
   <Toast />

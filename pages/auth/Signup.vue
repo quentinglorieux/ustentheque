@@ -48,7 +48,7 @@ async function registerDirectus() {
     <NuxtLink to="/auth/login"> 
             <Button label="Connexion" icon="pi pi-sign-in"  severity="info" class="font-bold px-5 py-3 p-button-raised  white-space-nowrap"></Button>
           </NuxtLink> </div>
-<div v-if="!succes" class="col-9">
+<div v-if="!succes" class="col-12">
             <div class="card">
                 <h5>S'inscrire</h5>
                 <div class="p-fluid formgrid grid">

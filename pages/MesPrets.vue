@@ -44,9 +44,17 @@
               </template>
             </Column>
 
-            <Column field="debut" header="Debut" sortable></Column>
+            <Column field="debut" header="Debut" sortable>
+              <template #body="slotProps">
+                {{ formatDate(slotProps.data.debut) }}
+              </template>
+            </Column>
 
-            <Column field="fin" header="Fin" sortable> </Column>
+            <Column field="fin" header="Fin" sortable>
+              <template #body="slotProps">
+                {{ formatDate(slotProps.data.fin) }}
+              </template>
+            </Column>
 
             <Column field="statut" header="Statut" sortable>
               <template #body="slotProps">
@@ -57,21 +65,16 @@
                 />
               </template>
             </Column>
-            <!-- <Column header="Edit">
-              <template #body="slotProps">
-                <NuxtLink :to="`/edit/pret-${slotProps.data.id}`">
-                  <Button
-                    icon="pi pi-pencil"
-                    class="p-button-rounded p-button-secondary mr-1 mb-1"
-                  />
-                </NuxtLink>
-              </template>
-            </Column> -->
+
             <Column field="user_created.last_name" header="A qui ?" sortable>
               <template #body="slotProps">
                 <Chip
                   class="mb-1 bg-slate-50"
-                  :label="slotProps.data.user_created.first_name + ' ' + slotProps.data.user_created.last_name"
+                  :label="
+                    slotProps.data.user_created.first_name +
+                    ' ' +
+                    slotProps.data.user_created.last_name
+                  "
                   :image="`https://devdirectus.rubidiumweb.eu/assets/${slotProps.data.user_created.avatar}?fit=cover&width=50&height=50&quality=20`"
                 />
               </template>
@@ -91,6 +94,8 @@
 <script setup>
 import { Directus } from "@directus/sdk";
 import { useAuthStore } from "@/stores/auth";
+import { formatDate } from "@/utils/dateUtils";
+
 const store = useAuthStore();
 // const resa = computed(() => store.resa);
 
@@ -103,7 +108,7 @@ async function mesPrets() {
     completed.value = true;
     return;
   }
-  
+
   completed.value = false;
 
   resa.value = await directus.items("reservation").readByQuery({

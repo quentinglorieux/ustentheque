@@ -110,6 +110,7 @@
                       {{ formatDate(slotProps.data.debut) }}
                     </template>
                   </Column>
+                  
                   <Column field="fin" header="Fin">
                     <template #body="slotProps">
                       {{ formatDate(slotProps.data.fin) }}
@@ -164,9 +165,8 @@
 <script setup>
 import { Directus } from "@directus/sdk";
 import { useAuthStore } from "@/stores/auth";
+import { formatDate } from '@/utils/dateUtils';
 
-import moment from "moment";
-import "moment/locale/fr";
 
 const directus = new Directus("https://devdirectus.rubidiumweb.eu");
 
@@ -178,28 +178,12 @@ const completed = ref();
 const store = useAuthStore();
 const meStore = computed(() => store.me);
 
-// const formatDate = (val) => {
-//   var mydate = new Date(val);
-//   var mom = moment(mydate);
-
-//   mom.locale("fr");
-//   const formattedDate = mom.fromNow();
-
-//   return formattedDate;
-//   // return mydate.toLocaleString('fr-FR', { style: 'date' });
-// };
-
-const formatDate = (dateString) => {
-  const options = { day: "numeric", month: "long", year: "numeric" };
-  const date = new Date(dateString);
-  return date.toLocaleDateString("fr-FR", options);
-};
 
 const formatCurrency = (val) => {
   return val.toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
 };
 
-const onRowExpand = (event) => {};
+// const onRowExpand = (event) => {};
 
 const convertToGrade = (etat) => {
   switch (etat) {
