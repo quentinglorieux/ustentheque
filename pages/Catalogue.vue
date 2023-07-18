@@ -1,38 +1,8 @@
 <template>
-    <div class="flex gap-10 justify-content-between">
-    <div class="flex">
-    <div class=" mb-2 lg:mb-0 mr-2">
-                       Filtrer les objets par nom:  <span class="p-input-icon-right">
-                            <InputText 
-                                @keyup="getSearchData(searchKey)"
-                                @keyup.delete="getSearchData(searchKey)" 
-                                v-model="searchKey" 
-                                type="text" 
-                                placeholder="Search" 
-                            />
-                            <i class="pi pi-search" />
-                        </span>
-                    </div>
-                    <Button @click="getSearchData(searchKey)" label="Filtre" class="mr-2 mb-2"></Button>
-                    <Button @click="getAllData()" label="Reset Filtre" class="mr-2 mb-2"></Button>
-                </div>
-
-                <div>
-                ou commencez à taper pour chercher : <AutoComplete 
-                placeholder="Search" 
-                id="dd" 
-                :dropdown="true" 
-                :multiple="false" 
-                v-model="selectedAutoValue" 
-                :suggestions="suggestions" 
-                @complete="searchOutil($event)" 
-                @item-select="getSearchData(selectedAutoValue.nom)"
-                @clear="getAllData()"
-                field="nom" />
-            </div>
-        </div>
+   
                     
      <div class="card">
+        
         
         <DataView :value="outils" :layout="layout">
             <template #header>
@@ -42,7 +12,21 @@
                     <DataViewLayoutOptions v-model="layout" />
                 </div>
             </div>
+            <div class=" mb-2 lg:mb-0 mr-2">
+                       Recherche :  <span class="p-input-icon-right">
+                            <InputText 
+                                @keyup="getSearchData(searchKey)"
+                                @keyup.delete="getSearchData(searchKey)" 
+                                v-model="searchKey" 
+                                type="text" 
+                                placeholder="Cherchez un objet" 
+                            />
+                            <i class="pi pi-search" />
+                        </span>
+                    </div>
             </template>
+
+            
 
             <template #list="slotProps">
                 <div class="col-12">
@@ -106,6 +90,24 @@
             </template>
         </DataView>
     </div>
+
+    <div class="flex gap-10 justify-content-between">
+
+
+<div class="hidden sm:block">
+ou commencez à taper pour chercher : <AutoComplete 
+placeholder="Cherchez un objet" 
+id="dd" 
+:dropdown="true" 
+:multiple="false" 
+v-model="selectedAutoValue" 
+:suggestions="suggestions" 
+@complete="searchOutil($event)" 
+@item-select="getSearchData(selectedAutoValue.nom)"
+@clear="getAllData()"
+field="nom" />
+</div>
+</div>
 
 </template>
 
