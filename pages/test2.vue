@@ -12,7 +12,7 @@
 
 
 async function sendEmail() {
-sgMail.setApiKey('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')
+sgMail.setApiKey('')
 
 const msg = {
   to: 'test@example.com', // Change to your recipient
