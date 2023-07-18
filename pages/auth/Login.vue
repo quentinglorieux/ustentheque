@@ -90,7 +90,10 @@ async function logoutDirectus() {
   store.avatar = "";
   store.resa = "";
   store.me = {};
-}
+  localStorage.clear();
+  localStorage.setItem("bgcolor", "red");
+};
+
 
 async function loginDirectus() {
   if (!authenticated.value) {
