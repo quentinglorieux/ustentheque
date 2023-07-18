@@ -2,13 +2,18 @@
     <div>
       <button @click="sendEmail">Send Email</button>
     </div>
+
+
   </template>
   
   <script setup>
   import sgMail  from "@sendgrid/mail";
 
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
+async function sendEmail() {
+sgMail.setApiKey('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')
+
 const msg = {
   to: 'test@example.com', // Change to your recipient
   from: 'test@example.com', // Change to your verified sender
@@ -16,7 +21,7 @@ const msg = {
   text: 'and easy to do anywhere, even with Node.js',
   html: '<strong>and easy to do anywhere, even with Node.js</strong>',
 }
-async function sendEmail() {
+
 sgMail
   .send(msg)
   .then(() => {

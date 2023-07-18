@@ -20,7 +20,7 @@ export default defineNuxtConfig({
       },
     ],
     serverMiddleware: [
-      { path: '/api', handler: '~/api/sendEmail.js' },
+      { path: '/api/send-email', handler: '~/api/sendEmail.js' },
     ],
   });
   
