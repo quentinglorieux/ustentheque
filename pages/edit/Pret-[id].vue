@@ -42,7 +42,7 @@
         <div class="text-m font-bold">
           Date:
           <span class="text-m font-semibold">
-            {{ resa.debut }} au {{ resa.fin }}
+            {{ formatDate(resa.debut) }} au {{ formatDate(resa.fin) }}
           </span>
         </div>
         <div class="flex content-center gap-2 mt-3">
@@ -62,6 +62,14 @@
           <li>Telephone: <span class="mt-2 text-m font-normal"> {{ resa.user_created.telephone }} </span></li>
         </div>
         </div>
+        <div v-if="resa.message" class="mt-2 text-m font-bold mb-4">
+          Demande:
+          <div > 
+          <span class="mt-2 text-m font-normal"> {{ resa.message }} </span>
+          
+        </div>
+        </div>
+
 
         <div class="field col-12 md:col-12">
           <div class="flex gap-2">
@@ -70,15 +78,19 @@
               label="Accepter"
               class="w-full p-3 text-xl"
               severity="success"
+              :disabled=isDateInPast(resa.fin)
             ></Button>
             <Button
               @click="refuseOneResa()"
               label="Refuser"
               class="w-full p-3 text-xl"
               severity="warning"
+              :disabled=isDateInPast(resa.fin)
             ></Button>
+            
             <Toast></Toast>
           </div>
+          <div v-if="isDateInPast(resa.fin)" class="text-red-500 pt-2"> Délais depassé. Modification non autorisée. </div>
         </div>
       </div>
     </div>
@@ -115,6 +127,8 @@
 import { Directus } from "@directus/sdk";
 import { useToast } from "primevue/usetoast";
 import { useAuthStore } from "@/stores/auth";
+import { formatDate,isDateInPast } from '@/utils/dateUtils';
+
 
 const store = useAuthStore();
 
@@ -136,7 +150,7 @@ async function retrieveOneResa() {
     .items("reservation")
     .readOne(route.params.id, {
       fields: [
-        "id,debut,fin,statut,user_created.first_name,user_created.last_name,user_created.avatar,user_created.avatar,user_created.location,user_created.telephone,objet.nom,objet.marque,objet.prix_indicatif,objet.photo,objet.etat",
+        "id,debut,fin,statut,message,user_created.first_name,user_created.last_name,user_created.avatar,user_created.avatar,user_created.location,user_created.telephone,objet.nom,objet.marque,objet.prix_indicatif,objet.photo,objet.etat",
       ],
     });
   resa.value = publicData;
