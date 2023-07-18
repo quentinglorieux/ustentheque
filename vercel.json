@@ -2,7 +2,7 @@
     "functions": {
       "api/send-email.js": {
         "memory": 128,
-        "maxDuration": 2
+        "maxDuration": 10
       }
     }
   }
