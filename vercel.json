@@ -1,6 +1,6 @@
 {
     "functions": {
-      "api/test": {
+      "api/test.ts": {
         "memory": 128,
         "maxDuration": 10
       }
