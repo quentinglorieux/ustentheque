@@ -40,6 +40,7 @@ async function myProfile() {
 const resa = ref("");
 
 async function mesPrets() {
+  
   resa.value = await directus.items("reservation").readByQuery({
     fields: [
       "id,debut,fin,statut,objet.id,objet.nom,objet.marque,objet.proprietaire",
@@ -103,6 +104,7 @@ async function loginDirectus() {
         store.authenticated = true;
         console.log("log in");
         myProfile();
+        mesPrets();
       })
       .catch(() => {
         console.log("Invalid credentials");
@@ -193,18 +195,21 @@ async function loginDirectus() {
     </div>
   </div>
   <div v-if="store.authenticated">
-    <div v-if="store.me.first_name">
-      <div class="text-900 text-3xl font-medium mb-3">
+    <div class="block" v-if="store.me.first_name">
+      <div class="text-900 text-3xl font-medium mb-3 ">
         Bonjour {{ store.me.first_name }},
       </div>
       <div class="text-700 text-xl font-medium mb-3">
         Merci de preter
-        <span class="text-orange-500">{{ store.me.objet.length }} </span> objets
+        <span class="text-green-500">{{ store.me.objet.length }} </span> objet{{store.me.objet.length > 1 ? 's': ''}}
       </div>
+      <div class="text-700 text-xl font-medium mb-3">
+        Vous avez <span class="text-orange-500"> {{ store.resa > 0 ? store.resa :0  }} </span> demande{{store.resa > 1 ? 's': ''}} en attente      </div>
+
       <Button
         @click="logoutDirectus()"
         label="Se déconnecter"
-        class="w-3 p-3 text-xl"
+        class=" p-3 text-xl"
       ></Button>
     </div>
   </div>
