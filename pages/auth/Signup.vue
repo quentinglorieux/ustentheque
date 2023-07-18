@@ -24,7 +24,8 @@ async function registerDirectus() {
     email: email.value,
     password: password.value,
     telephone: telephone.value,
-    location: ville.value
+    location: ville.value,
+    role: '62de0e16-3453-45fc-bc57-89ca548930f8'
     })
     .then(() => {
 				console.log('Succes');
