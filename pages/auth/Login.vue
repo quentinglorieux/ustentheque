@@ -1,7 +1,11 @@
 <script setup>
 import { Directus } from "@directus/sdk";
 import { useAuthStore } from "@/stores/auth";
+import { useToast } from "primevue/usetoast";
+
 const store = useAuthStore();
+const toast = useToast();
+
 const authenticated = computed(() => store.authenticated);
 
 const email = ref("");
@@ -111,6 +115,14 @@ async function loginDirectus() {
       })
       .catch(() => {
         console.log("Invalid credentials");
+        toast.add({
+        severity: "error",
+        summary: "Erreur",
+        detail: "Mot de passe ou identifiant incorrect.",
+        life: 3000,
+      });
+      password.value ='';
+
       });
   }
 }
@@ -172,7 +184,7 @@ async function loginDirectus() {
             <div
               class="flex align-items-center justify-content-between mb-5 gap-5"
             >
-              <div class="flex align-items-center">
+              <!-- <div class="flex align-items-center">
                 <Checkbox
                   v-model="checked"
                   id="rememberme1"
@@ -180,11 +192,11 @@ async function loginDirectus() {
                   class="mr-2"
                 ></Checkbox>
                 <label for="rememberme1">Se souvenir de moi</label>
-              </div>
+              </div> -->
               <a
                 class="font-medium no-underline ml-2 text-right cursor-pointer"
                 style="color: var(--primary-color)"
-                >Mot de passe oublié?</a
+                >Mot de passe oublié? (en maintenance)</a
               >
             </div>
             <Button
@@ -216,6 +228,8 @@ async function loginDirectus() {
       ></Button>
     </div>
   </div>
+
+  <Toast />
 </template>
 
 <style scoped>
