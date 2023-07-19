@@ -54,7 +54,7 @@
                 label="Mettre à jour"
                 class="w-full p-3 text-xl"
               ></Button>
-              <NuxtLink to="/catalogue">
+              <NuxtLink to="/">
                 <Button
                   v-if="!addMode"
                   @click="deleteOneResa()"

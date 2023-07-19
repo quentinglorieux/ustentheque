@@ -18,7 +18,9 @@
           <DataTable
             v-if="resa.data"
             :value="resa.data"
-            tableStyle="min-width: 50rem"
+            tableStyle="min-width: 20rem"
+            sortField="statut"
+            :sortOrder="1"
           >
             <template #header>
               <div
@@ -75,7 +77,7 @@
               <template #body="slotProps">
                 <Chip
                   v-if="slotProps.data.objet"
-                  class="mb-1 bg-slate-50"
+                  class="mb-1 bg-slate-50  px-3"
                   :label="
                     slotProps.data.objet.proprietaire.first_name +
                     ' ' +

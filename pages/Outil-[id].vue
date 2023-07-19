@@ -32,7 +32,7 @@
           <div class="mt-1 text-m font-semibold">Propiétaire:</div>
           <Chip
           v-if="authenticated"
-            class="mb-1 bg-slate-50"
+            class="mb-1 bg-slate-50 flex px-3"
             :label="proprio.first_name + ' ' + proprio.last_name"
             :image="`https://devdirectus.rubidiumweb.eu/assets/${proprio.avatar}?fit=cover&width=50&height=50&quality=20`"
           />

@@ -84,7 +84,9 @@ const checkActiveRoute = (item) => {
                 <app-menu-item v-for="(child, i) in item.items" :key="child" :index="i" :item="child" :parentItemKey="itemKey" :root="false"></app-menu-item>
             </ul>
         </Transition>
+        
     </li>
+
 </template>
 
 <style lang="scss" scoped></style>

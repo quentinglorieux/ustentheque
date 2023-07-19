@@ -46,7 +46,7 @@ const model = ref([
   {
     label: "Admin",
     items: [{
-        label: "Login",
+        label: "Connexion",
         icon: "pi pi-fw pi-sign-in",
         to: "/auth/login",
       },],

@@ -48,7 +48,7 @@
         <div class="flex content-center gap-2 mt-3">
           <div class="mt-2 text-m font-bold">Demandeur:</div>
           <Chip
-            class="mb-1 bg-slate-50"
+            class="mb-1 bg-slate-50 flex px-3"
             :label="
               resa.user_created.first_name + ' ' + resa.user_created.last_name
             "
@@ -88,7 +88,7 @@
               :disabled=isDateInPast(resa.fin)
             ></Button>
             
-            <Toast></Toast>
+            <Toast />
           </div>
           <div v-if="isDateInPast(resa.fin)" class="text-red-500 pt-2"> Délais depassé. Modification non autorisée. </div>
         </div>

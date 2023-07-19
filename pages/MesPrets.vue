@@ -18,7 +18,10 @@
           <DataTable
             v-if="resa.data"
             :value="resa.data"
-            tableStyle="min-width: 50rem"
+            tableStyle="min-width: 20rem"
+            sortField="statut"
+            :sortOrder="1"
+            :filters="filter"
           >
             <template #header>
               <div
@@ -69,7 +72,7 @@
             <Column field="user_created.last_name" header="A qui ?" sortable>
               <template #body="slotProps">
                 <Chip
-                  class="mb-1 bg-slate-50"
+                  class="mb-1 bg-slate-50  px-3"
                   :label="
                     slotProps.data.user_created.first_name +
                     ' ' +
@@ -101,6 +104,7 @@ const store = useAuthStore();
 
 const directus = new Directus("https://devdirectus.rubidiumweb.eu");
 const resa = ref("");
+const filter = ref()
 const completed = ref(false);
 
 async function mesPrets() {
