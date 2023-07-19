@@ -1,5 +1,7 @@
 <script setup>
 import { Directus } from "@directus/sdk";
+import { useToast } from "primevue/usetoast";
+
 
 const email = ref('');
 const password = ref('');
@@ -8,16 +10,20 @@ const last_name = ref('');
 const telephone = ref('');
 const ville=ref('');
 const succes=ref(false);
+const charte=ref()
 
 
 const directus = new Directus("https://devdirectus.rubidiumweb.eu");
 const users = directus.items('directus_users');
+
+const toast = useToast();
 
 onMounted(() => {
 });
 
 
 async function registerDirectus() {
+    if    (charte.value == "valide") {
     await users.createOne({
 	first_name: first_name.value,
     last_name: last_name.value,
@@ -35,7 +41,24 @@ async function registerDirectus() {
     )
     .catch(() => {
 				console.log('Erreur');
+                toast.add({
+                severity: "error",
+                summary: "Erreur.",
+                detail: "Merci de recommencer",
+                life: 3000,
 			});
+        }
+    );
+    }
+        else{
+        toast.add({
+        severity: "error",
+        summary: "Erreur.",
+        detail: "Veuillez accepter la charte",
+        life: 3000,})
+
+
+        }
 
 } 
     
@@ -45,6 +68,7 @@ async function registerDirectus() {
 </script>
 
 <template>
+<Toast/>
 <div v-if="succes"> Vous etes bien inscrit. Merci de vous connecter. 
     <NuxtLink to="/auth/login"> 
             <Button label="Connexion" icon="pi pi-sign-in"  severity="info" class="font-bold px-5 py-3 p-button-raised  white-space-nowrap"></Button>
@@ -84,7 +108,11 @@ async function registerDirectus() {
                     <label for="password" class="">Mot de Passe</label>
                         <Password id="password" v-model="password" placeholder="Mot de Passe" :toggleMask="true" class="w-full mb-3" inputClass="w-full"></Password>
                     </div>
-                    <div class="field col-6 md:col-4 md:col-offset-4">
+                    <div class="field col-12 md:col-6 flex">
+                    <Checkbox class="mt-1" v-model="charte" inputId="charte1" name="charte" value="valide" />
+                    <label for="charte1" class="ml-2 "> Je m'engage à souscrire aux principes de la charte de la BibOb. </label>
+                    </div>
+                    <div class="field col-6 md:col-4 md:col-offset-4 mt-20">
                         <Button @click="registerDirectus()" label="Inscription" class="w-full p-3 text-xl"></Button>
                     </div>
                 </div>

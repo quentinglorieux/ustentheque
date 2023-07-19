@@ -179,6 +179,7 @@ async function loginDirectus() {
               :toggleMask="false"
               class="w-full mb-3"
               inputClass="w-full"
+              :feedback="false"
             ></Password>
 
             <div

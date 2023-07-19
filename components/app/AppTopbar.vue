@@ -61,7 +61,7 @@ const store = useAuthStore();
 const first_name = computed(() => store.first_name);
 const avatar = computed(() => store.avatar);
 
-const version = "1.0.3";
+const version = "1.0.4";
 
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
