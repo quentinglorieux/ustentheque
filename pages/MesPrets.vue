@@ -19,8 +19,8 @@
             v-if="resa.data"
             :value="resa.data"
             tableStyle="min-width: 20rem"
-            sortField="statut"
-            :sortOrder="1"
+            sortField="debut"
+            :sortOrder="-1"
             :filters="filter"
           >
             <template #header>
@@ -83,6 +83,16 @@
               </template>
             </Column>
 
+            <Column header="Delete">
+              <template #body="slotProps">
+    <Button
+      icon="pi pi-trash"
+      class="p-button-sm p-button-rounded p-button-info"
+      @click="confirmDelete(slotProps.data.id)"
+    />
+  </template>
+</Column>
+
             <template #footer>
               Vous avez {{ resa ? store.resa : 0 }} pret(s) en attente.
             </template>
@@ -92,19 +102,19 @@
       </div>
     </div>
   </div>
+  <ConfirmDialog />
 </template>
 
 <script setup>
 import { Directus } from "@directus/sdk";
 import { useAuthStore } from "@/stores/auth";
 import { formatDate } from "@/utils/dateUtils";
+import { useConfirm } from "primevue/useconfirm";
+
 
 const store = useAuthStore();
-// const resa = computed(() => store.resa);
-
 const directus = new Directus("https://devdirectus.rubidiumweb.eu");
 const resa = ref("");
-const filter = ref()
 const completed = ref(false);
 
 async function mesPrets() {
@@ -139,6 +149,36 @@ async function mesPrets() {
   store.resa = countValidatedItems;
 }
 
+// Function to confirm and delete a reservation
+const confirm = useConfirm();
+
+async function confirmDelete(id) {
+  confirm.require({
+    message: "Êtes-vous sûr de vouloir supprimer cette réservation ?",
+    header: "Confirmer la suppression",
+    icon: "pi pi-exclamation-triangle",
+    accept: () => {
+      deleteResa(id);
+    },
+    reject: () => {
+      console.log("Suppression annulée.");
+    }
+  });
+}
+
+// Function to delete a reservation
+async function deleteResa(id) {
+  try {
+    await directus.items("reservation").deleteOne(id);
+    console.log(`Reservation ${id} deleted successfully.`);
+    
+    // Refresh the data after deleting
+    mesPrets();
+  } catch (error) {
+    console.error(`Error deleting reservation ${id}:`, error);
+  }
+}
+
 onMounted(() => {
   mesPrets();
 });
@@ -149,15 +189,14 @@ const getStatus = (resa) => {
       return "info";
     case "Validé":
       return "success";
-
     case "Rendu":
       return "warning";
-
     case "Refusé":
       return "danger";
-
     default:
       return null;
   }
 };
 </script>
+
+

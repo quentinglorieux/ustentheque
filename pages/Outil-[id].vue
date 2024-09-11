@@ -112,7 +112,7 @@
       
 
        
-      <div class="p-4 border-1 surface-border surface-card border-round">
+      <div v-if="authenticated" class="p-4 border-1 surface-border surface-card border-round">
         <div class="text-2xl font-bold text-center pb-4">
           Ajouter un message de demande
         </div>

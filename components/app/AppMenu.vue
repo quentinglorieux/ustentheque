@@ -25,12 +25,12 @@ const model = ref([
         to: "/mesoutils",
       },
       {
-        label: "Mes emprunts",
+        label: "J'emprunte",
         icon: "pi pi-fw pi-calendar",
         to: "/mesreservations",
       },
       {
-        label: "Mes prets",
+        label: "Je prête",
         icon: "pi pi-fw pi-external-link",
         to: "/mesprets",
         val: resa,

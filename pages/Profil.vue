@@ -99,6 +99,8 @@
           />
         </div>
 
+       
+
         <FileUpload
           class="flex justify-center mx-1"
           v-model="selectedFile"
@@ -112,6 +114,12 @@
           @select="uploadFile"
         />
       </div>
+
+      <div  v-if="me.first_name" class="text-center">  <Button
+        @click="logoutDirectus()"
+        label="Se déconnecter"
+        class=" p-3 text-xl "
+      ></Button></div>
     </div>
   </div>
 </template>
@@ -172,4 +180,18 @@ async function updateProfile() {
       });
     });
 }
+
+async function logoutDirectus() {
+  // AUTHENTICATION
+  // await directus.auth.logout({ refresh_token: token }).then("logged out");
+  store.authenticated = false;
+  store.id = "";
+  store.first_name = "";
+  store.avatar = "";
+  store.resa = "";
+  store.me = {};
+  localStorage.clear();
+  localStorage.setItem("bgcolor", "red");
+};
+
 </script>

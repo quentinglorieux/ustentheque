@@ -6,39 +6,38 @@ const directus = new Directus("https://devdirectus.rubidiumweb.eu");
 
 
 export default class ProductService {
-  getProductsSmall() {
-    return fetch(contextPath + "assets/demo/data/products-small.json")
-      .then((res) => res.json())
-      .then((d) => d.data);
+  async getProductsSmall() {
+    const res = await fetch(contextPath + "assets/demo/data/products-small.json");
+    const d = await res.json();
+    return d.data;
   }
 
-  getProducts() {
-    return fetch(contextPath + "assets/demo/data/products.json")
-      .then((res) => res.json())
-      .then((d) => d.data);
+  async getProducts() {
+    const res = await fetch(contextPath + "assets/demo/data/products.json");
+    const d = await res.json();
+    return d.data;
   }
 
-  getProductsWithOrdersSmall() {
-    return fetch(contextPath + "assets/demo/data/products-orders-small.json")
-      .then((res) => res.json())
-      .then((d) => d.data);
+  async getProductsWithOrdersSmall() {
+    const res = await fetch(contextPath + "assets/demo/data/products-orders-small.json");
+    const d = await res.json();
+    return d.data;
   }
 
-  getTools() {
-    return directus
+  async getTools() {
+    const res = await directus
       .items("objet")
       .readByQuery({
         fields: [
           "*"
         ],
         sort: ['nom']
-      })
-    //   .then((res) => console.log(res))
-      .then((res) => res.data);
+      });
+    return res.data;
   }
 
-  getToolsFilter(searchTerm) {
-    return directus
+  async getToolsFilter(searchTerm) {
+    const res = await directus
       .items("objet")
       .readByQuery({
         fields: [
@@ -50,9 +49,7 @@ export default class ProductService {
           },
         },
         sort: ['nom']
-      
-      })
-      // .then((res) => console.log(res))
-      .then((res) => res.data);
+      });
+    return res.data;
   }
 }

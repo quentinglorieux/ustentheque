@@ -19,8 +19,8 @@
             v-if="resa.data"
             :value="resa.data"
             tableStyle="min-width: 20rem"
-            sortField="statut"
-            :sortOrder="1"
+            sortField="debut"
+            :sortOrder="-1"
           >
             <template #header>
               <div
@@ -28,7 +28,6 @@
               >
                 <span class="text-xl text-900 font-bold">Mes emprunts</span>
                 <NuxtLink :to="`/edit/resa-add`">
-                  <Button icon="pi pi-plus" rounded raised />
                 </NuxtLink>
               </div>
             </template>
@@ -88,6 +87,17 @@
               </template>
             </Column>
 
+                       <!-- Delete Column -->
+                       <Column header="Supprimer">
+              <template #body="slotProps">
+                <Button
+                  icon="pi pi-trash"
+                  class="p-button-sm p-button-rounded p-button-info"
+                  @click="confirmDelete(slotProps.data.id)"
+                />
+              </template>
+            </Column>
+
             <template #footer>
               Vous avez {{ resa ? resa.data.length : 0 }} demande(s) d'emprunt
               sur votre compte.
@@ -98,23 +108,25 @@
       </div>
     </div>
   </div>
+  <ConfirmDialog />
 </template>
 
 <script setup>
 import { Directus } from "@directus/sdk";
 import { useAuthStore } from "@/stores/auth";
-import { formatDate } from '@/utils/dateUtils';
-
+import { formatDate } from "@/utils/dateUtils";
+import { useConfirm } from "primevue/useconfirm";
 
 const store = useAuthStore();
 const directus = new Directus("https://devdirectus.rubidiumweb.eu");
 const resa = ref("");
 const completed = ref(false);
+const confirm = useConfirm();
 
 async function mesResa() {
   if (!store.authenticated) {
     completed.value = true;
-    resa.store =''
+    resa.store = '';
     return;
   }
   completed.value = false;
@@ -132,6 +144,34 @@ async function mesResa() {
   completed.value = true;
 }
 
+// Function to confirm and delete a reservation
+async function confirmDelete(id) {
+  confirm.require({
+    message: "Êtes-vous sûr de vouloir supprimer cette demande d'emprunt ?",
+    header: "Confirmer la suppression",
+    icon: "pi pi-exclamation-triangle",
+    accept: () => {
+      deleteResa(id);
+    },
+    reject: () => {
+      console.log("Suppression annulée.");
+    }
+  });
+}
+
+// Function to delete a reservation
+async function deleteResa(id) {
+  try {
+    await directus.items("reservation").deleteOne(id);
+    console.log(`Reservation ${id} deleted successfully.`);
+    
+    // Refresh the data after deleting
+    mesResa();
+  } catch (error) {
+    console.error(`Error deleting reservation ${id}:`, error);
+  }
+}
+
 onMounted(() => {
   mesResa();
 });
@@ -142,15 +182,13 @@ const getStatus = (resa) => {
       return "info";
     case "Validé":
       return "success";
-
     case "Rendu":
       return "warning";
-
     case "Refusé":
       return "danger";
-
     default:
       return null;
   }
 };
 </script>
+

@@ -216,12 +216,21 @@ async function loginDirectus() {
         Bonjour {{ store.me.first_name }},
       </div>
       <div class="text-700 text-xl font-medium mb-3">
-        Merci de preter
-        <span class="text-green-500">{{ store.me.objet.length }} </span> objet{{store.me.objet.length > 1 ? 's': ''}}
+        Vous avez
+        <span class="text-green-500">{{ store.me.objet.length }} </span> objet{{store.me.objet.length > 1 ? 's': ''}} en prêt sur le site. Merci.
       </div>
       <div class="text-700 text-xl font-medium mb-3">
-        Vous avez <span class="text-orange-500"> {{ store.resa > 0 ? store.resa :0  }} </span> demande{{store.resa > 1 ? 's': ''}} en attente      </div>
+        
 
+        <NuxtLink to="/mesprets">
+        Vous avez 
+        <span class="text-orange-500">
+          {{ store.resa > 0 ? store.resa : 0 }}
+        </span> 
+        demande{{ store.resa > 1 ? 's' : '' }} en attente. Cliquer ici pour les consulter.
+      </NuxtLink>
+
+      </div>
       <Button
         @click="logoutDirectus()"
         label="Se déconnecter"

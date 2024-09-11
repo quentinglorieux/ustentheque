@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.4.0",
-    "nuxt": "^3.4.1",
+    "nuxt": "^3.13.1",
     "nuxt-directus": "^5.4.4",
     "sass": "^1.62.0",
     "sass-loader": "^13.2.2"
@@ -26,9 +26,7 @@
     "pinia": "^2.0.34",
     "primeflex": "^3.3.0",
     "primeicons": "^6.0.1",
-    "primevue": "^3.23.0"
-  },
-  "overrides": {
-    "vue": "latest"
+    "primevue": "^3.23.0",
+    "vue": "^3.5.4"
   }
 }
