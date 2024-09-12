@@ -94,8 +94,45 @@
         </div>
       </div>
     </div>
-  </div>
 
+    
+    <div class="col-3">
+      <!-- Image -->
+
+      <div class="card flex flex-col content-center">
+        <Toast />
+        <h4 class="text-center">Editer l'image</h4>
+        <div v-if="image" class="flex justify-center">
+          <img
+            class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem object-contain block xl:block border-round"
+            :src="`https://devdirectus.rubidiumweb.eu/assets/${image}?fit=cover&width=200&height=200&quality=70`"
+          />
+        </div>
+        <div v-else class="flex justify-center">
+          <img
+            class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem object-contain block xl:block border-round"
+            src="https://devdirectus.rubidiumweb.eu/assets/7ed6273f-9add-4257-b546-d99af9a3505a.png?fit=cover&width=200&height=200&quality=70"
+          />
+        </div>
+
+        <FileUpload
+          class="flex justify-center mx-1"
+          v-model="selectedFile"
+          name="file"
+          url="https://devdirectus.rubidiumweb.eu/files"
+          mode="basic"
+          accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
+          maxFileSize="5000000"
+          chooseLabel="Parcourir"
+          :withCredentials="true"
+          @select="uploadFile"
+        />
+      </div>
+    </div>
+
+
+  </div>
+  
   <!-- Confirm Dialog for new marque -->
   <ConfirmDialog />
   <Toast />
