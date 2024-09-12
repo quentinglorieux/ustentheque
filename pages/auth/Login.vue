@@ -16,9 +16,9 @@ const me = ref();
 
 const directus = new Directus("https://devdirectus.rubidiumweb.eu", {
   auth: {
-    mode: "json", // 'json' in Node.js
+    mode: "cookie", // 'json' in Node.js
     autoRefresh: true,
-    msRefreshBeforeExpires: 36000,
+    msRefreshBeforeExpires: 6000,
     staticToken: "",
   },
 });
