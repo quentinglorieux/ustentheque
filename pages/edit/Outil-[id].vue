@@ -1,305 +1,224 @@
 <template>
   <div class="grid">
     <div class="col-9">
-      <!-- Main form -->
       <div class="card">
         <h4 v-if="addMode">Nouvel objet</h4>
-        <h4 v-else>Editer : {{ objet.nom }} {{ objet.marque }}</h4>
-        <div v-if="proprio" class="flex content-center gap-2">
-          <div class="mt-1">Propiétaire:</div>
-          <Chip
-            v-if="proprio"
-            class="mb-1 bg-slate-50 flex px-3"
-            :label="proprio.first_name + ' ' + proprio.last_name"
-            :image="`https://devdirectus.rubidiumweb.eu/assets/${proprio.avatar}?fit=cover&width=50&height=50&quality=20`"
-          />
-        </div>
+        <h4 v-else>Editer : {{ objet.nom }} {{ selectedMarque.nom }}</h4>
         <div class="p-fluid formgrid grid">
           <div class="field col-12 md:col-6">
             <label for="nom">Nom</label>
             <InputText v-model="objet.nom" id="nom" type="text" />
           </div>
 
-          <div class="field col-12 md:col-6">
-            <label for="marque">Marque : </label>
+          <!-- Brand Dropdown with Editable Functionality -->
+          <div  class="field col-12 md:col-6">
+            <label for="brand">Marque :</label>
             <Dropdown
               v-model="selectedMarque"
-              editable
+              :editable="true"
               :options="fieldsMarque"
-              optionLabel="marque"
-              placeholder="Choisissez une marque existante ou créez une nouvelle"
+              optionLabel="nom"
+              placeholder="Choisissez ou ajoutez une marque"
               class="w-full"
+              @keyup.enter="handleBrandInput"
             />
+          
+            <small class="text-sm text-gray-500 italic">
+              Tapez "Enter" après avoir saisi la nouvelle marque pour l'ajouter si elle n'existe pas déjà.
+            </small>
           </div>
+       
+     
           
           <div class="field col-12 md:col-4">
             <label for="etat">Etat</label>
             <Dropdown
               v-model="selectedEtat"
-              editable
+              :editable="true"
               :options="fieldsEtat"
               optionLabel="etat"
               placeholder="Dans quel état ?"
               class="w-full"
             />
           </div>
+
           <div class="field col-12 md:col-4">
             <label for="prix_indicatif">Prix</label>
-            <InputText
-              v-model="objet.prix_indicatif"
-              id="prix_indicatif"
-              type="text"
-            />
+            <InputText v-model="objet.prix_indicatif" id="prix_indicatif" type="text" />
+            <small class="text-sm text-gray-500 italic">
+              Prix indicatif en euros lors de l'achat. <span class="text-sm text-gray-900"> Rappel:</span> les prêts sur la BibOB sont toujours gratuits.
+            </small>
           </div>
+
           <div class="field col-12 md:col-4">
-            <label for="duree">Durée</label>
-            <InputText v-model="objet.duree_max" id="duree" type="email" />
+            <label for="duree">Durée (jours)</label>
+            <InputText v-model="objet.duree_max" id="duree" type="text" />
+            <small class="text-sm text-gray-500 italic">
+              Durée maximale de prêt en jours.
+            </small>
           </div>
+
           <div class="field col-12 md:col-6">
-            <label for="conseils" class="">Conseils</label>
-            <Textarea
-              v-model="objet.conseils"
-              id="conseils"
-              rows="5"
-              cols="30"
-            />
+            <label for="conseils">Conseils</label>
+            <Textarea v-model="objet.conseils" id="conseils" rows="5" cols="30" />
           </div>
+
           <div class="field col-12 md:col-6">
             <label for="consommable" class="">Consommables</label>
-            <Textarea
-              v-model="objet.consommable"
-              id="consommable"
-              rows="5"
-              cols="30"
-            />
+            <Textarea v-model="objet.consommable" id="consommable" rows="5" cols="30" />
           </div>
+
+          <!-- Create / Update Button -->
           <div v-if="addMode" class="field col-6 md:col-4 md:col-offset-4">
             <Button
-              @click="createOneObjet()"
+              @click="createOneObjet"
               label="Créer un objet"
               class="w-full p-3 text-xl"
-            ></Button>
+            />
           </div>
-          <div v-if="!addMode" class="field col-8 md:col-6 md:col-offset-3">
+          <div v-else class="field col-8 md:col-6 md:col-offset-3">
             <div class="flex gap-2">
               <Button
-                v-if="!addMode"
-                @click="updateOneObjet()"
+                @click="updateOneObjet"
                 label="Mettre à jour"
                 class="w-full p-3 text-xl"
-              ></Button>
+              />
               <Button
-                v-if="!addMode"
-                @click="deleteOneObjet()"
+                @click="deleteOneObjet"
                 label="Supprimer"
                 class="w-full p-3 text-xl"
                 severity="warning"
-              ></Button>
+              />
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="col-3">
-      <!-- Image -->
-
-      <div class="card flex flex-col content-center">
-        <Toast />
-        <h4 class="text-center">Editer l'image</h4>
-        <div v-if="image" class="flex justify-center">
-          <img
-            class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem object-contain block xl:block border-round"
-            :src="`https://devdirectus.rubidiumweb.eu/assets/${image}?fit=cover&width=200&height=200&quality=70`"
-          />
-        </div>
-        <div v-else class="flex justify-center">
-          <img
-            class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem object-contain block xl:block border-round"
-            src="https://devdirectus.rubidiumweb.eu/assets/7ed6273f-9add-4257-b546-d99af9a3505a.png?fit=cover&width=200&height=200&quality=70"
-          />
-        </div>
-
-        <FileUpload
-          class="flex justify-center mx-1"
-          v-model="selectedFile"
-          name="file"
-          url="https://devdirectus.rubidiumweb.eu/files"
-          mode="basic"
-          accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
-          maxFileSize="5000000"
-          chooseLabel="Parcourir"
-          :withCredentials="true"
-          @select="uploadFile"
-        />
-      </div>
-    </div>
   </div>
+
+  <!-- Confirm Dialog for new marque -->
+  <ConfirmDialog />
+  <Toast />
 </template>
+
+
+
 
 <script setup>
 import { Directus } from "@directus/sdk";
 import { useToast } from "primevue/usetoast";
+import { useConfirm } from "primevue/useconfirm"; // Import Confirm service for confirmation dialogs
 import { useAuthStore } from "@/stores/auth";
+import { ref, onMounted } from "vue";
 
-const store = useAuthStore();
-
-const toast = useToast();
+// Directus and other dependencies
 const directus = new Directus("https://devdirectus.rubidiumweb.eu");
-const objetD = directus.items("objet");
-
-const succes = ref(false);
-const addMode = ref(false);
-
+const toast = useToast();
+const confirm = useConfirm(); // Create an instance of useConfirm
+const store = useAuthStore();
 const route = useRoute();
-const objet = ref({});
-const proprio = ref("");
-const selectedMarque = ref("");
-const selectedEtat = ref("");
 
-// isAddMode (or editMode)
+// Form-related data
+const objet = ref({});
+const selectedMarque = ref("");  // Initialize as an empty object
+const selectedEtat = ref("");
+const addMode = ref(false);
+const fieldsMarque = ref([]);  // This will now store data from the Marque collection
+const image = ref("");
+
+// Function to determine if in add mode
 const isAddMode = () => {
-  if (route.params.id == "add") {
-    addMode.value = true;
-  }
+  addMode.value = route.params.id === "add";
 };
 
-// L'objet
+// Retrieve object details for editing, including related `Marque`
 async function retrieveOneObjet() {
-  const publicData = await directus
-    .items("objet")
-    .readOne(route.params.id, { fields: ["*,proprietaire.*"] });
+  const publicData = await directus.items("objet").readOne(route.params.id, {
+    fields: ["*,brand.*"],  // Ensure we retrieve the related brand
+  });
   objet.value = publicData;
   image.value = publicData.photo;
-  proprio.value = publicData.proprietaire;
-  selectedMarque.value = publicData.marque;
+  selectedMarque.value = publicData.brand || {};  // Default to empty object if no brand is available
   selectedEtat.value = publicData.etat;
 }
 
-// Création de l outil
+// Create new object
 async function createOneObjet() {
-  await objetD
-    .createOne({
-      nom: nom.value,
-      marque: selectedMarque.value.marque,
-      etat: selectedEtat.value.etat,
-      prix_indicatif: prix_indicatif.value,
-      duree_max: duree.value,
-      consommable: consommable.value,
-      conseils: conseils.value,
-      proprietaire: store.id,
-      photo: image.value,
-    })
-    .then(() => {
-      succes.value = true;
-      addMode.value = false;
-      toast.add({
-        severity: "success",
-        summary: "Merci",
-        detail: "Outil ajouté.",
-        life: 3000,
-      });
-    })
-    .catch(() => {
-      console.log("Erreur");
-      toast.add({
-        severity: "error",
-        summary: "Erreur",
-        detail: "Photo manquante ou hors connexion.",
-        life: 3000,
-      });
-    });
-}
-
-// Mise a jour de l outil
-async function updateOneObjet() {
-  await objetD
-    .updateOne(route.params.id, {
-      nom: nom.value,
-      marque: selectedMarque.value.marque,
-      etat: selectedEtat.value.etat,
-      prix_indicatif: prix_indicatif.value,
-      duree_max: duree.value,
-      consommable: consommable.value,
-      conseils: conseils.value,
-      photo: image.value,
-    })
-    .then(() => {
-      succes.value = true;
-      toast.add({
-        severity: "success",
-        summary: "Merci",
-        detail: "Outil mis à jour.",
-        life: 3000,
-      });
-    })
-    .catch(() => {
-      console.log("Erreur");
-      toast.add({
-        severity: "error",
-        summary: "Erreur",
-        detail: "Veuillez vous reconnecter.",
-        life: 3000,
-      });
-    });
-}
-
-// Suppression de l outil
-async function deleteOneObjet() {
-  await objetD
-    .deleteOne(route.params.id)
-    .then(() => {
-      succes.value = true;
-      objet.value = {};
-      proprio.value = "";
-      toast.add({
-        severity: "success",
-        summary: "Merci",
-        detail: "Supprimé.",
-        life: 3000,
-      });
-    })
-    .catch(() => {
-      console.log("Erreur");
-      toast.add({
-        severity: "error",
-        summary: "Erreur",
-        detail: "Veuillez vous reconnecter.",
-        life: 3000,
-      });
-    });
-}
-
-// uploadFile
-const image = ref("");
-const uploadFile = async (event) => {
-  let form = new FormData();
-  form.append("file", event.files[0]);
-
-  await directus.files
-    .createOne(form)
-    .then((im) => {
-      image.value = im.id;
-    })
-    .catch(() => onFailed());
-};
-const onFailed = () => {
-  toast.add({
-    severity: "error",
-    summary: "Failed",
-    detail: "Upload failed",
-    life: 3000,
+  await directus.items("objet").createOne({
+    nom: objet.value.nom,
+    brand: selectedMarque.value?.id,  // Use optional chaining to avoid errors if brand is not selected
+    etat: selectedEtat.value.etat,
+    prix_indicatif: objet.value.prix_indicatif,
+    duree_max: objet.value.duree_max,
+    consommable: objet.value.consommable,
+    conseils: objet.value.conseils,
+    proprietaire: store.me.id,
+    photo: image.value,
+  }).then(() => {
+    toast.add({ severity: "success", summary: "Objet ajouté", life: 3000 });
+    addMode.value = false;
+  }).catch(() => {
+    toast.add({ severity: "error", summary: "Erreur", life: 3000 });
   });
+}
+
+// Update existing object
+async function updateOneObjet() {
+  await directus.items("objet").updateOne(route.params.id, {
+    nom: objet.value.nom,
+    brand: selectedMarque.value?.id,  // Use optional chaining to avoid errors if brand is not selected
+    etat: selectedEtat.value.etat,
+    prix_indicatif: objet.value.prix_indicatif,
+    duree_max: objet.value.duree_max,
+    consommable: objet.value.consommable,
+    conseils: objet.value.conseils,
+    photo: image.value,
+  }).then(() => {
+    toast.add({ severity: "success", summary: "Objet mis à jour", life: 3000 });
+  }).catch(() => {
+    toast.add({ severity: "error", summary: "Erreur", life: 3000 });
+  });
+}
+
+// Add a new marque to Directus after confirmation
+const handleBrandInput = async () => {
+  const typedMarque = selectedMarque.value;
+  console.log(typedMarque);
+  if (typedMarque && !fieldsMarque.value.some((item) => item.nom === typedMarque)) {
+    confirm.require({
+      message: `La marque "${typedMarque}" n'existe pas. Voulez-vous l'ajouter ?`,
+      header: "Confirmation",
+      icon: "pi pi-exclamation-triangle",
+      accept: async () => {
+        try {
+          // Add the new marque to the `Marque` collection
+          const newMarque = await directus.items("marque").createOne({
+            nom: typedMarque,
+          });
+
+          // After creating, refresh the marques and select the new one
+          await retrieveMarque();
+          selectedMarque.value = newMarque;
+
+          // Show a success message
+          toast.add({ severity: "success", summary: "Nouvelle marque ajoutée", detail: typedMarque, life: 3000 });
+        } catch (error) {
+          // Handle error if the marque could not be created
+          toast.add({ severity: "error", summary: "Erreur", detail: "Impossible d'ajouter la nouvelle marque", life: 3000 });
+        }
+      },
+      reject: () => {
+        // Handle case where the user declines adding the new marque
+        selectedMarque.value = {};
+      },
+    });
+  }
 };
 
-//retrieveMarque
-const fieldsMarque = ref([]);
+// Retrieve list of marques from the new `Marque` collection
 async function retrieveMarque() {
-  const publicdata = await directus.items("objet").readByQuery({ limit: -1 });
-  const temp = publicdata.data;
-  fieldsMarque.value = Array.from(new Set(temp.map((obj) => obj.marque))).map(
-    (marque) => ({ marque })
-  );
+  const publicData = await directus.items("marque").readByQuery({ limit: -1 });
+  fieldsMarque.value = publicData.data;
 }
 
 //retrieveEtat
@@ -312,6 +231,7 @@ const fieldsEtat = [
   { etat: "En panne" },
 ];
 
+// On component mount, retrieve data
 onMounted(() => {
   isAddMode();
   retrieveMarque();
@@ -320,5 +240,10 @@ onMounted(() => {
   }
 });
 </script>
+
+
+
+
+
 
 <style scoped></style>

@@ -231,11 +231,22 @@ async function loginDirectus() {
       </NuxtLink>
 
       </div>
+      <div class="flex space-x-4">
+        <NuxtLink to="/"> 
+          <Button
+        label="Voir mon Dashboard"
+        class=" p-3 text-xl bg-blue-500 hover:bg-blue-700"
+      ></Button>
+      </NuxtLink>
+      
       <Button
         @click="logoutDirectus()"
         label="Se déconnecter"
         class=" p-3 text-xl"
       ></Button>
+
+    
+    </div>
     </div>
   </div>
 

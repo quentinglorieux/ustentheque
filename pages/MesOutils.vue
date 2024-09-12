@@ -5,7 +5,7 @@
         <!-- res----- {{ reservation }} -->
 
         <div v-if="completed">
-            <div v-if="!me.objet">
+          <div v-if="!me.objet">
             <div>Vous n'etes pas connécté.</div>
             <NuxtLink to="/auth/login">
               <Button
@@ -52,7 +52,14 @@
                 </div>
               </template>
             </Column>
-            <Column field="marque" header="Marque" sortable> </Column>
+            <Column field="brand" header="Marque" sortable>
+              <template #body="slotProps">
+                <div v-if="slotProps.data.brand && slotProps.data.brand.nom">
+                  {{ slotProps.data.brand.nom }}
+                </div>
+                <div v-else> </div>
+              </template>
+            </Column>
             <Column field="prix_indicatif" header="Prix" sortable>
               <template #body="slotProps">
                 {{ formatCurrency(slotProps.data.prix_indicatif) }}
@@ -110,7 +117,7 @@
                       {{ formatDate(slotProps.data.debut) }}
                     </template>
                   </Column>
-                  
+
                   <Column field="fin" header="Fin">
                     <template #body="slotProps">
                       {{ formatDate(slotProps.data.fin) }}
@@ -165,8 +172,7 @@
 <script setup>
 import { Directus } from "@directus/sdk";
 import { useAuthStore } from "@/stores/auth";
-import { formatDate } from '@/utils/dateUtils';
-
+import { formatDate } from "@/utils/dateUtils";
 
 const directus = new Directus("https://devdirectus.rubidiumweb.eu");
 
@@ -177,7 +183,6 @@ const completed = ref();
 
 const store = useAuthStore();
 const meStore = computed(() => store.me);
-
 
 const formatCurrency = (val) => {
   return val.toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
@@ -231,7 +236,7 @@ async function mesObjets() {
   completed.value = false;
   me.value = await directus.users.me.read({
     fields: [
-      "objet.*,objet.reservation.user_created.first_name,objet.reservation.user_created.last_name,objet.reservation.user_created.telephone,objet.reservation.*",
+      "objet.*,objet.brand.nom,objet.reservation.user_created.first_name,objet.reservation.user_created.last_name,objet.reservation.user_created.telephone,objet.reservation.*",
     ],
   });
   completed.value = true;
