@@ -16,9 +16,9 @@ const me = ref();
 
 const directus = new Directus("https://devdirectus.rubidiumweb.eu", {
   auth: {
-    mode: "cookie", // 'json' in Node.js
+    mode: "json", // 'json' in Node.js
     autoRefresh: true,
-    msRefreshBeforeExpires: 60000,
+    msRefreshBeforeExpires: 36000,
     staticToken: "",
   },
 });
@@ -126,6 +126,63 @@ async function loginDirectus() {
       });
   }
 }
+async function resetPasswordDirectus() {
+  // Check if the email field is empty
+  if (!email.value || email.value.trim() === "") {
+    // Show a popup or toast if the email is empty
+    toast.add({
+      severity: "warn",
+      summary: "Champ requis",
+      detail: "Veuillez entrer votre adresse email.",
+      life: 3000,
+    });
+    return;  // Stop execution if email is empty
+  }
+
+  try {
+    // Query Directus to check if the email exists in the database
+    const { data: users } = await directus.items("directus_users").readByQuery({
+      filter: {
+        email: {
+          _eq: email.value.trim(),
+        },
+      },
+      limit: 1, // We only need to check if one result exists
+    });
+
+    if (users.length === 0) {
+      // If no user is found, show an error message
+      toast.add({
+        severity: "error",
+        summary: "Erreur",
+        detail: `Aucun utilisateur trouvé avec l'adresse email ${email.value}.`,
+        life: 3000,
+      });
+      return;  // Stop further execution
+    }
+
+    // If the email exists, proceed to send the password reset request
+    await directus.auth.password.request(email.value);
+    
+    // Show success toast with the destination email
+    toast.add({
+      severity: "success",
+      summary: "Email envoyé",
+      detail: `Un email a été envoyé à l'adresse ${email.value} pour réinitialiser votre mot de passe.`,
+      life: 3000,
+    });
+  } catch (error) {
+    // Handle any errors during the request
+    toast.add({
+      severity: "error",
+      summary: "Erreur",
+      detail: "Impossible d'envoyer l'email de réinitialisation.",
+      life: 3000,
+    });
+  }
+}
+
+
 </script>
 
 <template>
@@ -182,24 +239,11 @@ async function loginDirectus() {
               :feedback="false"
             ></Password>
 
-            <div
-              class="flex align-items-center justify-content-between mb-5 gap-5"
-            >
-              <!-- <div class="flex align-items-center">
-                <Checkbox
-                  v-model="checked"
-                  id="rememberme1"
-                  binary
-                  class="mr-2"
-                ></Checkbox>
-                <label for="rememberme1">Se souvenir de moi</label>
-              </div> -->
-              <a
-                class="font-medium no-underline ml-2 text-right cursor-pointer"
-                style="color: var(--primary-color)"
-                >Mot de passe oublié? (en maintenance)</a
-              >
+            <div class="flex align-items-center justify-content-between mb-5 gap-5">
+              <a @click="resetPasswordDirectus" class="font-medium no-underline ml-2 text-right cursor-pointer"
+                style="color: var(--primary-color)">Mot de passe oublié?</a>
             </div>
+
             <Button
               @click="loginDirectus()"
               label="Connexion"

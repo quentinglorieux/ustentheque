@@ -119,7 +119,7 @@ onMounted(() => {
     // productService.getProducts().then((data) => (products.value = data.slice(0, 12)));
     productService.getTools().then((data) => { 
         outils.value = data;
-        console.log(data)
+        // console.log(data)
         fullList.value = data;
      } );
 });
