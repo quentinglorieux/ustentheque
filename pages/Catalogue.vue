@@ -44,7 +44,7 @@
                                 <div class="flex flex-column align-items-start gap-3">
                                     <span class="flex align-items-center gap-2">
                                         <i class="pi pi-tag"></i>
-                                        <span> Marque:</span><span class="font-semibold">{{ slotProps.data.marque }}</span>
+                                        <span> Marque:</span><span class="font-semibold">{{ slotProps.data.brand.nom }}</span>
                                     </span>
                                     <span class="flex align-items-center gap-2">
                                         <i class="pi pi-info-circle"></i>
@@ -69,13 +69,13 @@
                         <div class="flex flex-wrap align-items-center justify-content-between gap-2">
                             <div class="flex align-items-center gap-2">
                                 <i class="pi pi-tag"></i>
-                                <span> Marque:</span><span class="font-semibold">{{ slotProps.data.marque }}</span>
+                                <span> Marque:</span><span class="font-semibold">{{ slotProps.data.brand.nom }}</span>
                             </div>
                             <Tag :value="slotProps.data.etat" :severity="getSeverity(slotProps.data)"></Tag>
                         </div>
                         <div class="flex flex-column align-items-center gap-3 py-5">
                             <NuxtLink :to="`/outil-${slotProps.data.id}`">
-                            <img class="w-80 h-60 object-contain border-round" :src="`https://devdirectus.rubidiumweb.eu/assets/${slotProps.data.photo}?    height=300&quality=40`" :alt="slotProps.data.name" />
+                            <img class="w-80 h-60 object-contain border-round" :src="`https://devdirectus.rubidiumweb.eu/assets/${slotProps.data.photo}?height=300&quality=40`" :alt="slotProps.data.name" />
                             </NuxtLink>
                             <div class="text-2xl font-bold">{{ slotProps.data.nom }}</div>
                             <!-- <Rating value="{product.rating}" readonly :cancel="false"></Rating> -->
@@ -93,7 +93,7 @@
 
     <div class="flex gap-10 justify-content-between">
 
-
+  <!-- 
 <div class="hidden sm:block">
 ou commencez à taper pour chercher : <AutoComplete 
 placeholder="Cherchez un objet" 
@@ -105,21 +105,21 @@ v-model="selectedAutoValue"
 @complete="searchOutil($event)" 
 @item-select="getSearchData(selectedAutoValue.nom)"
 @clear="getAllData()"
-field="nom" />
-</div>
+field="nom" />  
+</div>-->
 </div>
 
 </template>
 
 <script setup>
 import ProductService from '@/service/ProductService';
-
 const productService = new ProductService();
 
 onMounted(() => {
     // productService.getProducts().then((data) => (products.value = data.slice(0, 12)));
     productService.getTools().then((data) => { 
         outils.value = data;
+        console.log(data)
         fullList.value = data;
      } );
 });

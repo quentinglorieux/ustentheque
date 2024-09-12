@@ -26,12 +26,12 @@ const model = ref([
       },
       {
         label: "J'emprunte",
-        icon: "pi pi-fw pi-calendar",
+        icon: "pi pi-fw pi-download",
         to: "/mesreservations",
       },
       {
         label: "Je prête",
-        icon: "pi pi-fw pi-external-link",
+        icon: "pi pi-fw pi-upload",
         to: "/mesprets",
         val: resa,
       },

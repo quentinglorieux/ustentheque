@@ -29,7 +29,7 @@ export default class ProductService {
       .items("objet")
       .readByQuery({
         fields: [
-          "*"
+          "*,brand.nom",
         ],
         sort: ['nom']
       });
@@ -41,7 +41,7 @@ export default class ProductService {
       .items("objet")
       .readByQuery({
         fields: [
-          "*"
+          "*",
         ],
         filter: {
           nom: {
