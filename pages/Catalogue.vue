@@ -44,7 +44,8 @@
                                 <div class="flex flex-column align-items-start gap-3">
                                     <span class="flex align-items-center gap-2">
                                         <i class="pi pi-tag"></i>
-                                        <span> Marque:</span><span class="font-semibold">{{ slotProps.data.brand.nom }}</span>
+                                        <span> Marque:</span>
+                                        <span class="font-semibold">{{ slotProps.data.brand?.nom || 'N/A' }}</span>
                                     </span>
                                     <span class="flex align-items-center gap-2">
                                         <i class="pi pi-info-circle"></i>
