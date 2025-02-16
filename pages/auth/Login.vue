@@ -282,7 +282,12 @@ async function resetPasswordDirectus() {
         class=" p-3 text-xl bg-blue-500 hover:bg-blue-700"
       ></Button>
       </NuxtLink>
-      
+      <NuxtLink to="/edit/outil-add"> 
+        <Button
+        label="Ajouter un objet"
+        class=" p-3 text-xl bg-green-500 hover:bg-green-700">
+      </Button>
+      </NuxtLink>
       <Button
         @click="logoutDirectus()"
         label="Se déconnecter"
