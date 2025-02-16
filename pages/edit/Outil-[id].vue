@@ -268,6 +268,19 @@ const fieldsEtat = [
   { etat: "En panne" },
 ];
 
+const uploadFile = async (event) => {
+  let form = new FormData();
+  form.append("file", event.files[0]);
+
+  await directus.files
+    .createOne(form)
+    .then((im) => {
+      image.value = im.id;
+      console.log(image.value);
+    })
+    .catch(() => onFailed());
+};
+
 // On component mount, retrieve data
 onMounted(() => {
   isAddMode();
