@@ -6,7 +6,7 @@
 
         <div v-if="completed">
           <div v-if="!me.objet">
-            <div>Vous n'etes pas connécté.</div>
+            <div>Vous n'etes pas connécté.</div> 
             <NuxtLink to="/auth/login">
               <Button
                 label="Connectez vous ici"

@@ -1,7 +1,19 @@
 <template>
   <div class="grid">
     <div class="col-9">
-      <div class="card">
+      <div v-if="!store.authenticated">
+            <div>Vous n'etes pas connécté.</div> 
+            <NuxtLink to="/auth/login">
+              <Button
+                label="Connectez vous ici"
+                icon="pi pi-sign-in"
+                severity="info"
+                class="font-bold mt-5 px-5 py-3 p-button-raised white-space-nowrap"
+              ></Button>
+            </NuxtLink>
+          </div>
+
+      <div v-if="store.authenticated" class="card">
         <h4 v-if="addMode">Nouvel objet</h4>
         <h4 v-else>Editer : {{ objet.nom }} {{ selectedMarque.nom }}</h4>
         <div class="p-fluid formgrid grid">
@@ -96,7 +108,7 @@
     </div>
 
     
-    <div class="col-3">
+    <div v-if="store.authenticated" class="col-3" >
       <!-- Image -->
 
       <div class="card flex flex-col content-center">
