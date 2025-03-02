@@ -193,8 +193,9 @@ async function resetPasswordDirectus() {
     <div class="flex flex-column align-items-center justify-content-center">
       <div
         style="
-          border-radius: 56px;
+          border-radius: 26px;
           padding: 0.3rem;
+          margin-top: 50px;
           background: linear-gradient(
             180deg,
             var(--primary-color) 10%,
@@ -254,48 +255,44 @@ async function resetPasswordDirectus() {
       </div>
     </div>
   </div>
-  <div v-if="store.authenticated">
-    <div class="block" v-if="store.me.first_name">
-      <div class="text-900 text-3xl font-medium mb-3 ">
+  <div v-if="store.authenticated" class="p-4 sm:p-6">
+    <div class="block text-center" v-if="store.me.first_name">
+      <div class="text-900 text-2xl sm:text-3xl font-medium mb-4 pt-6 sm:pt-10">
         Bonjour {{ store.me.first_name }},
       </div>
-      <div class="text-700 text-xl font-medium mb-3">
+      <div class="text-700 text-lg sm:text-xl font-medium mb-3">
         Vous avez
-        <span class="text-green-500">{{ store.me.objet.length }} </span> objet{{store.me.objet.length > 1 ? 's': ''}} en prêt sur le site. Merci.
+        <span class="text-green-500 font-bold">{{ store.me.objet.length }}</span>
+        objet{{ store.me.objet.length > 1 ? 's' : '' }} en prêt sur le site. Merci.
       </div>
-      <div class="text-700 text-xl font-medium mb-3">
-        
-
-        <NuxtLink to="/mesprets">
-        Vous avez 
-        <span class="text-orange-500">
-          {{ store.resa > 0 ? store.resa : 0 }}
-        </span> 
-        demande{{ store.resa > 1 ? 's' : '' }} en attente. Cliquer ici pour les consulter.
-      </NuxtLink>
-
+      <div class="text-700 text-lg sm:text-xl font-medium mb-3">
+        <NuxtLink to="/mesprets" class="text-orange-500 font-semibold underline">
+          Vous avez
+          <span class="text-orange-500 font-bold">
+            {{ store.resa > 0 ? store.resa : 0 }}
+          </span>
+          demande{{ store.resa > 1 ? 's' : '' }} en attente. Cliquez ici pour les consulter.
+        </NuxtLink>
       </div>
-      <div class="flex space-x-4">
-        <NuxtLink to="/"> 
+      <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 mt-4">
+        <NuxtLink to="/">
           <Button
-        label="Voir mon Dashboard"
-        class=" p-3 text-xl bg-blue-500 hover:bg-blue-700"
-      ></Button>
-      </NuxtLink>
-      <NuxtLink to="/edit/outil-add"> 
+            label="Voir mon Dashboard"
+            class="w-full sm:w-auto p-3 text-lg sm:text-xl bg-blue-500 hover:bg-blue-700"
+          ></Button>
+        </NuxtLink>
+        <NuxtLink to="/edit/outil-add">
+          <Button
+            label="Ajouter un objet"
+            class="w-full sm:w-auto p-3 text-lg sm:text-xl bg-green-500 hover:bg-green-700"
+          ></Button>
+        </NuxtLink>
         <Button
-        label="Ajouter un objet"
-        class=" p-3 text-xl bg-green-500 hover:bg-green-700">
-      </Button>
-      </NuxtLink>
-      <Button
-        @click="logoutDirectus()"
-        label="Se déconnecter"
-        class=" p-3 text-xl"
-      ></Button>
-
-    
-    </div>
+          @click="logoutDirectus()"
+          label="Se déconnecter"
+          class="w-full sm:w-auto p-3 text-lg sm:text-xl bg-red-300 hover:bg-red-500"
+        ></Button>
+      </div>
     </div>
   </div>
 
@@ -311,5 +308,8 @@ async function resetPasswordDirectus() {
 .pi-eye-slash {
   transform: scale(1.6);
   margin-right: 1rem;
+}
+button {
+  border-radius: 8px;
 }
 </style>
