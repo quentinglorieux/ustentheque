@@ -1,29 +1,39 @@
 <template>
   <div class="grid">
-    <div class="col-9">
+    <div class="mt-2 col-12 md:col-9">
       <div v-if="!store.authenticated">
-            <div>Vous n'etes pas connécté.</div> 
-            <NuxtLink to="/auth/login">
-              <Button
-                label="Connectez vous ici"
-                icon="pi pi-sign-in"
-                severity="info"
-                class="font-bold mt-5 px-5 py-3 p-button-raised white-space-nowrap"
-              ></Button>
-            </NuxtLink>
-          </div>
+        <div>Vous n'etes pas connécté.</div>
+        <NuxtLink to="/auth/login">
+          <Button
+            label="Connectez vous ici"
+            icon="pi pi-sign-in"
+            severity="info"
+            class="font-bold mt-5 px-5 py-3 p-button-raised white-space-nowrap"
+          ></Button>
+        </NuxtLink>
+      </div>
 
-      <div v-if="store.authenticated" class="card">
-        <h4 v-if="addMode">Nouvel objet</h4>
-        <h4 v-else>Editer : {{ objet.nom }} {{ selectedMarque.nom }}</h4>
-        <div class="p-fluid formgrid grid">
+      <div v-if="store.authenticated" class="card p-4 sm:p-6">
+        <h4 class="text-xl sm:text-2xl font-semibold mb-4">
+          {{
+            addMode
+              ? "Nouvel objet"
+              : `Éditer : ${objet.nom} ${selectedMarque.nom}`
+          }}
+        </h4>
+        <div class="p-fluid formgrid grid gap-4">
           <div class="field col-12 md:col-6">
             <label for="nom">Nom</label>
-            <InputText v-model="objet.nom" id="nom" type="text" />
+            <InputText
+              v-model="objet.nom"
+              id="nom"
+              type="text"
+              class="w-full"
+            />
           </div>
 
           <!-- Brand Dropdown with Editable Functionality -->
-          <div  class="field col-12 md:col-6">
+          <div class="field col-12 md:col-6">
             <label for="brand">Marque :</label>
             <Dropdown
               v-model="selectedMarque"
@@ -34,16 +44,14 @@
               class="w-full"
               @keyup.enter="handleBrandInput"
             />
-          
             <small class="text-sm text-gray-500 italic">
-              Tapez "Enter" après avoir saisi la nouvelle marque pour l'ajouter si elle n'existe pas déjà.
+              Tapez "Enter" après avoir saisi la nouvelle marque pour l'ajouter
+              si elle n'existe pas déjà.
             </small>
           </div>
-       
-     
-          
+
           <div class="field col-12 md:col-4">
-            <label for="etat">Etat</label>
+            <label for="etat">État</label>
             <Dropdown
               v-model="selectedEtat"
               :editable="true"
@@ -55,60 +63,85 @@
           </div>
 
           <div class="field col-12 md:col-4">
-            <label for="prix_indicatif">Prix</label>
-            <InputText v-model="objet.prix_indicatif" id="prix_indicatif" type="text" />
+            <label for="prix_indicatif">Prix (€)</label>
+            <InputText
+              v-model="objet.prix_indicatif"
+              id="prix_indicatif"
+              type="text"
+              class="w-full"
+            />
             <small class="text-sm text-gray-500 italic">
-              Prix indicatif en euros lors de l'achat. <span class="text-sm text-gray-900"> Rappel:</span> les prêts sur la BibOB sont toujours gratuits.
+              Prix indicatif lors de l'achat.
+              <span class="text-gray-900"
+                >Les prêts sont toujours gratuits.</span
+              >
             </small>
           </div>
 
           <div class="field col-12 md:col-4">
             <label for="duree">Durée (jours)</label>
-            <InputText v-model="objet.duree_max" id="duree" type="text" />
+            <InputText
+              v-model="objet.duree_max"
+              id="duree"
+              type="text"
+              class="w-full"
+            />
             <small class="text-sm text-gray-500 italic">
-              Durée maximale de prêt en jours.
+              Durée maximale de prêt.
             </small>
           </div>
 
           <div class="field col-12 md:col-6">
             <label for="conseils">Conseils</label>
-            <Textarea v-model="objet.conseils" id="conseils" rows="5" cols="30" />
+            <Textarea
+              v-model="objet.conseils"
+              id="conseils"
+              rows="4"
+              class="w-full"
+            />
           </div>
 
           <div class="field col-12 md:col-6">
-            <label for="consommable" class="">Consommables</label>
-            <Textarea v-model="objet.consommable" id="consommable" rows="5" cols="30" />
+            <label for="consommable">Consommables</label>
+            <Textarea
+              v-model="objet.consommable"
+              id="consommable"
+              rows="4"
+              class="w-full"
+            />
           </div>
 
-          <!-- Create / Update Button -->
-          <div v-if="addMode" class="field col-6 md:col-4 md:col-offset-4">
+          <!-- Create / Update Buttons -->
+          <div
+            v-if="addMode"
+            class="field col-12 sm:col-6 sm:col-offset-3 flex justify-center"
+          >
             <Button
               @click="createOneObjet"
               label="Créer un objet"
-              class="w-full p-3 text-xl"
+              class="w-full sm:w-auto p-3 text-lg sm:text-xl bg-green-500 hover:bg-green-700"
             />
           </div>
-          <div v-else class="field col-8 md:col-6 md:col-offset-3">
-            <div class="flex gap-2">
-              <Button
-                @click="updateOneObjet"
-                label="Mettre à jour"
-                class="w-full p-3 text-xl"
-              />
-              <Button
-                @click="deleteOneObjet"
-                label="Supprimer"
-                class="w-full p-3 text-xl"
-                severity="warning"
-              />
-            </div>
+          <div
+            v-else
+            class="field col-12 flex flex-col sm:flex-row gap-3 sm:justify-center"
+          >
+            <Button
+              @click="updateOneObjet"
+              label="Mettre à jour"
+              class="w-full sm:w-auto p-3 text-lg sm:text-xl bg-blue-500 hover:bg-blue-700"
+            />
+            <Button
+              @click="deleteOneObjet"
+              label="Supprimer"
+              class="w-full sm:w-auto p-3 text-lg sm:text-xl bg-red-500 hover:bg-red-700"
+            />
           </div>
         </div>
       </div>
     </div>
 
-    
-    <div v-if="store.authenticated" class="col-3" >
+    <div v-if="store.authenticated" class="col-12 md:col-3">
       <!-- Image -->
 
       <div class="card flex flex-col content-center">
@@ -141,17 +174,12 @@
         />
       </div>
     </div>
-
-
   </div>
-  
+
   <!-- Confirm Dialog for new marque -->
   <ConfirmDialog />
   <Toast />
 </template>
-
-
-
 
 <script setup>
 import { Directus } from "@directus/sdk";
@@ -169,10 +197,10 @@ const route = useRoute();
 
 // Form-related data
 const objet = ref({});
-const selectedMarque = ref("");  // Initialize as an empty object
+const selectedMarque = ref(""); // Initialize as an empty object
 const selectedEtat = ref("");
 const addMode = ref(false);
-const fieldsMarque = ref([]);  // This will now store data from the Marque collection
+const fieldsMarque = ref([]); // This will now store data from the Marque collection
 const image = ref("");
 
 // Function to determine if in add mode
@@ -183,57 +211,72 @@ const isAddMode = () => {
 // Retrieve object details for editing, including related `Marque`
 async function retrieveOneObjet() {
   const publicData = await directus.items("objet").readOne(route.params.id, {
-    fields: ["*,brand.*"],  // Ensure we retrieve the related brand
+    fields: ["*,brand.*"], // Ensure we retrieve the related brand
   });
   objet.value = publicData;
   image.value = publicData.photo;
-  selectedMarque.value = publicData.brand || {};  // Default to empty object if no brand is available
+  selectedMarque.value = publicData.brand || {}; // Default to empty object if no brand is available
   selectedEtat.value = publicData.etat;
 }
 
 // Create new object
 async function createOneObjet() {
-  await directus.items("objet").createOne({
-    nom: objet.value.nom,
-    brand: selectedMarque.value?.id,  // Use optional chaining to avoid errors if brand is not selected
-    etat: selectedEtat.value.etat,
-    prix_indicatif: objet.value.prix_indicatif,
-    duree_max: objet.value.duree_max,
-    consommable: objet.value.consommable,
-    conseils: objet.value.conseils,
-    proprietaire: store.me.id,
-    photo: image.value,
-  }).then(() => {
-    toast.add({ severity: "success", summary: "Objet ajouté", life: 3000 });
-    addMode.value = false;
-  }).catch(() => {
-    toast.add({ severity: "error", summary: "Erreur", life: 3000 });
-  });
+  await directus
+    .items("objet")
+    .createOne({
+      nom: objet.value.nom,
+      brand: selectedMarque.value?.id, // Use optional chaining to avoid errors if brand is not selected
+      etat: selectedEtat.value.etat,
+      prix_indicatif: objet.value.prix_indicatif,
+      duree_max: objet.value.duree_max,
+      consommable: objet.value.consommable,
+      conseils: objet.value.conseils,
+      proprietaire: store.me.id,
+      photo: image.value,
+    })
+    .then(() => {
+      toast.add({ severity: "success", summary: "Objet ajouté", life: 3000 });
+      addMode.value = false;
+    })
+    .catch(() => {
+      toast.add({ severity: "error", summary: "Erreur", life: 3000 });
+    });
 }
 
 // Update existing object
 async function updateOneObjet() {
-  await directus.items("objet").updateOne(route.params.id, {
-    nom: objet.value.nom,
-    brand: selectedMarque.value?.id,  // Use optional chaining to avoid errors if brand is not selected
-    etat: selectedEtat.value.etat,
-    prix_indicatif: objet.value.prix_indicatif,
-    duree_max: objet.value.duree_max,
-    consommable: objet.value.consommable,
-    conseils: objet.value.conseils,
-    photo: image.value,
-  }).then(() => {
-    toast.add({ severity: "success", summary: "Objet mis à jour", life: 3000 });
-  }).catch(() => {
-    toast.add({ severity: "error", summary: "Erreur", life: 3000 });
-  });
+  await directus
+    .items("objet")
+    .updateOne(route.params.id, {
+      nom: objet.value.nom,
+      brand: selectedMarque.value?.id, // Use optional chaining to avoid errors if brand is not selected
+      etat: selectedEtat.value.etat,
+      prix_indicatif: objet.value.prix_indicatif,
+      duree_max: objet.value.duree_max,
+      consommable: objet.value.consommable,
+      conseils: objet.value.conseils,
+      photo: image.value,
+    })
+    .then(() => {
+      toast.add({
+        severity: "success",
+        summary: "Objet mis à jour",
+        life: 3000,
+      });
+    })
+    .catch(() => {
+      toast.add({ severity: "error", summary: "Erreur", life: 3000 });
+    });
 }
 
 // Add a new marque to Directus after confirmation
 const handleBrandInput = async () => {
   const typedMarque = selectedMarque.value;
   console.log(typedMarque);
-  if (typedMarque && !fieldsMarque.value.some((item) => item.nom === typedMarque)) {
+  if (
+    typedMarque &&
+    !fieldsMarque.value.some((item) => item.nom === typedMarque)
+  ) {
     confirm.require({
       message: `La marque "${typedMarque}" n'existe pas. Voulez-vous l'ajouter ?`,
       header: "Confirmation",
@@ -250,10 +293,20 @@ const handleBrandInput = async () => {
           selectedMarque.value = newMarque;
 
           // Show a success message
-          toast.add({ severity: "success", summary: "Nouvelle marque ajoutée", detail: typedMarque, life: 3000 });
+          toast.add({
+            severity: "success",
+            summary: "Nouvelle marque ajoutée",
+            detail: typedMarque,
+            life: 3000,
+          });
         } catch (error) {
           // Handle error if the marque could not be created
-          toast.add({ severity: "error", summary: "Erreur", detail: "Impossible d'ajouter la nouvelle marque", life: 3000 });
+          toast.add({
+            severity: "error",
+            summary: "Erreur",
+            detail: "Impossible d'ajouter la nouvelle marque",
+            life: 3000,
+          });
         }
       },
       reject: () => {
@@ -302,10 +355,5 @@ onMounted(() => {
   }
 });
 </script>
-
-
-
-
-
 
 <style scoped></style>
