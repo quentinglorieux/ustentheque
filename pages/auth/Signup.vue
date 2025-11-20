@@ -1,7 +1,6 @@
 <script setup>
-import { Directus } from "@directus/sdk";
 import { useToast } from "primevue/usetoast";
-import { useDirectusBase } from "@/composables/useDirectusBase";
+import { useDirectusClient } from "@/composables/useDirectusClient";
 
 
 const email = ref('');
@@ -14,8 +13,7 @@ const succes=ref(false);
 const charte=ref()
 
 
-const directusBase = useDirectusBase();
-const directus = new Directus(directusBase);
+const directus = useDirectusClient();
 const users = directus.items('directus_users');
 
 const toast = useToast();

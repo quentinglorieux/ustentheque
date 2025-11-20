@@ -1,12 +1,16 @@
-import { DIRECTUS_BASE } from "./utils/directusConfig";
+import { DIRECTUS_BASE, DIRECTUS_REMOTE_BASE } from "./utils/directusConfig";
 
 export default defineNuxtConfig({
   modules: [
     'nuxt-directus',
     "@nuxtjs/tailwindcss",
-    '@pinia/nuxt'],
+    '@nuxt/ui'
+  ],
 
   runtimeConfig: {
+    directus: {
+      base: DIRECTUS_REMOTE_BASE,
+    },
     public: {
       directusBase: DIRECTUS_BASE,
     },
@@ -18,7 +22,9 @@ export default defineNuxtConfig({
     "@/assets/styles.scss",
     "primevue/resources/themes/tailwind-light/theme.css",
     "primevue/resources/primevue.css",
-    "primeicons/primeicons.css"      
+    "primeicons/primeicons.css",
+    "primeflex/primeflex.css",
+    "@/assets/demo/styles/flags/flags.css"
   ],
 
   build: {

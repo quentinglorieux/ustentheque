@@ -1,5 +1,5 @@
 <script setup>
-import { useCounterStore } from "@/stores/counter";
+import { useCounterStore } from "@/composables/useCounterStore";
 const store = useCounterStore();
 const count = computed(() => store.count);
 </script>

@@ -1,7 +1,7 @@
 <template>
-  <div className="grid">
-    <div className="col-12">
-      <div className="card">
+  <div class="grid">
+    <div class="col-12">
+      <SectionCard title="Mes prêts">
         <div v-if="completed">
           <div v-if="!resa.data">
             <div>Vous n'etes pas connécté.</div>
@@ -23,17 +23,6 @@
             :sortOrder="-1"
             :filters="filter"
           >
-            <template #header>
-              <div
-                class="flex flex-wrap align-items-center justify-content-between gap-2"
-              >
-                <span class="text-xl text-900 font-bold">Mes prets</span>
-                <!-- <NuxtLink :to="`/edit/resa-add`">
-                  <Button icon="pi pi-plus" rounded raised />
-                </NuxtLink> -->
-              </div>
-            </template>
-
             <Column field="objet.nom" header="Objet" sortable>
               <template #body="slotProps">
                 <NuxtLink
@@ -78,7 +67,7 @@
                     ' ' +
                     slotProps.data.user_created.last_name
                   "
-                  :image="`https://bibob.rubidiumweb.fr/assets/${slotProps.data.user_created.avatar}?fit=cover&width=50&height=50&quality=20`"
+                  :image="`${directusBase}/assets/${slotProps.data.user_created.avatar}?fit=cover&width=50&height=50&quality=20`"
                 />
               </template>
             </Column>
@@ -99,23 +88,23 @@
           </DataTable>
         </div>
         <div v-else><ProgressSpinner /></div>
-      </div>
+      </SectionCard>
     </div>
   </div>
   <ConfirmDialog />
 </template>
 
 <script setup>
-import { Directus } from "@directus/sdk";
-import { useAuthStore } from "@/stores/auth";
+import { useAuthStore } from "@/composables/useAuthStore";
 import { formatDate } from "@/utils/dateUtils";
 import { useConfirm } from "primevue/useconfirm";
 import { useDirectusBase } from "@/composables/useDirectusBase";
+import { useDirectusClient } from "@/composables/useDirectusClient";
 
 
 const store = useAuthStore();
 const directusBase = useDirectusBase();
-const directus = new Directus(directusBase);
+const directus = useDirectusClient();
 const resa = ref("");
 const completed = ref(false);
 

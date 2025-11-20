@@ -1,7 +1,15 @@
 <template>
-  <div className="grid">
-    <div className="col-12">
-      <div className="card">
+  <div class="grid">
+    <div class="col-12">
+      <SectionCard title="Mes outils">
+        <template #actions>
+          <div class="flex items-center gap-2">
+            Nouvel outil
+            <NuxtLink :to="`/edit/outil-add`">
+              <Button icon="pi pi-plus" rounded raised />
+            </NuxtLink>
+          </div>
+        </template>
         <!-- res----- {{ reservation }} -->
 
         <div v-if="completed">
@@ -25,19 +33,6 @@
             :sortOrder="1"
             tableStyle="min-width: 50rem"
           >
-            <template #header>
-              <div
-                class="flex flex-wrap align-items-center justify-content-between gap-2"
-              >
-                <span class="text-xl text-900 font-bold">Mes outils</span>
-                <div class="flex items-center gap-2">
-                  Nouvel outil
-                  <NuxtLink :to="`/edit/outil-add`">
-                    <Button icon="pi pi-plus" rounded raised />
-                  </NuxtLink>
-                </div>
-              </div>
-            </template>
             <Column expander style="width: 5rem" />
             <Column field="nom" header="Objet" sortable>
               <template #body="slotProps">
@@ -164,19 +159,19 @@
             ></Button>
           </NuxtLink>
         </div>
-      </div>
+      </SectionCard>
     </div>
   </div>
 </template>
 
 <script setup>
-import { Directus } from "@directus/sdk";
-import { useAuthStore } from "@/stores/auth";
+import { useAuthStore } from "@/composables/useAuthStore";
 import { formatDate } from "@/utils/dateUtils";
 import { useDirectusBase } from "@/composables/useDirectusBase";
+import { useDirectusClient } from "@/composables/useDirectusClient";
 
 const directusBase = useDirectusBase();
-const directus = new Directus(directusBase);
+const directus = useDirectusClient();
 
 const me = ref("");
 const reservation = ref("");

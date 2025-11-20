@@ -1,13 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
 
 $gutter: 1rem; //for primeflex grid system
-@import '@/assets/styles/layout/layout.scss';
 
+@use "@/assets/styles/layout/layout" as *;
 
-// /* Demos */
-@import '@/assets/demo/styles/flags/flags.css';
-// @import '@/assets/demo/styles/badges.scss';
+.auth-card-shell {
+	border-radius: 26px;
+	padding: 0.3rem;
+	margin-top: 50px;
+	background: linear-gradient(
+		180deg,
+		var(--primary-color) 10%,
+		rgba(33, 150, 243, 0) 30%
+	);
+}
 
-/* PrimeVue */
-@import 'primevue/resources/primevue.css';
-@import 'primeflex/primeflex.scss';
+.auth-card-panel {
+	border-radius: 53px;
+}

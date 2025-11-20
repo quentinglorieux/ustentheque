@@ -83,17 +83,17 @@
 </template>
 
 <script setup>
-import { Directus } from "@directus/sdk";
 import { useToast } from "primevue/usetoast";
-import { useAuthStore } from "@/stores/auth";
+import { useAuthStore } from "@/composables/useAuthStore";
 import { useDirectusBase } from "@/composables/useDirectusBase";
+import { useDirectusClient } from "@/composables/useDirectusClient";
 
 const store = useAuthStore();
 const id = computed(() => store.id);
 
 const toast = useToast();
 const directusBase = useDirectusBase();
-const directus = new Directus(directusBase);
+const directus = useDirectusClient();
 
 const succes = ref(false);
 const addMode = ref(false);

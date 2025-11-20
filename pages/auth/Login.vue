@@ -1,8 +1,7 @@
 <script setup>
-import { Directus } from "@directus/sdk";
-import { useAuthStore } from "@/stores/auth";
+import { useAuthStore } from "@/composables/useAuthStore";
 import { useToast } from "primevue/usetoast";
-import { useDirectusBase } from "@/composables/useDirectusBase";
+import { useDirectusClient } from "@/composables/useDirectusClient";
 
 const store = useAuthStore();
 const toast = useToast();
@@ -11,121 +10,39 @@ const authenticated = computed(() => store.authenticated);
 
 const email = ref("");
 const password = ref("");
-const checked = ref(false);
-const token = ref();
-const me = ref();
+const directus = useDirectusClient();
 
-const directusBase = useDirectusBase();
-const directus = new Directus(directusBase, {
-  auth: {
-    mode: "cookie", // 'json' in Node.js
-    autoRefresh: true,
-    msRefreshBeforeExpires: 6000,
-    staticToken: "",
-  },
-});
-
-onMounted(() => {
-  checkLogin();
+onMounted(async () => {
+  await store.restoreSession();
   if (store.authenticated) {
-    myProfile();
-    mesPrets();
+    await Promise.all([store.fetchProfile(), store.fetchPendingReservations()]);
   }
 });
 
-async function myProfile() {
-  const profileData = await directus.users.me.read({ fields: ["*"] });
-  me.value = profileData;
-  store.me = profileData;
-  store.first_name = profileData.first_name;
-  store.last_name = profileData.last_name;
-  store.id = profileData.id;
-  store.avatar = profileData.avatar;
-}
-
-const resa = ref("");
-
-async function mesPrets() {
-  
-  resa.value = await directus.items("reservation").readByQuery({
-    fields: [
-      "id,debut,fin,statut,objet.id,objet.nom,objet.marque,objet.proprietaire",
-    ],
-    filter: {
-      objet: {
-        proprietaire: {
-          _eq: "$CURRENT_USER",
-        },
-      },
-    },
-  });
-  const countValidatedItems = resa.value.data.reduce((count, obj) => {
-    if (obj.statut === "En attente") {
-      return count + 1;
-    }
-    return count;
-  }, 0);
-
-  store.resa = countValidatedItems;
-}
-
-async function checkLogin() {
-  store.authenticated = false;
-  // AUTHENTICATION
-  await directus.auth.token
-    .then((a) => {
-      if (a) {
-        store.authenticated = true;
-        myProfile();
-        mesPrets();
-      }
-      //
-      token.value = a;
-    })
-    .catch(() => {
-      console.log("error");
-    });
-}
-
 async function logoutDirectus() {
-  // AUTHENTICATION
-  // await directus.auth.logout({ refresh_token: token }).then("logged out");
-  store.authenticated = false;
-  store.id = "";
-  store.first_name = "";
-  store.avatar = "";
-  store.resa = "";
-  store.me = {};
-  localStorage.clear();
-  localStorage.setItem("bgcolor", "red");
-};
-
+  await store.logout();
+}
 
 async function loginDirectus() {
-  if (!authenticated.value) {
-    await directus.auth
-      .login({
-        email: email.value,
-        password: password.value,
-        mode: "cookie",
-      })
-      .then(() => {
-        store.authenticated = true;
-        console.log("log in");
-        myProfile();
-        mesPrets();
-      })
-      .catch(() => {
-        console.log("Invalid credentials");
-        toast.add({
-        severity: "error",
-        summary: "Erreur",
-        detail: "Mot de passe ou identifiant incorrect.",
-        life: 3000,
-      });
-      password.value ='';
+  if (authenticated.value) {
+    return;
+  }
 
-      });
+  try {
+    await store.login({ email: email.value, password: password.value });
+  } catch (error) {
+    const message =
+      error?.statusMessage ||
+      error?.data?.errors?.[0]?.message ||
+      "Mot de passe ou identifiant incorrect.";
+
+    toast.add({
+      severity: "error",
+      summary: "Erreur",
+      detail: message,
+      life: 3000,
+    });
+    password.value = "";
   }
 }
 async function resetPasswordDirectus() {
@@ -193,22 +110,8 @@ async function resetPasswordDirectus() {
     class="flex align-items-center justify-center overflow-hidden"
   >
     <div class="flex flex-column align-items-center justify-content-center">
-      <div
-        style="
-          border-radius: 26px;
-          padding: 0.3rem;
-          margin-top: 50px;
-          background: linear-gradient(
-            180deg,
-            var(--primary-color) 10%,
-            rgba(33, 150, 243, 0) 30%
-          );
-        "
-      >
-        <div
-          class="w-full surface-card py-8 px-5 sm:px-8"
-          style="border-radius: 53px"
-        >
+      <div class="auth-card-shell">
+        <div class="w-full surface-card py-8 px-5 sm:px-8 auth-card-panel">
           <div class="text-center mb-5">
             <div class="text-900 text-3xl font-medium mb-3">
               Larchant Outilthèque

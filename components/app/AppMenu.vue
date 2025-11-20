@@ -1,6 +1,6 @@
 <script setup>
 import AppMenuItem from "./AppMenuItem.vue";
-import { useAuthStore } from "@/stores/auth";
+import { useAuthStore } from "@/composables/useAuthStore";
 const store = useAuthStore();
 const resa = computed(() => store.resa);
 

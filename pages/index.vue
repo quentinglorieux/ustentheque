@@ -182,15 +182,15 @@
 
 
 <script setup>
-import { Directus } from "@directus/sdk";
-import { useAuthStore } from "@/stores/auth";
+import { useAuthStore } from "@/composables/useAuthStore";
 import { ref, onMounted } from "vue";
 import Chart from "primevue/chart";
 import { useDirectusBase } from "@/composables/useDirectusBase";
+import { useDirectusClient } from "@/composables/useDirectusClient";
 
 // Directus setup
 const directusBase = useDirectusBase();
-const directus = new Directus(directusBase);
+const directus = useDirectusClient();
 
 // Get the authenticated user
 const store = useAuthStore();

@@ -26,7 +26,7 @@
               <div class="flex flex-column align-items-center gap-3 py-1">
                 <img
                   class="w-80 h-60 object-contain border-round"
-                  :src="`https://bibob.rubidiumweb.fr/assets/${resa.objet.photo}?    height=300&quality=40`"
+                  :src="`${directusBase}/assets/${resa.objet.photo}?    height=300&quality=40`"
                 />
               </div>
             </div>
@@ -52,7 +52,7 @@
             :label="
               resa.user_created.first_name + ' ' + resa.user_created.last_name
             "
-            :image="`https://bibob.rubidiumweb.fr/assets/${resa.user_created.avatar}?fit=cover&width=50&height=50&quality=20`"
+            :image="`${directusBase}/assets/${resa.user_created.avatar}?fit=cover&width=50&height=50&quality=20`"
           />
         </div>
         <div class="mt-2 text-m font-bold mb-4">
@@ -124,18 +124,18 @@
 </template>
 
 <script setup>
-import { Directus } from "@directus/sdk";
 import { useToast } from "primevue/usetoast";
-import { useAuthStore } from "@/stores/auth";
+import { useAuthStore } from "@/composables/useAuthStore";
 import { formatDate,isDateInPast } from '@/utils/dateUtils';
 import { useDirectusBase } from "@/composables/useDirectusBase";
+import { useDirectusClient } from "@/composables/useDirectusClient";
 
 
 const store = useAuthStore();
 
 const toast = useToast();
 const directusBase = useDirectusBase();
-const directus = new Directus(directusBase);
+const directus = useDirectusClient();
 
 const addMode = ref(false);
 

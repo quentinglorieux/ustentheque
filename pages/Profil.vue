@@ -89,13 +89,13 @@
         <div v-if="me.avatar" class="flex justify-center">
           <img
             class="object-cover rounded-full mb-10"
-            :src="`https://bibob.rubidiumweb.fr/assets/${image}?fit=cover&width=300&height=300&quality=50`"
+            :src="`${directusBase}/assets/${image}?fit=cover&width=300&height=300&quality=50`"
           />
         </div>
         <div v-else class="flex justify-center">
           <img
             class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem object-contain block xl:block border-round"
-            :src="`https://bibob.rubidiumweb.fr/assets/7ed6273f-9add-4257-b546-d99af9a3505a.png?fit=cover&width=300&height=300&quality=50`"
+            :src="`${directusBase}/assets/7ed6273f-9add-4257-b546-d99af9a3505a.png?fit=cover&width=300&height=300&quality=50`"
           />
         </div>
 
@@ -105,7 +105,7 @@
           class="flex justify-center mx-1"
           v-model="selectedFile"
           name="file"
-          :url="`https://bibob.rubidiumweb.fr/files`"
+          :url="`${directusBase}/files`"
           mode="basic"
           accept=".png,.jpg,.jpeg"
           maxFileSize="2000000"
@@ -125,17 +125,17 @@
 </template>
 
 <script setup>
-import { useAuthStore } from "@/stores/auth";
-import { Directus } from "@directus/sdk";
+import { useAuthStore } from "@/composables/useAuthStore";
 import { useToast } from "primevue/usetoast";
 import { useDirectusBase } from "@/composables/useDirectusBase";
+import { useDirectusClient } from "@/composables/useDirectusClient";
 
 const store = useAuthStore();
 const toast = useToast();
 
 const me = computed(() => store.me);
 const directusBase = useDirectusBase();
-const directus = new Directus(directusBase);
+const directus = useDirectusClient();
 
 // uploadFile
 const image = ref("");
@@ -183,16 +183,7 @@ async function updateProfile() {
 }
 
 async function logoutDirectus() {
-  // AUTHENTICATION
-  // await directus.auth.logout({ refresh_token: token }).then("logged out");
-  store.authenticated = false;
-  store.id = "";
-  store.first_name = "";
-  store.avatar = "";
-  store.resa = "";
-  store.me = {};
-  localStorage.clear();
-  localStorage.setItem("bgcolor", "red");
-};
+  await store.logout();
+}
 
 </script>
