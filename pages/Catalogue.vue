@@ -32,7 +32,7 @@
                 <div class="col-12">
                     <div class="flex flex-column xl:flex-row xl:align-items-start p-3 gap-4">
                         <NuxtLink :to="`/outil-${slotProps.data.id}`">
-                       <img class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem  object-contain shadow-2 block xl:block mx-auto border-round" :src="`https://devdirectus.rubidiumweb.eu/assets/${slotProps.data.photo}?fit=cover&width=300&height=300&quality=40`" :alt="slotProps.data.name" />
+                       <img class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem  object-contain shadow-2 block xl:block mx-auto border-round" :src="`https://bibob.rubidiumweb.fr/assets/${slotProps.data.photo}?fit=cover&width=300&height=300&quality=40`" :alt="slotProps.data.name" />
                         </NuxtLink>
                     <div class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
                             <div class="flex flex-column align-items-center sm:align-items-start gap-3">
@@ -76,7 +76,7 @@
                         </div>
                         <div class="flex flex-column align-items-center gap-3 py-5">
                             <NuxtLink :to="`/outil-${slotProps.data.id}`">
-                            <img class="w-80 h-60 object-contain border-round" :src="`https://devdirectus.rubidiumweb.eu/assets/${slotProps.data.photo}?height=300&quality=40`" :alt="slotProps.data.name" />
+                            <img class="w-80 h-60 object-contain border-round" :src="`https://bibob.rubidiumweb.fr/assets/${slotProps.data.photo}?height=300&quality=40`" :alt="slotProps.data.name" />
                             </NuxtLink>
                             <div class="text-2xl font-bold">{{ slotProps.data.nom }}</div>
                             <!-- <Rating value="{product.rating}" readonly :cancel="false"></Rating> -->

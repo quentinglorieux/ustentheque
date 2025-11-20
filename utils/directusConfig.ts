@@ -4,4 +4,4 @@ const directusFromProcess =
     : undefined;
 
 export const DIRECTUS_BASE =
-  directusFromProcess ?? "https://devdirectus.rubidiumweb.eu";
+  directusFromProcess ?? "https://bibob.rubidiumweb.fr";

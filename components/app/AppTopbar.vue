@@ -39,7 +39,7 @@
         <router-link to="/auth/login"> <i v-if="!avatar" class="pi pi-user"></i></router-link>
         <router-link to="/profil"> <Avatar
           v-if="avatar"
-          :image="`https://devdirectus.rubidiumweb.eu/assets/${avatar}`"
+          :image="`https://bibob.rubidiumweb.fr/assets/${avatar}`"
           class="hover:border-2"
           size="large"
           shape="circle"

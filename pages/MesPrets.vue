@@ -78,7 +78,7 @@
                     ' ' +
                     slotProps.data.user_created.last_name
                   "
-                  :image="`https://devdirectus.rubidiumweb.eu/assets/${slotProps.data.user_created.avatar}?fit=cover&width=50&height=50&quality=20`"
+                  :image="`https://bibob.rubidiumweb.fr/assets/${slotProps.data.user_created.avatar}?fit=cover&width=50&height=50&quality=20`"
                 />
               </template>
             </Column>

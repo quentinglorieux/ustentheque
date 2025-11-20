@@ -82,7 +82,7 @@
                     ' ' +
                     slotProps.data.objet.proprietaire.last_name
                   "
-                  :image="`https://devdirectus.rubidiumweb.eu/assets/${slotProps.data.objet.proprietaire.avatar}?fit=cover&width=50&height=50&quality=20`"
+                  :image="`https://bibob.rubidiumweb.fr/assets/${slotProps.data.objet.proprietaire.avatar}?fit=cover&width=50&height=50&quality=20`"
                 />
               </template>
             </Column>

@@ -89,13 +89,13 @@
         <div v-if="me.avatar" class="flex justify-center">
           <img
             class="object-cover rounded-full mb-10"
-            :src="`https://devdirectus.rubidiumweb.eu/assets/${image}?fit=cover&width=300&height=300&quality=50`"
+            :src="`https://bibob.rubidiumweb.fr/assets/${image}?fit=cover&width=300&height=300&quality=50`"
           />
         </div>
         <div v-else class="flex justify-center">
           <img
             class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem object-contain block xl:block border-round"
-            :src="`https://devdirectus.rubidiumweb.eu/assets/7ed6273f-9add-4257-b546-d99af9a3505a.png?fit=cover&width=300&height=300&quality=50`"
+            :src="`https://bibob.rubidiumweb.fr/assets/7ed6273f-9add-4257-b546-d99af9a3505a.png?fit=cover&width=300&height=300&quality=50`"
           />
         </div>
 
@@ -105,7 +105,7 @@
           class="flex justify-center mx-1"
           v-model="selectedFile"
           name="file"
-          :url="`https://devdirectus.rubidiumweb.eu/files`"
+          :url="`https://bibob.rubidiumweb.fr/files`"
           mode="basic"
           accept=".png,.jpg,.jpeg"
           maxFileSize="2000000"
