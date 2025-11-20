@@ -18,7 +18,7 @@
           <NuxtLink :to="`/outil-${objet.id}`">
             <img
               class="w-80 h-60 object-contain border-round"
-              :src="`${directusBase}/assets/${objet.photo}?    height=300&quality=40`"
+              :src="`https://devdirectus.rubidiumweb.eu/assets/${objet.photo}?    height=300&quality=40`"
             />
           </NuxtLink>
         </div>
@@ -34,7 +34,7 @@
           v-if="authenticated"
             class="mb-1 bg-slate-50 flex px-3"
             :label="proprio.first_name + ' ' + proprio.last_name"
-            :image="`${directusBase}/assets/${proprio.avatar}?fit=cover&width=50&height=50&quality=20`"
+            :image="`https://devdirectus.rubidiumweb.eu/assets/${proprio.avatar}?fit=cover&width=50&height=50&quality=20`"
           />
         </div>
         <div class="flex align-items-center justify-content-between">

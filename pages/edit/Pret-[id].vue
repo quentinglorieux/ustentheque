@@ -26,7 +26,7 @@
               <div class="flex flex-column align-items-center gap-3 py-1">
                 <img
                   class="w-80 h-60 object-contain border-round"
-                  :src="`${directusBase}/assets/${resa.objet.photo}?    height=300&quality=40`"
+                  :src="`https://devdirectus.rubidiumweb.eu/assets/${resa.objet.photo}?    height=300&quality=40`"
                 />
               </div>
             </div>
@@ -52,7 +52,7 @@
             :label="
               resa.user_created.first_name + ' ' + resa.user_created.last_name
             "
-            :image="`${directusBase}/assets/${resa.user_created.avatar}?fit=cover&width=50&height=50&quality=20`"
+            :image="`https://devdirectus.rubidiumweb.eu/assets/${resa.user_created.avatar}?fit=cover&width=50&height=50&quality=20`"
           />
         </div>
         <div class="mt-2 text-m font-bold mb-4">
