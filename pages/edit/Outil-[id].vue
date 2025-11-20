@@ -150,13 +150,13 @@
         <div v-if="image" class="flex justify-center">
           <img
             class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem object-contain block xl:block border-round"
-            :src="`https://devdirectus.rubidiumweb.eu/assets/${image}?fit=cover&width=200&height=200&quality=70`"
+            :src="`${directusBase}/assets/${image}?fit=cover&width=200&height=200&quality=70`"
           />
         </div>
         <div v-else class="flex justify-center">
           <img
             class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem object-contain block xl:block border-round"
-            src="https://devdirectus.rubidiumweb.eu/assets/7ed6273f-9add-4257-b546-d99af9a3505a.png?fit=cover&width=200&height=200&quality=70"
+            :src="`${directusBase}/assets/7ed6273f-9add-4257-b546-d99af9a3505a.png?fit=cover&width=200&height=200&quality=70`"
           />
         </div>
 
@@ -164,7 +164,7 @@
           class="flex justify-center mx-1"
           v-model="selectedFile"
           name="file"
-          url="https://devdirectus.rubidiumweb.eu/files"
+          :url="`${directusBase}/files`"
           mode="basic"
           accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
           maxFileSize="5000000"
@@ -187,9 +187,11 @@ import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm"; // Import Confirm service for confirmation dialogs
 import { useAuthStore } from "@/stores/auth";
 import { ref, onMounted } from "vue";
+import { useDirectusBase } from "@/composables/useDirectusBase";
 
 // Directus and other dependencies
-const directus = new Directus("https://devdirectus.rubidiumweb.eu");
+const directusBase = useDirectusBase();
+const directus = new Directus(directusBase);
 const toast = useToast();
 const confirm = useConfirm(); // Create an instance of useConfirm
 const store = useAuthStore();

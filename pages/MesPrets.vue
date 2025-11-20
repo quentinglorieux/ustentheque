@@ -78,7 +78,7 @@
                     ' ' +
                     slotProps.data.user_created.last_name
                   "
-                  :image="`https://devdirectus.rubidiumweb.eu/assets/${slotProps.data.user_created.avatar}?fit=cover&width=50&height=50&quality=20`"
+                  :image="`${directusBase}/assets/${slotProps.data.user_created.avatar}?fit=cover&width=50&height=50&quality=20`"
                 />
               </template>
             </Column>
@@ -110,10 +110,12 @@ import { Directus } from "@directus/sdk";
 import { useAuthStore } from "@/stores/auth";
 import { formatDate } from "@/utils/dateUtils";
 import { useConfirm } from "primevue/useconfirm";
+import { useDirectusBase } from "@/composables/useDirectusBase";
 
 
 const store = useAuthStore();
-const directus = new Directus("https://devdirectus.rubidiumweb.eu");
+const directusBase = useDirectusBase();
+const directus = new Directus(directusBase);
 const resa = ref("");
 const completed = ref(false);
 

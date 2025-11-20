@@ -86,12 +86,14 @@
 import { Directus } from "@directus/sdk";
 import { useToast } from "primevue/usetoast";
 import { useAuthStore } from "@/stores/auth";
+import { useDirectusBase } from "@/composables/useDirectusBase";
 
 const store = useAuthStore();
 const id = computed(() => store.id);
 
 const toast = useToast();
-const directus = new Directus("https://devdirectus.rubidiumweb.eu");
+const directusBase = useDirectusBase();
+const directus = new Directus(directusBase);
 
 const succes = ref(false);
 const addMode = ref(false);

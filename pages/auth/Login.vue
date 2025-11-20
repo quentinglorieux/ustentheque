@@ -2,6 +2,7 @@
 import { Directus } from "@directus/sdk";
 import { useAuthStore } from "@/stores/auth";
 import { useToast } from "primevue/usetoast";
+import { useDirectusBase } from "@/composables/useDirectusBase";
 
 const store = useAuthStore();
 const toast = useToast();
@@ -14,7 +15,8 @@ const checked = ref(false);
 const token = ref();
 const me = ref();
 
-const directus = new Directus("https://devdirectus.rubidiumweb.eu", {
+const directusBase = useDirectusBase();
+const directus = new Directus(directusBase, {
   auth: {
     mode: "cookie", // 'json' in Node.js
     autoRefresh: true,

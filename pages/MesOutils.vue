@@ -173,8 +173,10 @@
 import { Directus } from "@directus/sdk";
 import { useAuthStore } from "@/stores/auth";
 import { formatDate } from "@/utils/dateUtils";
+import { useDirectusBase } from "@/composables/useDirectusBase";
 
-const directus = new Directus("https://devdirectus.rubidiumweb.eu");
+const directusBase = useDirectusBase();
+const directus = new Directus(directusBase);
 
 const me = ref("");
 const reservation = ref("");

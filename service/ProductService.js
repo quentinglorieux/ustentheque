@@ -1,8 +1,9 @@
 import { Directus } from "@directus/sdk";
+import { DIRECTUS_BASE } from "@/utils/directusConfig";
 
 const contextPath = import.meta.env.BASE_URL;
 
-const directus = new Directus("https://devdirectus.rubidiumweb.eu");
+const directus = new Directus(DIRECTUS_BASE);
 
 
 export default class ProductService {

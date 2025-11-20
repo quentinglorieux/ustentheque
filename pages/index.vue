@@ -186,9 +186,11 @@ import { Directus } from "@directus/sdk";
 import { useAuthStore } from "@/stores/auth";
 import { ref, onMounted } from "vue";
 import Chart from "primevue/chart";
+import { useDirectusBase } from "@/composables/useDirectusBase";
 
 // Directus setup
-const directus = new Directus("https://devdirectus.rubidiumweb.eu");
+const directusBase = useDirectusBase();
+const directus = new Directus(directusBase);
 
 // Get the authenticated user
 const store = useAuthStore();

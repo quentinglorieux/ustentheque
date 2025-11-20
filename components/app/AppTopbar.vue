@@ -39,7 +39,7 @@
         <router-link to="/auth/login"> <i v-if="!avatar" class="pi pi-user"></i></router-link>
         <router-link to="/profil"> <Avatar
           v-if="avatar"
-          :image="`https://devdirectus.rubidiumweb.eu/assets/${avatar}`"
+          :image="`${directusBase}/assets/${avatar}`"
           class="hover:border-2"
           size="large"
           shape="circle"
@@ -60,6 +60,7 @@
 <script setup>
 import { Directus } from "@directus/sdk";
 import { useAuthStore } from "@/stores/auth";
+import { useDirectusBase } from "@/composables/useDirectusBase";
 
 const { layoutConfig, onMenuToggle, contextPath } = useLayout();
 
@@ -73,7 +74,8 @@ const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
 const router = useRouter();
 
-const directus = new Directus("https://devdirectus.rubidiumweb.eu");
+const directusBase = useDirectusBase();
+const directus = new Directus(directusBase);
 
 const me = ref("");
 
