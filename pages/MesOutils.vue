@@ -1,8 +1,12 @@
 <template>
-  <div className="grid">
-    <div className="col-12">
-      <div className="card">
+  <div class="grid">
+    <div class="col-12">
+      <div class="card">
         <!-- res----- {{ reservation }} -->
+
+        <div v-if="error" class="p-4 mb-4 text-white bg-red-500 rounded">
+          Error: {{ error }}
+        </div>
 
         <div v-if="completed">
           <div v-if="!me.objet">
@@ -136,91 +140,45 @@
 
 <script setup>
 import { readMe } from "@directus/sdk";
-import { useAuthStore } from "@/stores/auth";
 import { formatDate } from "@/utils/dateUtils";
-import { useDirectusBase } from "@/composables/useDirectusBase";
 
-const directusBase = useDirectusBase();
 const directus = useDirectus();
+const { isAuthenticated, loading } = useUser();
 
 const me = ref("");
 const reservation = ref("");
 const expandedRows = ref([]);
-const completed = ref();
-
-const store = useAuthStore();
-const meStore = computed(() => store.me);
+const completed = ref(false);
+const error = ref(null);
 
 const formatCurrency = (val) => {
   return val.toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
 };
 
-// const onRowExpand = (event) => {};
-
 const convertToGrade = (etat) => {
   switch (etat) {
-    case "Neuf":
-      return 5;
-    case "Excellent":
-      return 4;
-    case "Bon":
-      return 3;
-    case "Moyen":
-      return 2;
-    case "Mauvais":
-      return 1;
-    case "En Panne":
-      return 0;
-
-    default:
-      return null;
+    case "Neuf": return 5;
+    case "Excellent": return 4;
+    case "Bon": return 3;
+    case "Moyen": return 2;
+    case "Mauvais": return 1;
+    case "En Panne": return 0;
+    default: return null;
   }
 };
 
 const getSeverity = (resa) => {
   switch (resa.statut) {
-    case "En attente":
-      return null;
-    case "Validé":
-      return "success";
-
-    case "Rendu":
-      return "warning";
-
-    case "Refusé":
-      return "danger";
-
-    default:
-      return null;
+    case "En attente": return null;
+    case "Validé": return "success";
+    case "Rendu": return "warning";
+    case "Refusé": return "danger";
+    default: return null;
   }
 };
 
-async function mesObjets() {
-  if (!store.authenticated) {
-    completed.value = true;
-    return;
-  }
-  completed.value = false;
-  try {
-    me.value = await directus.request(readMe({
-      fields: [
-        "objet.*",
-        "objet.brand.nom",
-        "objet.reservation.user_created.first_name",
-        "objet.reservation.user_created.last_name",
-        "objet.reservation.user_created.telephone",
-        "objet.reservation.*",
-      ],
-    }));
-    reservation.value = me.value.objet;
-  } catch (e) {
-    console.error(e);
-  }
-  completed.value = true;
-}
-
 const checkAvailabilityForToday = (reservations) => {
-  const currentDate = new Date().toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
+  const currentDate = new Date().toISOString().split("T")[0];
 
   for (const reservation of reservations) {
     const { debut, fin } = reservation;
@@ -230,14 +188,52 @@ const checkAvailabilityForToday = (reservations) => {
         reservation.statut == "En attente"
       ) {
         return false;
-      } // Overlapping reservation found}
-      return true; // Overlapping reservation found but not validated
+      }
+      return true;
     }
   }
-  return true; // No overlapping reservation for today found
+  return true;
 };
 
-onMounted(() => {
-  mesObjets();
-});
+async function mesObjets() {
+  // Don't fetch if still loading auth
+  if (loading.value) return;
+
+  if (!isAuthenticated.value) {
+    completed.value = true;
+    return;
+  }
+
+  completed.value = false;
+  error.value = null;
+
+  try {
+    const userData = await directus.request(readMe({
+      fields: [
+        "objet.*",
+        "objet.brand.nom",
+        "objet.reservation.user_created.first_name",
+        "objet.reservation.user_created.last_name",
+        "objet.reservation.user_created.telephone",
+        "objet.reservation.*",
+      ],
+    }));
+
+    me.value = userData;
+    reservation.value = me.value.objet;
+
+  } catch (e) {
+    console.error("Error fetching user objects:", e);
+    error.value = e.message || JSON.stringify(e);
+  }
+  completed.value = true;
+}
+
+// Watch for auth changes
+watch([isAuthenticated, loading], () => {
+  if (!loading.value) {
+    mesObjets();
+  }
+}, { immediate: true });
+
 </script>

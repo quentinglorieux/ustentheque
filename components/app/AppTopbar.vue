@@ -51,14 +51,13 @@
 
 <script setup>
 import { readMe } from "@directus/sdk";
-import { useAuthStore } from "@/stores/auth";
 import { useDirectusBase } from "@/composables/useDirectusBase";
 
 const { layoutConfig, onMenuToggle, contextPath } = useLayout();
+const { user, isAuthenticated } = useUser();
 
-const store = useAuthStore();
-const first_name = computed(() => store.first_name);
-const avatar = computed(() => store.avatar);
+const first_name = computed(() => user.value?.first_name);
+const avatar = computed(() => user.value?.avatar);
 
 const version = "2.0.beta.0";
 
@@ -69,21 +68,13 @@ const router = useRouter();
 const directusBase = useDirectusBase();
 const directus = useDirectus();
 
-const me = ref("");
+// No need for local myProfile fetch if app.vue does it, 
+// but we can keep it if we want to refresh on mount or just rely on 'user' state.
+// Since 'user' state is reactive and populated by app.vue, we can just use it.
 
-async function myProfile() {
-  if (store.authenticated) {
-    try {
-      me.value = await directus.request(readMe());
-    } catch (e) {
-      console.error("Error fetching profile", e);
-    }
-  }
-}
 
 onMounted(() => {
   bindOutsideClickListener();
-  myProfile();
 });
 
 onBeforeUnmount(() => {

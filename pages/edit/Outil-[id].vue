@@ -1,7 +1,7 @@
 <template>
   <div class="grid">
     <div class="mt-2 col-12 md:col-9">
-      <div v-if="!store.authenticated">
+      <div v-if="!isAuthenticated">
         <div>Vous n'etes pas connécté.</div>
         <NuxtLink to="/auth/login">
           <Button label="Connectez vous ici" icon="pi pi-sign-in" severity="info"
@@ -9,7 +9,7 @@
         </NuxtLink>
       </div>
 
-      <div v-if="store.authenticated" class="card p-4 sm:p-6">
+      <div v-if="isAuthenticated" class="card p-4 sm:p-6">
         <h4 class="text-xl sm:text-2xl font-semibold mb-4">
           {{
             addMode
@@ -82,7 +82,7 @@
       </div>
     </div>
 
-    <div v-if="store.authenticated" class="col-12 md:col-3">
+    <div v-if="isAuthenticated" class="col-12 md:col-3">
       <!-- Image -->
 
       <div class="card flex flex-col content-center">
@@ -113,7 +113,6 @@
 import { readItem, createItem, updateItem, deleteItem, readItems, uploadFiles } from "@directus/sdk";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
-import { useAuthStore } from "@/stores/auth";
 import { ref, onMounted } from "vue";
 import { useDirectusBase } from "@/composables/useDirectusBase";
 
@@ -122,7 +121,7 @@ const directusBase = useDirectusBase();
 const directus = useDirectus();
 const toast = useToast();
 const confirm = useConfirm();
-const store = useAuthStore();
+const { user, isAuthenticated } = useUser();
 const route = useRoute();
 
 // Form-related data
@@ -164,7 +163,7 @@ async function createOneObjet() {
       duree_max: objet.value.duree_max,
       consommable: objet.value.consommable,
       conseils: objet.value.conseils,
-      proprietaire: store.me.id,
+      proprietaire: user.value.id,
       photo: image.value,
     }));
     toast.add({ severity: "success", summary: "Objet ajouté", life: 3000 });

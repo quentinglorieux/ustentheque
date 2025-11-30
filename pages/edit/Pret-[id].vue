@@ -102,11 +102,10 @@
 <script setup>
 import { readItem, updateItem } from "@directus/sdk";
 import { useToast } from "primevue/usetoast";
-import { useAuthStore } from "@/stores/auth";
 import { formatDate, isDateInPast } from '@/utils/dateUtils';
 import { useDirectusBase } from "@/composables/useDirectusBase";
 
-const store = useAuthStore();
+const { user } = useUser();
 
 const toast = useToast();
 const directusBase = useDirectusBase();

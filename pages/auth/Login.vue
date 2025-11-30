@@ -1,44 +1,20 @@
 <script setup>
 import { readMe, readItems, passwordRequest } from "@directus/sdk";
-import { useAuthStore } from "@/stores/auth";
 import { useToast } from "primevue/usetoast";
 import { useDirectusBase } from "@/composables/useDirectusBase";
 
-const store = useAuthStore();
 const toast = useToast();
-
-const authenticated = computed(() => store.authenticated);
+const { login, logout, user, isAuthenticated } = useUser();
+const directus = useDirectus();
 
 const email = ref("");
 const password = ref("");
-const checked = ref(false);
-const token = ref();
-const me = ref();
-
-const directusBase = useDirectusBase();
-const directus = useDirectus();
 
 onMounted(() => {
-  checkLogin();
-  if (store.authenticated) {
-    myProfile();
+  if (isAuthenticated.value) {
     mesPrets();
   }
 });
-
-async function myProfile() {
-  try {
-    const profileData = await directus.request(readMe({ fields: ["*"] }));
-    me.value = profileData;
-    store.me = profileData;
-    store.first_name = profileData.first_name;
-    store.last_name = profileData.last_name;
-    store.id = profileData.id;
-    store.avatar = profileData.avatar;
-  } catch (e) {
-    console.error("Error fetching profile", e);
-  }
-}
 
 const resa = ref("");
 
@@ -57,59 +33,32 @@ async function mesPrets() {
       },
     }));
 
-    resa.value = result; // readItems returns array directly in v11 usually
+    resa.value = result;
 
-    const countValidatedItems = resa.value.reduce((count, obj) => {
+    const countValidatedItems = Array.isArray(resa.value) ? resa.value.reduce((count, obj) => {
       if (obj.statut === "En attente") {
         return count + 1;
       }
       return count;
-    }, 0);
+    }, 0) : 0;
 
-    store.resa = countValidatedItems;
+    // We can store this in a local ref or another state if needed, 
+    // but for now let's keep it local or use a simpler state if needed.
+    // store.resa = countValidatedItems; 
   } catch (e) {
     console.error("Error fetching loans", e);
   }
 }
 
-async function checkLogin() {
-  store.authenticated = false;
-  // In v11 with cookie mode, we can just try to fetch 'me' to check if logged in
-  try {
-    await directus.request(readMe({ fields: ['id'] }));
-    store.authenticated = true;
-    myProfile();
-    mesPrets();
-  } catch (e) {
-    // Not authenticated
-    console.log("Not authenticated");
-  }
-}
-
 async function logoutDirectus() {
-  try {
-    await directus.logout();
-  } catch (e) {
-    console.error("Logout error", e);
-  }
-  store.authenticated = false;
-  store.id = "";
-  store.first_name = "";
-  store.avatar = "";
-  store.resa = "";
-  store.me = {};
-  localStorage.clear();
-  localStorage.setItem("bgcolor", "red");
+  await logout();
 };
 
-
 async function loginDirectus() {
-  if (!authenticated.value) {
+  if (!isAuthenticated.value) {
     try {
-      await directus.login({ email: email.value, password: password.value });
-      store.authenticated = true;
-      console.log("log in");
-      myProfile();
+      await login(email.value, password.value);
+      console.log("log in success");
       mesPrets();
     } catch (e) {
       console.log("Invalid credentials", e);
@@ -125,20 +74,17 @@ async function loginDirectus() {
 }
 
 async function resetPasswordDirectus() {
-  // Check if the email field is empty
   if (!email.value || email.value.trim() === "") {
-    // Show a popup or toast if the email is empty
     toast.add({
       severity: "warn",
       summary: "Champ requis",
       detail: "Veuillez entrer votre adresse email.",
       life: 3000,
     });
-    return; // Stop execution if email is empty
+    return;
   }
 
   try {
-    // Query Directus to check if the email exists in the database
     const users = await directus.request(readItems("directus_users", {
       filter: {
         email: {
@@ -149,20 +95,17 @@ async function resetPasswordDirectus() {
     }));
 
     if (users.length === 0) {
-      // If no user is found, show an error message
       toast.add({
         severity: "error",
         summary: "Erreur",
         detail: `Aucun utilisateur trouvé avec l'adresse email ${email.value}.`,
         life: 3000,
       });
-      return; // Stop further execution
+      return;
     }
 
-    // If the email exists, proceed to send the password reset request
     await directus.request(passwordRequest(email.value));
 
-    // Show success toast with the destination email
     toast.add({
       severity: "success",
       summary: "Email envoyé",
@@ -170,7 +113,6 @@ async function resetPasswordDirectus() {
       life: 3000,
     });
   } catch (error) {
-    // Handle any errors during the request
     console.error(error);
     toast.add({
       severity: "error",
@@ -180,12 +122,10 @@ async function resetPasswordDirectus() {
     });
   }
 }
-
-
 </script>
 
 <template>
-  <div v-if="!store.authenticated" class="flex align-items-center justify-center overflow-hidden">
+  <div v-if="!isAuthenticated" class="flex align-items-center justify-center overflow-hidden">
     <div class="flex flex-column align-items-center justify-content-center">
       <div style="
           border-radius: 26px;
@@ -223,23 +163,20 @@ async function resetPasswordDirectus() {
       </div>
     </div>
   </div>
-  <div v-if="store.authenticated" class="p-4 sm:p-6">
-    <div class="block text-center" v-if="store.me.first_name">
+  <div v-if="isAuthenticated && user" class="p-4 sm:p-6">
+    <div class="block text-center" v-if="user.first_name">
       <div class="text-900 text-2xl sm:text-3xl font-medium mb-4 pt-6 sm:pt-10">
-        Bonjour {{ store.me.first_name }},
+        Bonjour {{ user.first_name }},
       </div>
-      <div class="text-700 text-lg sm:text-xl font-medium mb-3">
+      <div class="text-700 text-lg sm:text-xl font-medium mb-3" v-if="user.objet">
         Vous avez
-        <span class="text-green-500 font-bold">{{ store.me.objet.length }}</span>
-        objet{{ store.me.objet.length > 1 ? 's' : '' }} en prêt sur le site. Merci.
+        <span class="text-green-500 font-bold">{{ user.objet.length }}</span>
+        objet{{ user.objet.length > 1 ? 's' : '' }} en prêt sur le site. Merci.
       </div>
       <div class="text-700 text-lg sm:text-xl font-medium mb-3">
         <NuxtLink to="/mesprets" class="text-orange-500 font-semibold underline">
-          Vous avez
-          <span class="text-orange-500 font-bold">
-            {{ store.resa > 0 ? store.resa : 0 }}
-          </span>
-          demande{{ store.resa > 1 ? 's' : '' }} en attente. Cliquez ici pour les consulter.
+          <!-- TODO: Handle 'resa' count if needed, or remove if not critical for this view -->
+          Cliquez ici pour consulter vos demandes.
         </NuxtLink>
       </div>
       <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 mt-4">

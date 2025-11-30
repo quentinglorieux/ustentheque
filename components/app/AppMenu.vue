@@ -1,13 +1,12 @@
 <script setup>
 import AppMenuItem from "./AppMenuItem.vue";
-import { useAuthStore } from "@/stores/auth";
-const store = useAuthStore();
-const resa = computed(() => store.resa);
+
+const resa = computed(() => 0); // Placeholder, as resa count was removed from store
 
 
 
 const model = ref([
-{
+  {
     label: "Home",
     items: [{ label: "Dashboard", icon: "pi pi-fw pi-home", to: "/" }],
   },
@@ -45,34 +44,28 @@ const model = ref([
         icon: "pi pi-fw pi-user",
         to: "/profil",
       },
-      
+
     ],
   },
   {
     label: "Admin",
     items: [{
-        label: "Connexion",
-        icon: "pi pi-fw pi-sign-in",
-        to: "/auth/login",
-      },],
+      label: "Connexion",
+      icon: "pi pi-fw pi-sign-in",
+      to: "/auth/login",
+    },],
   },
-  
+
 ]);
 </script>
 
 <template>
   <ul class="layout-menu">
     <template v-for="(item, i) in model" :key="item">
-      <app-menu-item
-        v-if="!item.separator"
-        :item="item"
-        :index="i"
-      ></app-menu-item>
+      <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
       <li v-if="item.separator" class="menu-separator"></li>
     </template>
   </ul>
 </template>
 
 <style lang="scss" scoped></style>
-
-

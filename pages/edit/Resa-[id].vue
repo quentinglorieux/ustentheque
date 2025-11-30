@@ -62,11 +62,10 @@
 <script setup>
 import { readItem, readItems, createItem, updateItem, deleteItem } from "@directus/sdk";
 import { useToast } from "primevue/usetoast";
-import { useAuthStore } from "@/stores/auth";
 import { useDirectusBase } from "@/composables/useDirectusBase";
 
-const store = useAuthStore();
-const id = computed(() => store.id);
+const { user } = useUser();
+const id = computed(() => user.value?.id);
 
 const toast = useToast();
 const directusBase = useDirectusBase();

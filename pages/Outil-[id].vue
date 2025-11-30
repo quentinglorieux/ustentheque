@@ -99,14 +99,12 @@
 <script setup>
 import { readItem, createItem } from "@directus/sdk";
 import { useToast } from "primevue/usetoast";
-import { useAuthStore } from "@/stores/auth";
 import { useDirectusBase } from "@/composables/useDirectusBase";
 
 const route = useRoute();
 const toast = useToast();
 
-const store = useAuthStore();
-const authenticated = computed(() => store.authenticated);
+const { isAuthenticated } = useUser();
 
 const directusBase = useDirectusBase();
 const directus = useDirectus();

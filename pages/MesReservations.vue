@@ -86,12 +86,11 @@
 
 <script setup>
 import { readItems, deleteItem } from "@directus/sdk";
-import { useAuthStore } from "@/stores/auth";
 import { formatDate } from "@/utils/dateUtils";
 import { useConfirm } from "primevue/useconfirm";
 import { useDirectusBase } from "@/composables/useDirectusBase";
 
-const store = useAuthStore();
+const { isAuthenticated } = useUser();
 const directusBase = useDirectusBase();
 const directus = useDirectus();
 const resa = ref("");
@@ -99,9 +98,9 @@ const completed = ref(false);
 const confirm = useConfirm();
 
 async function mesResa() {
-  if (!store.authenticated) {
+  if (!isAuthenticated.value) {
     completed.value = true;
-    resa.store = '';
+    resa.value = '';
     return;
   }
   completed.value = false;

@@ -68,7 +68,8 @@
             </Column>
 
             <template #footer>
-              Vous avez {{ resa ? store.resa : 0 }} pret(s) en attente.
+              Vous avez {{resa && resa.data ? resa.data.filter(r => r.statut === 'En attente').length : 0}} pret(s) en
+              attente.
             </template>
           </DataTable>
         </div>
@@ -83,20 +84,22 @@
 
 <script setup>
 import { readItems, deleteItem } from "@directus/sdk";
-import { useAuthStore } from "@/stores/auth";
 import { formatDate } from "@/utils/dateUtils";
 import { useConfirm } from "primevue/useconfirm";
 import { useDirectusBase } from "@/composables/useDirectusBase";
 
 
-const store = useAuthStore();
+const { isAuthenticated } = useUser();
 const directusBase = useDirectusBase();
 const directus = useDirectus();
 const resa = ref("");
 const completed = ref(false);
 
 async function mesPrets() {
-  if (!store.authenticated) {
+  if (!isAuthenticated.value) {
+    // If not authenticated, we can stop here. 
+    // Ideally we might want to redirect or show a message, 
+    // but the template handles the !resa.data case or we can set completed=true
     completed.value = true;
     return;
   }
@@ -116,16 +119,10 @@ async function mesPrets() {
         },
       },
     }));
-    resa.value = { data: result }; // Maintain structure for template compatibility
+    resa.value = { data: result };
 
-    const countValidatedItems = result.reduce((count, obj) => {
-      if (obj.statut === "En attente") {
-        return count + 1;
-      }
-      return count;
-    }, 0);
+    // countValidatedItems logic was updating store.resa, we can remove it or keep it local if needed
 
-    store.resa = countValidatedItems;
   } catch (e) {
     console.error("Error fetching loans", e);
   }

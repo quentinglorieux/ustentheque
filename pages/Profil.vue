@@ -90,21 +90,24 @@
 </template>
 
 <script setup>
-import { useAuthStore } from "@/stores/auth";
 import { updateMe, uploadFiles } from "@directus/sdk";
 import { useToast } from "primevue/usetoast";
 import { useDirectusBase } from "@/composables/useDirectusBase";
 
-const store = useAuthStore();
+const { user, logout } = useUser();
 const toast = useToast();
 
-const me = computed(() => store.me);
+const me = computed(() => user.value || {});
 const directusBase = useDirectusBase();
 const directus = useDirectus();
 
 // uploadFile
 const image = ref("");
-image.value = me.value.avatar;
+watchEffect(() => {
+  if (user.value?.avatar) {
+    image.value = user.value.avatar;
+  }
+});
 
 const uploadFile = async (event) => {
   let form = new FormData();
@@ -113,6 +116,14 @@ const uploadFile = async (event) => {
   try {
     const im = await directus.request(uploadFiles(form));
     image.value = im.id;
+    // Update the user avatar in the backend immediately or wait for profile update?
+    // Usually profile update handles it, but here we just set image.value.
+    // If we want to save avatar immediately:
+    await directus.request(updateMe({ avatar: im.id }));
+    // Refresh user state
+    // fetchUser(); // We might need to expose fetchUser or just update local state
+    if (user.value) user.value.avatar = im.id;
+
     console.log(image.value);
   } catch (e) {
     onFailed();
@@ -135,7 +146,7 @@ async function updateProfile() {
       last_name: me.value.last_name,
       telephone: me.value.telephone,
       location: me.value.location,
-      //   photo: image.value,
+      // photo: image.value, // If photo is separate from avatar
     }));
     toast.add({
       severity: "success",
@@ -155,19 +166,9 @@ async function updateProfile() {
 }
 
 async function logoutDirectus() {
-  try {
-    await directus.logout();
-  } catch (e) {
-    console.error("Logout error", e);
-  }
-  store.authenticated = false;
-  store.id = "";
-  store.first_name = "";
-  store.avatar = "";
-  store.resa = "";
-  store.me = {};
-  localStorage.clear();
-  localStorage.setItem("bgcolor", "red");
+  await logout();
+  // Redirect to home or login page is handled by logout usually or we can do it here
+  navigateTo('/');
 };
 
 </script>
