@@ -125,90 +125,110 @@ async function resetPasswordDirectus() {
 </script>
 
 <template>
-  <div v-if="!isAuthenticated" class="flex align-items-center justify-center overflow-hidden">
-    <div class="flex flex-column align-items-center justify-content-center">
-      <div style="
-          border-radius: 26px;
-          padding: 0.3rem;
-          margin-top: 50px;
-          background: linear-gradient(
-            180deg,
-            var(--primary-color) 10%,
-            rgba(33, 150, 243, 0) 30%
-          );
-        ">
-        <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius: 53px">
-          <div class="text-center mb-5">
-            <div class="text-900 text-3xl font-medium mb-3">
-              Larchant Outilthèque
+  <div class="min-h-screen flex  justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <!-- Login Form -->
+    <div v-if="!isAuthenticated" class="max-w-md w-full space-y-8">
+      <div>
+        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          Larchant Outilthèque
+        </h2>
+        <p class="mt-2 text-center text-sm text-gray-600">
+          Connectez-vous pour gérer vos outils et réservations
+        </p>
+      </div>
+      <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div class="space-y-6">
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700">
+              Adresse Email
+            </label>
+            <div class="mt-1">
+              <InputText id="email" v-model="email" type="email" autocomplete="email" required
+                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
             </div>
           </div>
 
           <div>
-            <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
-            <InputText id="email1" type="text" placeholder="Email" class="w-full md:w-30rem mb-5" v-model="email" />
-
-            <label for="password1" class="block text-900 font-medium text-xl mb-2">Mot de Passe</label>
-            <Password id="password1" v-model="password" placeholder="Mot de Passe" :toggleMask="false"
-              class="w-full mb-3" inputClass="w-full" :feedback="false"></Password>
-
-            <div class="flex align-items-center justify-content-between mb-5 gap-5">
-              <a @click="resetPasswordDirectus" class="font-medium no-underline ml-2 text-right cursor-pointer"
-                style="color: var(--primary-color)">Mot de passe oublié?</a>
+            <label for="password" class="block text-sm font-medium text-gray-700">
+              Mot de passe
+            </label>
+            <div class="mt-1">
+              <Password id="password" v-model="password" :feedback="false" :toggleMask="true"
+                inputClass="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                class="w-full" />
             </div>
+          </div>
 
-            <Button @click="loginDirectus()" label="Connexion" class="w-full p-3 text-xl"></Button>
+          <div class="flex items-center justify-end">
+            <div class="text-sm">
+              <a @click="resetPasswordDirectus"
+                class="font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer">
+                Mot de passe oublié ?
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <Button @click="loginDirectus()" label="Se connecter" icon="pi pi-sign-in"
+              class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Authenticated View -->
+    <div v-else class="max-w-4xl w-full space-y-8">
+      <div class="bg-white shadow rounded-lg p-6 sm:p-10">
+        <div class="text-center">
+          <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+            Bonjour {{ user?.first_name }} !
+          </h2>
+          <p class="mt-4 text-lg text-gray-500">
+            Bienvenue sur votre espace personnel.
+          </p>
+        </div>
+
+        <div class="mt-10">
+          <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <NuxtLink to="/" class="w-full sm:w-auto">
+              <Button label="Tableau de bord" icon="pi pi-home"
+                class="w-full justify-center py-3 px-6 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10" />
+            </NuxtLink>
+            <NuxtLink to="/edit/outil-add" class="w-full sm:w-auto">
+              <Button label="Ajouter un outil" icon="pi pi-plus"
+                class="w-full justify-center py-3 px-6 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 md:py-4 md:text-lg md:px-10" />
+            </NuxtLink>
+            <Button @click="logoutDirectus()" label="Déconnexion" icon="pi pi-sign-out" severity="danger" outlined
+              class="w-full sm:w-auto justify-center py-3 px-6 border border-red-300 text-base font-medium rounded-md text-red-700 bg-white hover:bg-red-50 md:py-4 md:text-lg md:px-10" />
+          </div>
+        </div>
+
+        <div class="mt-8 border-t border-gray-200 pt-8">
+          <div class="rounded-md bg-blue-50 p-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <i class="pi pi-info-circle text-blue-400" aria-hidden="true"></i>
+              </div>
+              <div class="ml-3 flex-1 md:flex md:justify-between">
+                <p class="text-sm text-blue-700">
+                  Vous avez actuellement <span class="font-bold">{{ user?.objet?.length || 0 }}</span> outil(s)
+                  partagé(s).
+                </p>
+                <p class="mt-3 text-sm md:mt-0 md:ml-6">
+                  <NuxtLink to="/mesprets" class="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600">
+                    Voir mes demandes <span aria-hidden="true">&rarr;</span>
+                  </NuxtLink>
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div v-if="isAuthenticated && user" class="p-4 sm:p-6">
-    <div class="block text-center" v-if="user.first_name">
-      <div class="text-900 text-2xl sm:text-3xl font-medium mb-4 pt-6 sm:pt-10">
-        Bonjour {{ user.first_name }},
-      </div>
-      <div class="text-700 text-lg sm:text-xl font-medium mb-3" v-if="user.objet">
-        Vous avez
-        <span class="text-green-500 font-bold">{{ user.objet.length }}</span>
-        objet{{ user.objet.length > 1 ? 's' : '' }} en prêt sur le site. Merci.
-      </div>
-      <div class="text-700 text-lg sm:text-xl font-medium mb-3">
-        <NuxtLink to="/mesprets" class="text-orange-500 font-semibold underline">
-          <!-- TODO: Handle 'resa' count if needed, or remove if not critical for this view -->
-          Cliquez ici pour consulter vos demandes.
-        </NuxtLink>
-      </div>
-      <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 mt-4">
-        <NuxtLink to="/">
-          <Button label="Voir mon Dashboard"
-            class="w-full sm:w-auto p-3 text-lg sm:text-xl bg-blue-500 hover:bg-blue-700"></Button>
-        </NuxtLink>
-        <NuxtLink to="/edit/outil-add">
-          <Button label="Ajouter un objet"
-            class="w-full sm:w-auto p-3 text-lg sm:text-xl bg-green-500 hover:bg-green-700"></Button>
-        </NuxtLink>
-        <Button @click="logoutDirectus()" label="Se déconnecter"
-          class="w-full sm:w-auto p-3 text-lg sm:text-xl bg-red-300 hover:bg-red-500"></Button>
-      </div>
-    </div>
-  </div>
-
   <Toast />
 </template>
 
 <style scoped>
-.pi-eye {
-  transform: scale(1.6);
-  margin-right: 1rem;
-}
-
-.pi-eye-slash {
-  transform: scale(1.6);
-  margin-right: 1rem;
-}
-
-button {
-  border-radius: 8px;
-}
+/* Scoped styles can be removed as we are using Tailwind utility classes */
 </style>

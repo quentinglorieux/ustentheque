@@ -46,7 +46,13 @@
 
             <Column field="statut" header="Statut" sortable>
               <template #body="slotProps">
-                <Tag class="px-4 py-2 text-sm" :value="slotProps.data.statut" :severity="getStatus(slotProps.data)" />
+                <div class="flex align-items-center gap-2">
+                  <Tag class="px-4 py-2 text-sm" :value="slotProps.data.statut" :severity="getStatus(slotProps.data)" />
+                  <NuxtLink v-if="slotProps.data.statut === 'En attente'" :to="`/edit/pret-${slotProps.data.id}`">
+                    <Button label="Répondre" size="small"
+                      class="px-2 py-1.5 bg-indigo-500 text-white hover:bg-indigo-600" />
+                  </NuxtLink>
+                </div>
               </template>
             </Column>
 
@@ -60,9 +66,9 @@
               </template>
             </Column>
 
-            <Column header="Delete">
+            <Column header="Refuser">
               <template #body="slotProps">
-                <Button icon="pi pi-trash" class="p-button-sm p-button-rounded p-button-info"
+                <Button icon="pi pi-trash" class="p-button-lg p-button-rounded p-button-info"
                   @click="confirmDelete(slotProps.data.id)" />
               </template>
             </Column>
