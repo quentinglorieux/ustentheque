@@ -6,29 +6,17 @@
 
         <div v-if="completed">
           <div v-if="!me.objet">
-            <div>Vous n'etes pas connécté.</div> 
+            <div>Vous n'etes pas connécté.</div>
             <NuxtLink to="/auth/login">
-              <Button
-                label="Connectez vous ici"
-                icon="pi pi-sign-in"
-                severity="info"
-                class="font-bold mt-5 px-5 py-3 p-button-raised white-space-nowrap"
-              ></Button>
+              <Button label="Connectez vous ici" icon="pi pi-sign-in" severity="info"
+                class="font-bold mt-5 px-5 py-3 p-button-raised white-space-nowrap"></Button>
             </NuxtLink>
           </div>
 
-          <DataTable
-            v-if="me.objet"
-            :value="me.objet"
-            v-model:expandedRows="expandedRows"
-            sortField="nom"
-            :sortOrder="1"
-            tableStyle="min-width: 50rem"
-          >
+          <DataTable v-if="me.objet" :value="me.objet" v-model:expandedRows="expandedRows" sortField="nom"
+            :sortOrder="1" tableStyle="min-width: 50rem">
             <template #header>
-              <div
-                class="flex flex-wrap align-items-center justify-content-between gap-2"
-              >
+              <div class="flex flex-wrap align-items-center justify-content-between gap-2">
                 <span class="text-xl text-900 font-bold">Mes outils</span>
                 <div class="flex items-center gap-2">
                   Nouvel outil
@@ -42,10 +30,7 @@
             <Column field="nom" header="Objet" sortable>
               <template #body="slotProps">
                 <div>
-                  <NuxtLink
-                    :to="`/edit/outil-${slotProps.data.id}`"
-                    class="flex align-items-center gap-2"
-                  >
+                  <NuxtLink :to="`/edit/outil-${slotProps.data.id}`" class="flex align-items-center gap-2">
                     {{ slotProps.data.nom }}
                     <Button icon="pi pi-pencil" class="py-0" text rounded />
                   </NuxtLink>
@@ -68,28 +53,16 @@
 
             <Column field="etat" header="Etat" sortable>
               <template #body="slotProps">
-                <Rating
-                  :modelValue="convertToGrade(slotProps.data.etat)"
-                  readonly
-                  :cancel="false"
-                />
+                <Rating :modelValue="convertToGrade(slotProps.data.etat)" readonly :cancel="false" />
               </template>
             </Column>
 
             <Column field="dispo" header="Dispo" sortable>
               <template #body="slotProps">
-                <Tag
-                  v-if="!checkAvailabilityForToday(slotProps.data.reservation)"
-                  class="px-4 py-2"
-                  value="Reservé"
-                  severity="danger"
-                />
-                <Tag
-                  v-if="checkAvailabilityForToday(slotProps.data.reservation)"
-                  class="px-4 py-2"
-                  value="Disponible"
-                  severity="success"
-                />
+                <Tag v-if="!checkAvailabilityForToday(slotProps.data.reservation)" class="px-4 py-2" value="Reservé"
+                  severity="danger" />
+                <Tag v-if="checkAvailabilityForToday(slotProps.data.reservation)" class="px-4 py-2" value="Disponible"
+                  severity="success" />
               </template>
             </Column>
 
@@ -125,21 +98,15 @@
                   </Column>
                   <Column field="statut" header="Statut">
                     <template #body="slotProps">
-                      <Tag
-                        class="px-4 py-2 text-sm"
-                        :value="slotProps.data.statut"
-                        :severity="getSeverity(slotProps.data)"
-                      />
+                      <Tag class="px-4 py-2 text-sm" :value="slotProps.data.statut"
+                        :severity="getSeverity(slotProps.data)" />
                     </template>
                   </Column>
 
                   <Column header="Edit">
                     <template #body="slotProps">
                       <NuxtLink :to="`/edit/pret-${slotProps.data.id}`">
-                        <Button
-                          icon="pi pi-pencil"
-                          class="p-button-rounded p-button-secondary mr-1 mb-1"
-                        />
+                        <Button icon="pi pi-pencil" class="p-button-rounded p-button-secondary mr-1 mb-1" />
                       </NuxtLink>
                     </template>
                   </Column>
@@ -152,16 +119,14 @@
             </template>
           </DataTable>
         </div>
-        <div v-if="!completed"><ProgressSpinner /></div>
+        <div v-if="!completed">
+          <ProgressSpinner />
+        </div>
         <div v-if="!meStore">
           <div>Vous n'etes pas connécté.</div>
           <NuxtLink to="/auth/login">
-            <Button
-              label="Connectez vous ici"
-              icon="pi pi-sign-in"
-              severity="info"
-              class="font-bold mt-5 px-5 py-3 p-button-raised white-space-nowrap"
-            ></Button>
+            <Button label="Connectez vous ici" icon="pi pi-sign-in" severity="info"
+              class="font-bold mt-5 px-5 py-3 p-button-raised white-space-nowrap"></Button>
           </NuxtLink>
         </div>
       </div>
@@ -170,13 +135,13 @@
 </template>
 
 <script setup>
-import { Directus } from "@directus/sdk";
+import { readMe } from "@directus/sdk";
 import { useAuthStore } from "@/stores/auth";
 import { formatDate } from "@/utils/dateUtils";
 import { useDirectusBase } from "@/composables/useDirectusBase";
 
 const directusBase = useDirectusBase();
-const directus = new Directus(directusBase);
+const directus = useDirectus();
 
 const me = ref("");
 const reservation = ref("");
@@ -236,13 +201,22 @@ async function mesObjets() {
     return;
   }
   completed.value = false;
-  me.value = await directus.users.me.read({
-    fields: [
-      "objet.*,objet.brand.nom,objet.reservation.user_created.first_name,objet.reservation.user_created.last_name,objet.reservation.user_created.telephone,objet.reservation.*",
-    ],
-  });
+  try {
+    me.value = await directus.request(readMe({
+      fields: [
+        "objet.*",
+        "objet.brand.nom",
+        "objet.reservation.user_created.first_name",
+        "objet.reservation.user_created.last_name",
+        "objet.reservation.user_created.telephone",
+        "objet.reservation.*",
+      ],
+    }));
+    reservation.value = me.value.objet;
+  } catch (e) {
+    console.error(e);
+  }
   completed.value = true;
-  reservation.value = me.value.objet;
 }
 
 const checkAvailabilityForToday = (reservations) => {

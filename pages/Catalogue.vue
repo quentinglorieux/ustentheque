@@ -1,63 +1,57 @@
 <template>
     <div class="card">
-        <DataView v-if="Array.isArray(outils) && outils.length > 0" :value="outils" :layout="layout">
+        <DataView :value="outils" :layout="layout">
             <template #header>
-                <div class="flex justify-content-between"> 
-                    <div class="text-3xl">Catalogue</div>
-                    <div class="flex justify-content-end">
-                        <DataViewLayoutOptions v-model="layout" />
+                <div class="flex flex-column md:flex-row justify-content-between gap-2">
+                    <div class="flex flex-column md:flex-row gap-2">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search" />
+                            <InputText @keyup="getSearchData(searchKey)" @keyup.delete="getSearchData(searchKey)"
+                                v-model="searchKey" type="text" placeholder="Chercher..." class="p-inputtext-sm" />
+                        </span>
                     </div>
-                </div>
-                <div class="mb-2 lg:mb-0 mr-2">
-                    Recherche: <span class="p-input-icon-right">
-                        <InputText 
-                            @keyup="getSearchData(searchKey)"
-                            @keyup.delete="getSearchData(searchKey)" 
-                            v-model="searchKey" 
-                            type="text" 
-                            placeholder="Cherchez un objet" 
-                        />
-                        <i class="pi pi-search" />
-                    </span>
+                    <div class="flex justify-end">
+                        <SelectButton v-model="layout" :options="options" :allowEmpty="false">
+                            <template #option="{ option }">
+                                <i :class="[option === 'list' ? 'pi pi-bars' : 'pi pi-table']" />
+                            </template>
+                        </SelectButton>
+                    </div>
                 </div>
             </template>
 
             <template #list="slotProps">
-                <div v-if="slotProps.data" class="col-12">
-                    <div class="flex flex-column xl:flex-row xl:align-items-start p-3 gap-4">
-                        <NuxtLink :to="`/outil-${slotProps.data.id}`">
-                            <img 
-                                v-if="slotProps.data.photo" 
-                                class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem object-contain shadow-2 block xl:block mx-auto border-round" 
-                                :src="`${directusBase}/assets/${slotProps.data.photo}?fit=cover&width=300&height=300&quality=40`" 
-                                :alt="slotProps.data.nom || 'Image'" 
-                            />
-                            <div v-else class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem flex align-items-center justify-content-center bg-gray-200 border-round">
-                                Pas d'image
-                            </div>
-                        </NuxtLink>
-                        <div class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
-                            <div class="flex flex-column align-items-center sm:align-items-start gap-3">
-                                <NuxtLink :to="`/outil-${slotProps.data.id}`"> 
-                                    <div class="text-2xl font-bold text-900">{{ slotProps.data?.nom || 'Sans nom' }}</div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div v-for="(item, index) in slotProps.items" :key="index" class="h-full">
+                        <div
+                            class="flex flex-row items-start p-3 gap-4 border border-surface-200 dark:border-surface-700 rounded h-full bg-surface-0 dark:bg-surface-900 hover:bg-zinc-100 hover:cursor-pointer hover:border-zinc-300">
+                            <div class="w-32 shrink-0 relative">
+                                <NuxtLink :to="`/outil-${item.id}`">
+                                    <img v-if="item.photo" class="block rounded w-full object-cover aspect-square"
+                                        :src="`${directusBase}/assets/${item.photo?.id || item.photo}?fit=cover&width=200&height=200&quality=40`"
+                                        :alt="item.nom" />
+                                    <div v-else
+                                        class="block rounded w-full aspect-square bg-gray-200 flex align-items-center justify-content-center text-xs">
+                                        Pas d'image</div>
+
+                                    <div class="absolute bg-black/70 rounded-border" style="left: 4px; top: 4px">
+                                        <Tag :value="item.etat" :severity="getSeverity(item)" class="text-xs p-1"></Tag>
+                                    </div>
                                 </NuxtLink>
-                                <div class="flex flex-column align-items-start gap-3">
-                                    <span class="flex align-items-center gap-2">
-                                        <i class="pi pi-tag"></i>
-                                        <span>Marque:</span>
-                                        <span class="font-semibold">{{ slotProps.data.brand?.nom || 'N/A' }}</span>
-                                    </span>
-                                    <span class="flex align-items-center gap-2">
-                                        <i class="pi pi-info-circle"></i>
-                                        <span>Etat:</span> 
-                                        <Tag :value="slotProps.data.etat || 'N/A'" :severity="getSeverity(slotProps.data)"></Tag>
-                                    </span>
-                                </div>
                             </div>
-                            <div class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
-                                <span class="text-l font-semibold">Prix indicatif: {{ slotProps.data?.prix_indicatif || 0 }} €</span>
-                                <NuxtLink :to="`/outil-${slotProps.data.id}`">
-                                    <Button icon="pi pi-plus" rounded :disabled="slotProps.data.etat === 'En panne'"></Button>
+                            <div class="flex flex-col justify-between flex-1 h-full gap-2">
+                                <NuxtLink :to="`/outil-${item.id}`">
+                                    <div>
+                                        <span class="font-bold text-surface-500 dark:text-surface-400 text-sm">{{
+                                            item.brand?.nom || 'Sans marque' }}</span>
+                                        <div class="text-base font-medium mt-1 line-clamp-2 w-24">{{ item.nom }}</div>
+                                    </div>
+                                    <div class="flex flex-col gap-2 mt-auto">
+                                        <div class="flex justify-content-between items-center">
+                                            <span class="text-lg font-semibold">{{ item.prix_indicatif }} €</span>
+
+                                        </div>
+                                    </div>
                                 </NuxtLink>
                             </div>
                         </div>
@@ -66,35 +60,45 @@
             </template>
 
             <template #grid="slotProps">
-                <div v-if="slotProps.data" class="col-12 sm:col-6 lg:col-4 xl:col-3 p-2">
-                    <div class="p-4 border-1 surface-border surface-card border-round">
-                        <div class="flex flex-wrap align-items-center justify-content-between gap-2">
-                            <div class="flex align-items-center gap-2">
-                                <i class="pi pi-tag"></i>
-                                <span>Marque:</span>
-                                <span class="font-semibold">{{ slotProps.data.brand?.nom || 'N/A' }}</span>
-                            </div>
-                            <Tag :value="slotProps.data.etat || 'N/A'" :severity="getSeverity(slotProps.data)"></Tag>
-                        </div>
-                        <div class="flex flex-column align-items-center gap-3 py-5">
-                            <NuxtLink :to="`/outil-${slotProps.data.id}`">
-                                <img 
-                                    v-if="slotProps.data.photo" 
-                                    class="w-80 h-60 object-contain border-round" 
-                                    :src="`${directusBase}/assets/${slotProps.data.photo}?height=300&quality=40`" 
-                                    :alt="slotProps.data.nom || 'Image'" 
-                                />
-                                <div v-else class="w-80 h-60 flex align-items-center justify-content-center bg-gray-200 border-round">
-                                    Pas d'image
+                <div class="grid grid-cols-12 gap-2">
+                    <div v-for="(item, index) in slotProps.items" :key="index"
+                        class="col-span-12 sm:col-span-6 md:col-span-4 lg:col-span-3 xl:col-span-2 p-1 mx-auto">
+                        <div
+                            class="p-2 border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 rounded flex flex-col">
+                            <div class="bg-surface-50 flex justify-center rounded p-2 mx-auto">
+                                <div class="relative mx-auto">
+                                    <NuxtLink :to="`/outil-${item.id}`">
+                                        <img v-if="item.photo" class="rounded w-full"
+                                            :src="`${directusBase}/assets/${item.photo?.id || item.photo}?fit=cover&width=300&height=300&quality=40`"
+                                            :alt="item.nom" style="max-width: 200px" />
+                                        <div v-else
+                                            class="rounded w-full h-8rem bg-gray-200 flex align-items-center justify-content-center text-xs"
+                                            style="max-width: 300px">Pas d'image</div>
+                                    </NuxtLink>
+                                    <div class="absolute bg-black/70 rounded-border" style="left: 4px; top: 4px">
+                                        <Tag :value="item.etat" :severity="getSeverity(item)" class="text-xs p-1"></Tag>
+                                    </div>
                                 </div>
-                            </NuxtLink>
-                            <div class="text-2xl font-bold">{{ slotProps.data?.nom || 'Sans nom' }}</div>
-                        </div>
-                        <div class="flex align-items-center justify-content-between">
-                            <span class="text-m font-semibold">Prix indicatif: {{ slotProps.data?.prix_indicatif || 0 }} €</span>
-                            <NuxtLink :to="`/outil-${slotProps.data.id}`">
-                                <Button icon="pi pi-plus" rounded :disabled="slotProps.data.etat === 'En panne'"></Button>
-                            </NuxtLink>
+                            </div>
+                            <div class="pt-2">
+                                <div class="flex flex-row justify-between items-start gap-1">
+                                    <div>
+                                        <span class="font-bold text-surface-500 dark:text-surface-400 text-sm">{{
+                                            item.brand?.nom || 'Sans marque' }}</span>
+                                        <div class="text-base font-medium mt-1">{{ item.nom }}</div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-content-between gap-2 mt-2">
+                                    <span class="text-lg font-semibold">{{ item.prix_indicatif }} €</span>
+                                    <div class="flex gap-2 ">
+                                        <NuxtLink :to="`/outil-${item.id}`" class="flex-auto">
+                                            <Button icon="pi pi-eye" label="Voir" size="medium"
+                                                :disabled="item.etat === 'En panne'"
+                                                class=" px-2 py-1 whitespace-nowrap bg-indigo-500 text-white"></Button>
+                                        </NuxtLink>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -106,113 +110,60 @@
                 </div>
             </template>
         </DataView>
-
-        <div v-else-if="outils === ''" class="p-4 text-center">
-            <i class="pi pi-spin pi-spinner text-4xl"></i>
-            <p class="mt-3">Chargement du catalogue...</p>
-        </div>
-
-        <div v-else class="p-4 text-center text-500">
-            Aucun outil disponible
-        </div>
     </div>
-
-    <div class="flex gap-10 justify-content-between">
-
-  <!-- 
-<div class="hidden sm:block">
-ou commencez à taper pour chercher : <AutoComplete 
-placeholder="Cherchez un objet" 
-id="dd" 
-:dropdown="true" 
-:multiple="false" 
-v-model="selectedAutoValue" 
-:suggestions="suggestions" 
-@complete="searchOutil($event)" 
-@item-select="getSearchData(selectedAutoValue.nom)"
-@clear="getAllData()"
-field="nom" />  
-</div>-->
-</div>
-
 </template>
 
 <script setup>
-import ProductService from '@/service/ProductService';
+import { onMounted, ref } from 'vue';
+import { readItems } from '@directus/sdk';
 import { useDirectusBase } from '@/composables/useDirectusBase';
-const productService = new ProductService();
+
 const directusBase = useDirectusBase();
-
-onMounted(() => {
-    productService.getTools().then((data) => {
-        const toolsData = Array.isArray(data) ? data : [];
-        outils.value = toolsData;
-        fullList.value = toolsData;
-    }).catch((error) => {
-        console.error('Error loading tools:', error);
-        outils.value = [];
-        fullList.value = [];
-    });
-});
-
-
+const directus = useDirectus();
 
 const layout = ref('grid');
+const options = ref(['list', 'grid']);
 const outils = ref([]);
 const fullList = ref([]);
 const searchKey = ref('');
 
-const selectedAutoValue = ref(null);
-const suggestions = ref([]);
+const fetchTools = async (filter = {}) => {
+    try {
+        const items = await directus.request(readItems('objet', {
+            filter: filter,
+            limit: -1,
+            fields: ['*.*']
+        }));
 
+        outils.value = Array.isArray(items) ? items : [];
 
+        if (Object.keys(filter).length === 0) {
+            fullList.value = outils.value;
+        }
+    } catch (error) {
+        console.error('Error loading tools:', error);
+    }
+};
 
-const getSearchData = (a) => {
-    if (a) {
-        productService.getToolsFilter(a).then((data) => {
-            outils.value = Array.isArray(data) ? data : [];
-        }).catch((error) => {
-            console.error('Error fetching filtered tools:', error);
-            outils.value = [];
+onMounted(() => {
+    fetchTools();
+});
+
+const getSearchData = (query) => {
+    if (query) {
+        fetchTools({
+            nom: {
+                _contains: query
+            }
         });
     } else {
-        productService.getTools().then((data) => {
-            outils.value = Array.isArray(data) ? data : [];
-        }).catch((error) => {
-            console.error('Error fetching tools:', error);
-            outils.value = [];
-        });
+        fetchTools();
     }
 }
 
-const getAllData = () => {
-    productService.getTools().then((data) => {
-        outils.value = Array.isArray(data) ? data : [];
-    }).catch((error) => {
-        console.error('Error fetching tools:', error);
-        outils.value = [];
-    });
-    searchKey.value = '';
-}
-
-const searchOutil = (event) => {
-    setTimeout(() => {
-        if (!event.query.trim().length) {
-            suggestions.value = Array.isArray(fullList.value) ? [...fullList.value] : [];
-        } else {
-            suggestions.value = Array.isArray(fullList.value) 
-                ? fullList.value.filter((outil) => {
-                    return outil?.nom?.toLowerCase().startsWith(event.query.toLowerCase());
-                })
-                : [];
-        }
-    }, 250);
-};
-
-
 const getSeverity = (outil) => {
     if (!outil || !outil.etat) return null;
-    
+
     switch (outil.etat) {
         case 'Neuf':
         case 'Excellent':
@@ -227,5 +178,4 @@ const getSeverity = (outil) => {
             return null;
     }
 }
-
 </script>

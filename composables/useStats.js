@@ -1,10 +1,8 @@
-import { Directus } from "@directus/sdk";
-import { useDirectusBase } from "@/composables/useDirectusBase";
+import { readItems } from "@directus/sdk";
 import { ref } from "vue";
 
 export const useStats = () => {
-    const directusBase = useDirectusBase();
-    const directus = new Directus(directusBase);
+    const directus = useDirectus();
 
     const userBorrowed = ref(0);
     const userLent = ref(0);
@@ -55,17 +53,17 @@ export const useStats = () => {
     const fetchUserStats = async (userId) => {
         try {
             // Fetch total borrowed items for the user
-            const borrowedResponse = await directus.items("reservation").readByQuery({
+            const borrowedResponse = await directus.request(readItems("reservation", {
                 filter: {
                     user_created: {
                         _eq: userId,
                     },
                 },
-            });
-            userBorrowed.value = borrowedResponse.data.length;
+            }));
+            userBorrowed.value = borrowedResponse.length;
 
             // Fetch total lent items by the user
-            const lentResponse = await directus.items("reservation").readByQuery({
+            const lentResponse = await directus.request(readItems("reservation", {
                 filter: {
                     objet: {
                         proprietaire: {
@@ -73,25 +71,25 @@ export const useStats = () => {
                         },
                     },
                 },
-            });
-            userLent.value = lentResponse.data.length;
+            }));
+            userLent.value = lentResponse.length;
 
             // Fetch total items owned by the user
-            const totalItemsResponse = await directus.items("objet").readByQuery({
+            const totalItemsResponse = await directus.request(readItems("objet", {
                 filter: {
                     proprietaire: {
                         _eq: userId,
                     },
                 },
-            });
-            totalItems.value = totalItemsResponse.data.length;
+            }));
+            totalItems.value = totalItemsResponse.length;
 
             // Populate activityChartData with real data
-            populateChartData(borrowedResponse.data, lentResponse.data);
+            populateChartData(borrowedResponse, lentResponse);
 
             // Update the return percentage for the doughnut chart
-            const returnedItems = lentResponse.data.filter(item => item.statut === "Rendu").length;
-            returnChartData.value.datasets[0].data = [returnedItems, lentResponse.data.length - returnedItems];
+            const returnedItems = lentResponse.filter(item => item.statut === "Rendu").length;
+            returnChartData.value.datasets[0].data = [returnedItems, lentResponse.length - returnedItems];
         } catch (error) {
             console.error("Error fetching user stats:", error);
         }

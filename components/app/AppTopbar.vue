@@ -50,7 +50,7 @@
 <style lang="scss" scoped></style>
 
 <script setup>
-import { Directus } from "@directus/sdk";
+import { readMe } from "@directus/sdk";
 import { useAuthStore } from "@/stores/auth";
 import { useDirectusBase } from "@/composables/useDirectusBase";
 
@@ -60,20 +60,24 @@ const store = useAuthStore();
 const first_name = computed(() => store.first_name);
 const avatar = computed(() => store.avatar);
 
-const version = "1.3";
+const version = "2.0.beta.0";
 
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
 const router = useRouter();
 
 const directusBase = useDirectusBase();
-const directus = new Directus(directusBase);
+const directus = useDirectus();
 
 const me = ref("");
 
 async function myProfile() {
   if (store.authenticated) {
-    me.value = await directus.users.me.read();
+    try {
+      me.value = await directus.request(readMe());
+    } catch (e) {
+      console.error("Error fetching profile", e);
+    }
   }
 }
 

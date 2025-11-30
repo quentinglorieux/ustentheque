@@ -6,12 +6,8 @@
       <div v-if="!me.first_name" class="card">
         <div>Vous n'etes pas connécté.</div>
         <NuxtLink to="/auth/login">
-          <Button
-            label="Connectez vous ici"
-            icon="pi pi-sign-in"
-            severity="info"
-            class="font-bold mt-5 px-5 py-3 p-button-raised white-space-nowrap"
-          ></Button>
+          <Button label="Connectez vous ici" icon="pi pi-sign-in" severity="info"
+            class="font-bold mt-5 px-5 py-3 p-button-raised white-space-nowrap"></Button>
         </NuxtLink>
       </div>
 
@@ -43,39 +39,24 @@
           <Divider />
 
           <h4>Mon compte</h4>
-          
+
           <div class="flex field col-6 md:col-6 p-inputgroup pb-3">
             <span class="p-inputgroup-addon">
               <i class="pi pi-at"></i>
             </span>
-            <InputText
-              placeholder="Email"
-              v-model="me.email"
-              id="email"
-              type="email"
-              disabled
-            />
+            <InputText placeholder="Email" v-model="me.email" id="email" type="email" disabled />
           </div>
 
           <div class="flex field col-6 md:col-6 p-inputgroup pb-3">
             <span class="p-inputgroup-addon">
               <i class="pi pi-lock"></i>
             </span>
-            <InputText
-              placeholder="Password"
-              v-model="me.password"
-              id="password"
-              type="password"
-            />
+            <InputText placeholder="Password" v-model="me.password" id="password" type="password" />
           </div>
 
           <div class="field col-8 md:col-6 md:col-offset-3">
             <div class="flex gap-2">
-              <Button
-                label="Mettre à jour"
-                class="w-full p-3 text-xl"
-                @click="updateProfile()"
-              ></Button>
+              <Button label="Mettre à jour" class="w-full p-3 text-xl" @click="updateProfile()"></Button>
             </div>
           </div>
         </div>
@@ -87,46 +68,30 @@
         <Toast />
         <h4 class="text-center">Ma photo</h4>
         <div v-if="me.avatar" class="flex justify-center">
-          <img
-            class="object-cover rounded-full mb-10"
-            :src="`https://bibob.rubidiumweb.fr/assets/${image}?fit=cover&width=300&height=300&quality=50`"
-          />
+          <img class="object-cover rounded-full mb-10"
+            :src="`https://bibob.rubidiumweb.fr/assets/${image}?fit=cover&width=300&height=300&quality=50`" />
         </div>
         <div v-else class="flex justify-center">
-          <img
-            class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem object-contain block xl:block border-round"
-            :src="`https://bibob.rubidiumweb.fr/assets/7ed6273f-9add-4257-b546-d99af9a3505a.png?fit=cover&width=300&height=300&quality=50`"
-          />
+          <img class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem object-contain block xl:block border-round"
+            :src="`https://bibob.rubidiumweb.fr/assets/7ed6273f-9add-4257-b546-d99af9a3505a.png?fit=cover&width=300&height=300&quality=50`" />
         </div>
 
-       
 
-        <FileUpload
-          class="flex justify-center mx-1"
-          v-model="selectedFile"
-          name="file"
-          :url="`https://bibob.rubidiumweb.fr/files`"
-          mode="basic"
-          accept=".png,.jpg,.jpeg"
-          maxFileSize="2000000"
-          chooseLabel="Modifier"
-          :withCredentials="true"
-          @select="uploadFile"
-        />
+
+        <FileUpload class="flex justify-center mx-1" v-model="selectedFile" name="file"
+          :url="`https://bibob.rubidiumweb.fr/files`" mode="basic" accept=".png,.jpg,.jpeg" maxFileSize="2000000"
+          chooseLabel="Modifier" :withCredentials="true" @select="uploadFile" />
       </div>
 
-      <div  v-if="me.first_name" class="text-center">  <Button
-        @click="logoutDirectus()"
-        label="Se déconnecter"
-        class=" p-3 text-xl "
-      ></Button></div>
+      <div v-if="me.first_name" class="text-center"> <Button @click="logoutDirectus()" label="Se déconnecter"
+          class=" p-3 text-xl "></Button></div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { useAuthStore } from "@/stores/auth";
-import { Directus } from "@directus/sdk";
+import { updateMe, uploadFiles } from "@directus/sdk";
 import { useToast } from "primevue/usetoast";
 import { useDirectusBase } from "@/composables/useDirectusBase";
 
@@ -135,7 +100,7 @@ const toast = useToast();
 
 const me = computed(() => store.me);
 const directusBase = useDirectusBase();
-const directus = new Directus(directusBase);
+const directus = useDirectus();
 
 // uploadFile
 const image = ref("");
@@ -145,13 +110,13 @@ const uploadFile = async (event) => {
   let form = new FormData();
   form.append("file", event.files[0]);
 
-  await directus.files
-    .createOne(form)
-    .then((im) => {
-      image.value = im.id;
-      console.log(image.value);
-    })
-    .catch(() => onFailed());
+  try {
+    const im = await directus.request(uploadFiles(form));
+    image.value = im.id;
+    console.log(image.value);
+  } catch (e) {
+    onFailed();
+  }
 };
 const onFailed = () => {
   toast.add({
@@ -164,27 +129,37 @@ const onFailed = () => {
 
 // Mise a jour de l outil
 async function updateProfile() {
-  await directus.users.me
-    .update({
+  try {
+    await directus.request(updateMe({
       first_name: me.value.first_name,
       last_name: me.value.last_name,
       telephone: me.value.telephone,
       location: me.value.location,
       //   photo: image.value,
-    })
-    .then(() => {
-      toast.add({
-        severity: "success",
-        summary: "Merci",
-        detail: "Profil mis à jour.",
-        life: 3000,
-      });
+    }));
+    toast.add({
+      severity: "success",
+      summary: "Merci",
+      detail: "Profil mis à jour.",
+      life: 3000,
     });
+  } catch (e) {
+    console.error("Error updating profile", e);
+    toast.add({
+      severity: "error",
+      summary: "Erreur",
+      detail: "Mise à jour échouée",
+      life: 3000,
+    });
+  }
 }
 
 async function logoutDirectus() {
-  // AUTHENTICATION
-  // await directus.auth.logout({ refresh_token: token }).then("logged out");
+  try {
+    await directus.logout();
+  } catch (e) {
+    console.error("Logout error", e);
+  }
   store.authenticated = false;
   store.id = "";
   store.first_name = "";

@@ -1,5 +1,5 @@
 <script setup>
-import { Directus } from "@directus/sdk";
+import { readMe, readItems, passwordRequest } from "@directus/sdk";
 import { useAuthStore } from "@/stores/auth";
 import { useToast } from "primevue/usetoast";
 import { useDirectusBase } from "@/composables/useDirectusBase";
@@ -16,14 +16,7 @@ const token = ref();
 const me = ref();
 
 const directusBase = useDirectusBase();
-const directus = new Directus(directusBase, {
-  auth: {
-    mode: "cookie", // 'json' in Node.js
-    autoRefresh: true,
-    msRefreshBeforeExpires: 6000,
-    staticToken: "",
-  },
-});
+const directus = useDirectus();
 
 onMounted(() => {
   checkLogin();
@@ -34,62 +27,71 @@ onMounted(() => {
 });
 
 async function myProfile() {
-  const profileData = await directus.users.me.read({ fields: ["*"] });
-  me.value = profileData;
-  store.me = profileData;
-  store.first_name = profileData.first_name;
-  store.last_name = profileData.last_name;
-  store.id = profileData.id;
-  store.avatar = profileData.avatar;
+  try {
+    const profileData = await directus.request(readMe({ fields: ["*"] }));
+    me.value = profileData;
+    store.me = profileData;
+    store.first_name = profileData.first_name;
+    store.last_name = profileData.last_name;
+    store.id = profileData.id;
+    store.avatar = profileData.avatar;
+  } catch (e) {
+    console.error("Error fetching profile", e);
+  }
 }
 
 const resa = ref("");
 
 async function mesPrets() {
-  
-  resa.value = await directus.items("reservation").readByQuery({
-    fields: [
-      "id,debut,fin,statut,objet.id,objet.nom,objet.marque,objet.proprietaire",
-    ],
-    filter: {
-      objet: {
-        proprietaire: {
-          _eq: "$CURRENT_USER",
+  try {
+    const result = await directus.request(readItems("reservation", {
+      fields: [
+        "id", "debut", "fin", "statut", "objet.id", "objet.nom", "objet.marque", "objet.proprietaire",
+      ],
+      filter: {
+        objet: {
+          proprietaire: {
+            _eq: "$CURRENT_USER",
+          },
         },
       },
-    },
-  });
-  const countValidatedItems = resa.value.data.reduce((count, obj) => {
-    if (obj.statut === "En attente") {
-      return count + 1;
-    }
-    return count;
-  }, 0);
+    }));
 
-  store.resa = countValidatedItems;
+    resa.value = result; // readItems returns array directly in v11 usually
+
+    const countValidatedItems = resa.value.reduce((count, obj) => {
+      if (obj.statut === "En attente") {
+        return count + 1;
+      }
+      return count;
+    }, 0);
+
+    store.resa = countValidatedItems;
+  } catch (e) {
+    console.error("Error fetching loans", e);
+  }
 }
 
 async function checkLogin() {
   store.authenticated = false;
-  // AUTHENTICATION
-  await directus.auth.token
-    .then((a) => {
-      if (a) {
-        store.authenticated = true;
-        myProfile();
-        mesPrets();
-      }
-      //
-      token.value = a;
-    })
-    .catch(() => {
-      console.log("error");
-    });
+  // In v11 with cookie mode, we can just try to fetch 'me' to check if logged in
+  try {
+    await directus.request(readMe({ fields: ['id'] }));
+    store.authenticated = true;
+    myProfile();
+    mesPrets();
+  } catch (e) {
+    // Not authenticated
+    console.log("Not authenticated");
+  }
 }
 
 async function logoutDirectus() {
-  // AUTHENTICATION
-  // await directus.auth.logout({ refresh_token: token }).then("logged out");
+  try {
+    await directus.logout();
+  } catch (e) {
+    console.error("Logout error", e);
+  }
   store.authenticated = false;
   store.id = "";
   store.first_name = "";
@@ -103,31 +105,25 @@ async function logoutDirectus() {
 
 async function loginDirectus() {
   if (!authenticated.value) {
-    await directus.auth
-      .login({
-        email: email.value,
-        password: password.value,
-        mode: "cookie",
-      })
-      .then(() => {
-        store.authenticated = true;
-        console.log("log in");
-        myProfile();
-        mesPrets();
-      })
-      .catch(() => {
-        console.log("Invalid credentials");
-        toast.add({
+    try {
+      await directus.login({ email: email.value, password: password.value });
+      store.authenticated = true;
+      console.log("log in");
+      myProfile();
+      mesPrets();
+    } catch (e) {
+      console.log("Invalid credentials", e);
+      toast.add({
         severity: "error",
         summary: "Erreur",
         detail: "Mot de passe ou identifiant incorrect.",
         life: 3000,
       });
-      password.value ='';
-
-      });
+      password.value = '';
+    }
   }
 }
+
 async function resetPasswordDirectus() {
   // Check if the email field is empty
   if (!email.value || email.value.trim() === "") {
@@ -138,19 +134,19 @@ async function resetPasswordDirectus() {
       detail: "Veuillez entrer votre adresse email.",
       life: 3000,
     });
-    return;  // Stop execution if email is empty
+    return; // Stop execution if email is empty
   }
 
   try {
     // Query Directus to check if the email exists in the database
-    const { data: users } = await directus.items("directus_users").readByQuery({
+    const users = await directus.request(readItems("directus_users", {
       filter: {
         email: {
           _eq: email.value.trim(),
         },
       },
-      limit: 1, // We only need to check if one result exists
-    });
+      limit: 1,
+    }));
 
     if (users.length === 0) {
       // If no user is found, show an error message
@@ -160,12 +156,12 @@ async function resetPasswordDirectus() {
         detail: `Aucun utilisateur trouvé avec l'adresse email ${email.value}.`,
         life: 3000,
       });
-      return;  // Stop further execution
+      return; // Stop further execution
     }
 
     // If the email exists, proceed to send the password reset request
-    await directus.auth.password.request(email.value);
-    
+    await directus.request(passwordRequest(email.value));
+
     // Show success toast with the destination email
     toast.add({
       severity: "success",
@@ -175,6 +171,7 @@ async function resetPasswordDirectus() {
     });
   } catch (error) {
     // Handle any errors during the request
+    console.error(error);
     toast.add({
       severity: "error",
       summary: "Erreur",
@@ -188,13 +185,9 @@ async function resetPasswordDirectus() {
 </script>
 
 <template>
-  <div
-    v-if="!store.authenticated"
-    class="flex align-items-center justify-center overflow-hidden"
-  >
+  <div v-if="!store.authenticated" class="flex align-items-center justify-center overflow-hidden">
     <div class="flex flex-column align-items-center justify-content-center">
-      <div
-        style="
+      <div style="
           border-radius: 26px;
           padding: 0.3rem;
           margin-top: 50px;
@@ -203,12 +196,8 @@ async function resetPasswordDirectus() {
             var(--primary-color) 10%,
             rgba(33, 150, 243, 0) 30%
           );
-        "
-      >
-        <div
-          class="w-full surface-card py-8 px-5 sm:px-8"
-          style="border-radius: 53px"
-        >
+        ">
+        <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius: 53px">
           <div class="text-center mb-5">
             <div class="text-900 text-3xl font-medium mb-3">
               Larchant Outilthèque
@@ -216,42 +205,19 @@ async function resetPasswordDirectus() {
           </div>
 
           <div>
-            <label for="email1" class="block text-900 text-xl font-medium mb-2"
-              >Email</label
-            >
-            <InputText
-              id="email1"
-              type="text"
-              placeholder="Email"
-              class="w-full md:w-30rem mb-5"
-              v-model="email"
-            />
+            <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
+            <InputText id="email1" type="text" placeholder="Email" class="w-full md:w-30rem mb-5" v-model="email" />
 
-            <label
-              for="password1"
-              class="block text-900 font-medium text-xl mb-2"
-              >Mot de Passe</label
-            >
-            <Password
-              id="password1"
-              v-model="password"
-              placeholder="Mot de Passe"
-              :toggleMask="false"
-              class="w-full mb-3"
-              inputClass="w-full"
-              :feedback="false"
-            ></Password>
+            <label for="password1" class="block text-900 font-medium text-xl mb-2">Mot de Passe</label>
+            <Password id="password1" v-model="password" placeholder="Mot de Passe" :toggleMask="false"
+              class="w-full mb-3" inputClass="w-full" :feedback="false"></Password>
 
             <div class="flex align-items-center justify-content-between mb-5 gap-5">
               <a @click="resetPasswordDirectus" class="font-medium no-underline ml-2 text-right cursor-pointer"
                 style="color: var(--primary-color)">Mot de passe oublié?</a>
             </div>
 
-            <Button
-              @click="loginDirectus()"
-              label="Connexion"
-              class="w-full p-3 text-xl"
-            ></Button>
+            <Button @click="loginDirectus()" label="Connexion" class="w-full p-3 text-xl"></Button>
           </div>
         </div>
       </div>
@@ -278,22 +244,15 @@ async function resetPasswordDirectus() {
       </div>
       <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 mt-4">
         <NuxtLink to="/">
-          <Button
-            label="Voir mon Dashboard"
-            class="w-full sm:w-auto p-3 text-lg sm:text-xl bg-blue-500 hover:bg-blue-700"
-          ></Button>
+          <Button label="Voir mon Dashboard"
+            class="w-full sm:w-auto p-3 text-lg sm:text-xl bg-blue-500 hover:bg-blue-700"></Button>
         </NuxtLink>
         <NuxtLink to="/edit/outil-add">
-          <Button
-            label="Ajouter un objet"
-            class="w-full sm:w-auto p-3 text-lg sm:text-xl bg-green-500 hover:bg-green-700"
-          ></Button>
+          <Button label="Ajouter un objet"
+            class="w-full sm:w-auto p-3 text-lg sm:text-xl bg-green-500 hover:bg-green-700"></Button>
         </NuxtLink>
-        <Button
-          @click="logoutDirectus()"
-          label="Se déconnecter"
-          class="w-full sm:w-auto p-3 text-lg sm:text-xl bg-red-300 hover:bg-red-500"
-        ></Button>
+        <Button @click="logoutDirectus()" label="Se déconnecter"
+          class="w-full sm:w-auto p-3 text-lg sm:text-xl bg-red-300 hover:bg-red-500"></Button>
       </div>
     </div>
   </div>
@@ -311,6 +270,7 @@ async function resetPasswordDirectus() {
   transform: scale(1.6);
   margin-right: 1rem;
 }
+
 button {
   border-radius: 8px;
 }

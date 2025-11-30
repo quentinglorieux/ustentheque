@@ -2,7 +2,6 @@ import { DIRECTUS_BASE } from "./utils/directusConfig";
 
 export default defineNuxtConfig({
   modules: [
-    'nuxt-directus',
     "@nuxtjs/tailwindcss",
     '@pinia/nuxt'],
 
