@@ -5,46 +5,38 @@
       <span>BibOB {{ version }}</span>
     </router-link>
 
-    <button
-      class="p-link layout-menu-button layout-topbar-button"
-      @click="onMenuToggle()"
-    >
+    <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
       <i class="pi pi-bars"></i>
     </button>
 
-    <button
-      class="p-link layout-topbar-menu-button layout-topbar-button"
-      @click="onTopBarMenuButton()"
-    >
+    <button class="p-link layout-topbar-menu-button layout-topbar-button" @click="onTopBarMenuButton()">
       <i class="pi pi-ellipsis-v"></i>
     </button>
-   
+
     <div class="layout-topbar-menu" :class="topbarMenuClasses">
       <div v-if="avatar">
-        <router-link to="/mesreservations">  <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
-        <i class="pi pi-download"></i>
-      </button>
-    </router-link>
+        <router-link to="/mesreservations"> <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
+            <i class="pi pi-download"></i>
+          </button>
+        </router-link>
 
-      <router-link to="/mesprets">  <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
-        <i class="pi pi-upload"></i>
-      </button>
+        <router-link to="/mesprets"> <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
+            <i class="pi pi-upload"></i>
+          </button>
+        </router-link>
+      </div>
+
+
+      <router-link to="/profil">
+        <div class="pt-3 pl-3"> {{ first_name }}</div>
       </router-link>
-    </div>
-    
-
-      <router-link to="/profil"> <div class="pt-3 pl-3"> {{ first_name }}</div></router-link>
 
       <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
         <router-link to="/auth/login"> <i v-if="!avatar" class="pi pi-user"></i></router-link>
-        <router-link to="/profil"> <Avatar
-          v-if="avatar"
-          :image="`https://bibob.rubidiumweb.fr/assets/${avatar}`"
-          class="hover:border-2"
-          size="large"
-          shape="circle"
-        />
-    </router-link>
+        <router-link to="/profil">
+          <Avatar v-if="avatar" :image="`https://bibob.rubidiumweb.fr/assets/${avatar}`" class="hover:border-2"
+            size="large" shape="circle" />
+        </router-link>
       </button>
 
       <!-- <button @click="onSettingsClick()" class="p-link layout-topbar-button">
@@ -68,7 +60,7 @@ const store = useAuthStore();
 const first_name = computed(() => store.first_name);
 const avatar = computed(() => store.avatar);
 
-const version = "1.2";
+const version = "1.3";
 
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
@@ -95,9 +87,8 @@ onBeforeUnmount(() => {
 });
 
 const logoUrl = computed(() => {
-  return `${contextPath}layout/images/${
-    layoutConfig.darkTheme.value ? "logo-white" : "logo-dark"
-  }.svg`;
+  return `${contextPath}layout/images/${layoutConfig.darkTheme.value ? "logo-white" : "logo-dark"
+    }.svg`;
 });
 
 const onTopBarMenuButton = () => {

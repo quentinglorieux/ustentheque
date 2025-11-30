@@ -1,6 +1,6 @@
-const sgMail = require("@sendgrid/mail");
+import sgMail from "@sendgrid/mail";
 
-export default async function (req, res) {
+export default defineEventHandler(async (event) => {
   try {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -14,11 +14,14 @@ export default async function (req, res) {
 
     await sgMail.send(msg);
 
-    res.status(200).json({ message: "Email sent successfully" });
+    return { message: "Email sent successfully" };
   } catch (error) {
     console.error("Error sending email:", error);
-    res.status(500).json({ message: "Failed to send email" });
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Failed to send email",
+    });
   }
-}
+});
 
 
