@@ -1,90 +1,98 @@
 <template>
   <div class="grid">
-    <div class="col-12 md:col-9">
-      <!-- Main form -->
-
-      <div v-if="!me.first_name" class="card">
-        <div>Vous n'etes pas connécté.</div>
+    <div class="col-12">
+      <div v-if="!me.first_name" class="flex flex-column align-items-center justify-content-center h-screen">
+        <div class="text-2xl font-bold mb-4">Vous n'êtes pas connecté.</div>
         <NuxtLink to="/auth/login">
-          <Button label="Connectez vous ici" icon="pi pi-sign-in" severity="info"
-            class="font-bold mt-5 px-5 py-3 p-button-raised white-space-nowrap"></Button>
+          <Button label="Connectez-vous ici" icon="pi pi-sign-in" severity="primary" size="large" raised
+            rounded></Button>
         </NuxtLink>
       </div>
 
-      <div v-if="me.first_name" class="card">
-        <h3>Mon Profil</h3>
-
-        <Divider />
-        <h4>Mes infos</h4>
-        <div class="p-fluid formgrid grid">
-          <div class="field col-12 md:col-6">
-            <label for="nom">Prénom</label>
-            <InputText v-model="me.first_name" id="first_name" type="text" />
+      <div v-else class="grid nested-grid">
+        <!-- Header -->
+        <div class="col-12">
+          <div class="flex align-items-center justify-content-between mb-4">
+            <h1 class="text-3xl font-bold text-900 m-0">Mon Profil</h1>
+            <Button @click="logoutDirectus()" label="Se déconnecter" icon="pi pi-sign-out" severity="danger" outlined />
           </div>
+        </div>
 
-          <div class="field col-12 md:col-6">
-            <label for="etat">Nom</label>
-            <InputText v-model="me.last_name" id="last_name" type="text" />
-          </div>
-          <div class="field col-12 md:col-12">
-            <label for="nom">Adresse</label>
-            <InputText v-model="me.location" id="location" type="text" />
-          </div>
+        <!-- Main Info (Left Column) -->
+        <div class="col-12 md:col-8 order-2 md:order-1">
+          <div class="card p-fluid border-round-xl shadow-2 p-5 border-top-3 border-blue-500">
+            <h5 class="text-xl font-semibold mb-4 text-blue-600">Mes Informations</h5>
 
-          <div class="field col-12 md:col-6">
-            <label for="etat">Telephone</label>
-            <InputText v-model="me.telephone" id="telephone" type="telephone" />
-          </div>
+            <div class="formgrid grid">
+              <div class="field col-12 md:col-6">
+                <label for="first_name" class="font-medium">Prénom</label>
+                <InputText v-model="me.first_name" id="first_name" type="text" />
+              </div>
+              <div class="field col-12 md:col-6">
+                <label for="last_name" class="font-medium">Nom</label>
+                <InputText v-model="me.last_name" id="last_name" type="text" />
+              </div>
+              <div class="field col-12">
+                <label for="location" class="font-medium">Adresse</label>
+                <InputText v-model="me.location" id="location" type="text" placeholder="Votre adresse complète" />
+              </div>
+              <div class="field col-12 md:col-6">
+                <label for="telephone" class="font-medium">Téléphone</label>
+                <InputText v-model="me.telephone" id="telephone" type="tel" />
+              </div>
+            </div>
 
-          <Divider />
+            <Divider />
 
-          <h4>Mon compte</h4>
+            <h5 class="text-xl font-semibold mb-4 text-blue-600">Mon Compte</h5>
 
-          <div class="flex field col-6 md:col-6 p-inputgroup pb-3">
-            <span class="p-inputgroup-addon">
-              <i class="pi pi-at"></i>
-            </span>
-            <InputText placeholder="Email" v-model="me.email" id="email" type="email" disabled />
-          </div>
+            <div class="formgrid grid">
+              <div class="field col-12 md:col-6">
+                <label for="email" class="font-medium">Email</label>
+                <div class="p-inputgroup">
+                  <span class="p-inputgroup-addon"><i class="pi pi-at"></i></span>
+                  <InputText v-model="me.email" id="email" type="email" disabled class="bg-gray-100" />
+                </div>
+              </div>
+              <div class="field col-12 md:col-6">
+                <label for="password" class="font-medium">Mot de passe</label>
+                <div class="p-inputgroup">
+                  <span class="p-inputgroup-addon"><i class="pi pi-lock"></i></span>
+                  <InputText v-model="me.password" id="password" type="password" placeholder="Nouveau mot de passe" />
+                </div>
+              </div>
+            </div>
 
-          <div class="flex field col-6 md:col-6 p-inputgroup pb-3">
-            <span class="p-inputgroup-addon">
-              <i class="pi pi-lock"></i>
-            </span>
-            <InputText placeholder="Password" v-model="me.password" id="password" type="password" />
-          </div>
-
-          <div class="field col-8 md:col-6 md:col-offset-3">
-            <div class="flex gap-2">
-              <Button label="Mettre à jour" class="w-full p-3 text-xl" @click="updateProfile()"></Button>
+            <div class="flex justify-content-end mt-4">
+              <Button label="Enregistrer les modifications" icon="pi pi-save" @click="updateProfile()"
+                severity="primary" size="large" class="bg-indigo-500 text-white px-6 py-2" raised />
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <div class="col-12 sm:col-6 md:col-3">
-      <div v-if="me.first_name" class="card flex flex-col content-center">
-        <Toast />
-        <h4 class="text-center">Ma photo</h4>
-        <div v-if="me.avatar" class="flex justify-center">
-          <img class="object-cover rounded-full mb-10"
-            :src="`https://bibob.rubidiumweb.fr/assets/${image}?fit=cover&width=300&height=300&quality=50`" />
+        <!-- Sidebar (Right Column) -->
+        <div class="col-12 md:col-4 order-1 md:order-2">
+          <!-- Avatar Card -->
+          <div
+            class="card border-round-xl shadow-2 p-4 mb-4 flex flex-column align-items-center border-top-3 border-blue-500">
+            <h5 class="text-xl font-semibold mb-3 text-blue-600 align-self-start">Ma Photo</h5>
+
+            <div
+              class="relative w-10rem h-10rem border-2 border-dashed border-blue-200 border-circle bg-blue-50 flex align-items-center justify-content-center overflow-hidden mb-4">
+              <img v-if="image"
+                :src="`https://bibob.rubidiumweb.fr/assets/${image}?fit=cover&width=300&height=300&quality=80`"
+                class="w-full h-full object-cover" alt="Avatar" />
+              <div v-else class="text-center text-500">
+                <i class="pi pi-user text-4xl mb-2"></i>
+              </div>
+            </div>
+
+            <FileUpload mode="basic" name="file" :url="`https://bibob.rubidiumweb.fr/files`" accept="image/*"
+              :maxFileSize="2000000" :auto="true" chooseLabel="Modifier ma photo" class="p-button-outlined w-full"
+              :withCredentials="true" @select="uploadFile" />
+          </div>
         </div>
-        <div v-else class="flex justify-center">
-          <img class="w-40 h-40 sm:w-16rem sm:h-16rem xl:w-10rem xl:h-10rem object-contain block xl:block border-round"
-            :src="`https://bibob.rubidiumweb.fr/assets/7ed6273f-9add-4257-b546-d99af9a3505a.png?fit=cover&width=300&height=300&quality=50`" />
-        </div>
-
-
-
-        <FileUpload class="flex justify-center mx-1" v-model="selectedFile" name="file"
-          :url="`https://bibob.rubidiumweb.fr/files`" mode="basic" accept=".png,.jpg,.jpeg" maxFileSize="2000000"
-          chooseLabel="Modifier" :withCredentials="true" @select="uploadFile" />
       </div>
-
-      <div v-if="me.first_name" class="text-center"> <Button @click="logoutDirectus()" label="Se déconnecter"
-          class=" p-3 text-xl "></Button></div>
     </div>
   </div>
 </template>

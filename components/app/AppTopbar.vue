@@ -34,15 +34,27 @@
       <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
         <router-link to="/auth/login"> <i v-if="!avatar" class="pi pi-user"></i></router-link>
         <router-link to="/profil">
-          <Avatar v-if="avatar" :image="`https://bibob.rubidiumweb.fr/assets/${avatar}`" class="hover:border-2"
-            size="large" shape="circle" />
+
+          <div class="relative inline-block">
+            <Avatar v-if="avatar" :image="`https://bibob.rubidiumweb.fr/assets/${avatar}`" class="hover:border-2"
+              size="large" shape="circle" />
+
+          </div>
+
         </router-link>
+
       </button>
 
-      <!-- <button @click="onSettingsClick()" class="p-link layout-topbar-button">
-                <i  class="pi pi-cog"></i>
-                <span>Settings</span>
-            </button> -->
+
+      <router-link v-if="pendingRequests > 0" to="/mesprets" class="ml-3">
+        <button class="p-link layout-topbar-button relative">
+          <i class="pi pi-envelope text-2xl p-overlay-badge" v-badge.danger="pendingRequests"></i>
+
+        </button>
+        <Badge v-if="pendingRequests > 0" :value="pendingRequests" class="absolute top-4 right-8"></Badge>
+
+      </router-link>
+
     </div>
   </div>
 </template>
@@ -50,23 +62,47 @@
 <style lang="scss" scoped></style>
 
 <script setup>
-import { readMe } from "@directus/sdk";
-import { useDirectusBase } from "@/composables/useDirectusBase";
-
+const directus = useDirectus();
 const { layoutConfig, onMenuToggle, contextPath } = useLayout();
-const { user, isAuthenticated } = useUser();
+const { user } = useUser();
+import { readItems } from "@directus/sdk";
 
 const first_name = computed(() => user.value?.first_name);
 const avatar = computed(() => user.value?.avatar);
+const pendingRequests = ref(0);
+
+const fetchPendingRequests = async () => {
+  if (!user.value?.id) return;
+  try {
+    const requests = await directus.request(readItems('reservation', {
+      filter: {
+        statut: { _eq: 'En attente' },
+        objet: {
+          proprietaire: {
+            _eq: user.value.id
+          }
+        }
+      },
+      aggregate: { count: '*' }
+    }));
+    // Directus aggregate returns an array of objects
+    pendingRequests.value = requests[0]?.count || 0;
+  } catch (e) {
+    console.error("Error fetching pending requests", e);
+  }
+};
+
+watch(() => user.value, () => {
+  if (user.value) {
+    fetchPendingRequests();
+  }
+}, { immediate: true });
 
 const version = "2.0.beta.0";
 
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
-const router = useRouter();
 
-const directusBase = useDirectusBase();
-const directus = useDirectus();
 
 // No need for local myProfile fetch if app.vue does it, 
 // but we can keep it if we want to refresh on mount or just rely on 'user' state.
@@ -89,10 +125,7 @@ const logoUrl = computed(() => {
 const onTopBarMenuButton = () => {
   topbarMenuActive.value = !topbarMenuActive.value;
 };
-const onSettingsClick = () => {
-  topbarMenuActive.value = false;
-  router.push("/documentation");
-};
+
 const topbarMenuClasses = computed(() => {
   return {
     "layout-topbar-menu-mobile-active": topbarMenuActive.value,

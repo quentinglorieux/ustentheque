@@ -12,7 +12,7 @@
           <div v-if="!me.objet">
             <div>Vous n'etes pas connécté.</div>
             <NuxtLink to="/auth/login">
-              <Button label="Connectez vous ici" icon="pi pi-sign-in" severity="info"
+              <Button label="Connectez vous icix" icon="pi pi-sign-in" severity="info"
                 class="font-bold mt-5 px-5 py-3 p-button-raised white-space-nowrap"></Button>
             </NuxtLink>
           </div>
@@ -70,11 +70,6 @@
               </template>
             </Column>
 
-            <!-- <Column expander header="Réservations"  style="width: 5rem">
-         <template #body="slotProps">
-            <Button icon="pi pi-calendar" class="p-button-rounded content-justify-center p-button-secondary mr-1 mb-1" />
-        </template>
-    </Column>  -->
 
             <template #expansion="slotProps">
               <div class="p-3 bg-slate-100">
@@ -126,13 +121,7 @@
         <div v-if="!completed">
           <ProgressSpinner />
         </div>
-        <div v-if="!meStore">
-          <div>Vous n'etes pas connécté.</div>
-          <NuxtLink to="/auth/login">
-            <Button label="Connectez vous ici" icon="pi pi-sign-in" severity="info"
-              class="font-bold mt-5 px-5 py-3 p-button-raised white-space-nowrap"></Button>
-          </NuxtLink>
-        </div>
+
       </div>
     </div>
   </div>

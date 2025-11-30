@@ -23,7 +23,7 @@
 
         <div class="flex content-center gap-2">
           <div class="mt-1 text-m font-semibold">Propiétaire:</div>
-          <Chip v-if="authenticated" class="mb-1 bg-slate-50 flex px-3"
+          <Chip v-if="isAuthenticated" class="mb-1 bg-slate-50 flex px-3"
             :label="proprio.first_name + ' ' + proprio.last_name"
             :image="`https://bibob.rubidiumweb.fr/assets/${proprio.avatar}?fit=cover&width=50&height=50&quality=20`" />
         </div>
@@ -39,7 +39,7 @@
       <!-- Retour -->
       <div class=" hidden xl:flex justify-center p-4 mt-3 border-1 surface-border surface-card border-round">
         <NuxtLink to="/catalogue" class="flex justify-center">
-          <Button label="Retour au Catalogue" class="mr-2 mb-2"></Button>
+          <Button label="Retour au Catalogue" class="mr-2 mb-2 bg-indigo-500 p-2 text-white"></Button>
         </NuxtLink>
       </div>
     </div>
@@ -48,7 +48,7 @@
 
 
     <!-- Reservation form -->
-    <div v-if="authenticated" class="col-12 sm:col-12 lg:col-12 xl:col-6 p-2">
+    <div v-if="isAuthenticated" class="col-12 sm:col-12 lg:col-12 xl:col-6 p-2">
       <div class="p-4 border-1 surface-border surface-card border-round">
         <div class="text-2xl font-bold text-center pb-4">Reservation</div>
         <div class="mb-2">
@@ -66,9 +66,9 @@
           </div>
           <div class="flex justify-center pt-3">
             <Button v-if="!dates" disabled label="Envoyer une demande d'emprunt" severity="info"
-              class="mr-2 mb-2 "></Button>
+              class="mr-2 mb-2 bg-indigo-100 p-2 text-white"></Button>
             <Button v-if="dates" @click="createOneResa()" label="Envoyer une demande d'emprunt" severity="info"
-              class="mr-2 mb-2"></Button>
+              class="mr-2 mb-2 bg-indigo-500 p-2 text-white"></Button>
           </div>
         </div>
       </div>
@@ -80,12 +80,12 @@
 
 
 
-      <div v-if="authenticated" class="p-4 border-1 surface-border surface-card border-round">
-        <div class="text-2xl font-bold text-center pb-4">
+      <div v-if="isAuthenticated" class="p-4 border-1 surface-border surface-card border-round ">
+        <div class="text-2xl font-bold text-center pb-4 ">
           Ajouter un message de demande
         </div>
         <span class="p-float-label">
-          <Textarea v-model="value" rows="20" autoResize />
+          <Textarea class="w-full  bg-gray-100" v-model="value" rows="20" autoResize />
           <label>Votre demande ici</label>
         </span>
       </div>

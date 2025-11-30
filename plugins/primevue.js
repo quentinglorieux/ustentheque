@@ -8,7 +8,6 @@ import AccordionTab from "primevue/accordiontab";
 import Avatar from "primevue/avatar";
 import AvatarGroup from "primevue/avatargroup";
 import Badge from "primevue/badge";
-import BadgeDirective from "primevue/badgedirective";
 import BlockUI from "primevue/blockui";
 import Button from "primevue/button";
 import Breadcrumb from "primevue/breadcrumb";

@@ -49,7 +49,13 @@
                                     <div class="flex flex-col gap-2 mt-auto">
                                         <div class="flex justify-content-between items-center">
                                             <span class="text-lg font-semibold">{{ item.prix_indicatif }} €</span>
-
+                                            <div class="flex gap-2">
+                                                <Button icon="pi pi-eye" label="Voir" size="small"
+                                                    class="p-button-rounded p-button-text"></Button>
+                                                <Button v-if="isAuthenticated" icon="pi pi-calendar-plus"
+                                                    label="Réserver" size="small"
+                                                    class="p-button-rounded p-button-text text-teal-500"></Button>
+                                            </div>
                                         </div>
                                     </div>
                                 </NuxtLink>
@@ -96,6 +102,11 @@
                                                 :disabled="item.etat === 'En panne'"
                                                 class=" px-2 py-1 whitespace-nowrap bg-indigo-500 text-white"></Button>
                                         </NuxtLink>
+                                        <NuxtLink v-if="isAuthenticated" :to="`/outil-${item.id}`" class="flex-auto">
+                                            <Button icon="pi pi-calendar-plus" label="Réserver" size="medium"
+                                                :disabled="item.etat === 'En panne'"
+                                                class=" px-2 py-1 whitespace-nowrap bg-teal-500 text-white"></Button>
+                                        </NuxtLink>
                                     </div>
                                 </div>
                             </div>
@@ -120,6 +131,7 @@ import { useDirectusBase } from '@/composables/useDirectusBase';
 
 const directusBase = useDirectusBase();
 const directus = useDirectus();
+const { isAuthenticated } = useUser();
 
 const layout = ref('grid');
 const options = ref(['list', 'grid']);

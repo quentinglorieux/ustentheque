@@ -62,9 +62,9 @@
 
         <div class="field col-12 md:col-12">
           <div class="flex gap-2">
-            <Button @click="acceptOneResa()" label="Accepter" class="w-full p-3 text-xl" severity="success"
+            <Button @click="acceptOneResa()" label="Accepter" class="w-full p-3 text-xl bg-green-500 text-white"
               :disabled=isDateInPast(resa.fin)></Button>
-            <Button @click="refuseOneResa()" label="Refuser" class="w-full p-3 text-xl" severity="warning"
+            <Button @click="refuseOneResa()" label="Refuser" class="w-full p-3 text-xl bg-orange-500 text-white"
               :disabled=isDateInPast(resa.fin)></Button>
 
             <Toast />
