@@ -1,12 +1,7 @@
 <script setup>
 import AppMenuItem from "./AppMenuItem.vue";
 
-const resa = computed(() => 0); // Placeholder, as resa count was removed from store
-
-
-
-const { isAuthenticated, logout } = useUser();
-const router = useRouter();
+const { pendingRequests } = useNotifications();
 
 const model = computed(() => [
   {
@@ -43,7 +38,7 @@ const model = computed(() => [
         label: "Je prête",
         icon: "pi pi-fw pi-upload",
         to: "/mesprets",
-        val: resa,
+        badge: pendingRequests.value > 0 ? pendingRequests.value : null,
         visible: isAuthenticated.value
       },
       {

@@ -14,7 +14,7 @@
 
     <div class="layout-topbar-menu" :class="topbarMenuClasses">
       <!-- Menu pour utilisateurs connectés -->
-      <div v-if="avatar" class="flex flex-column md:flex-row gap-2">
+      <div v-if="user" class="flex flex-column md:flex-row gap-2">
         <router-link to="/catalogue">
           <button @click="onTopBarMenuButton()"
             class="p-link layout-topbar-button flex align-items-center gap-2 block md:hidden">
@@ -81,8 +81,8 @@
         </router-link>
 
         <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
-          <router-link to="/auth/login">
-            <div v-if="!avatar" class="flex align-items-center gap-2">
+          <router-link to="/">
+            <div v-if="!user" class="flex align-items-center gap-2">
               <i class="pi pi-user"></i>
               <span class="block md:hidden font-bold">Se connecter</span>
             </div>
@@ -90,9 +90,8 @@
           <router-link to="/profil">
 
             <div class="relative inline-block">
-              <Avatar v-if="avatar" :image="`https://bibob.rubidiumweb.fr/assets/${avatar}`" class="hover:border-2"
-                size="large" shape="circle" />
-
+              <Avatar v-if="avatar" :image="`https://bibob.rubidiumweb.fr/assets/${avatar}`"
+                class="hover:border-2 rounded-full overflow-hidden" size="large" shape="circle" />
             </div>
 
           </router-link>
