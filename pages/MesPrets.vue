@@ -16,18 +16,16 @@
             <template #header>
               <div class="flex flex-wrap align-items-center justify-content-between gap-2">
                 <span class="text-xl text-900 font-bold">Mes prets</span>
-                <!-- <NuxtLink :to="`/edit/resa-add`">
-                  <Button icon="pi pi-plus" rounded raised />
-                </NuxtLink> -->
               </div>
             </template>
 
             <Column field="objet.nom" header="Objet" sortable>
               <template #body="slotProps">
-                <NuxtLink :to="`/edit/pret-${slotProps.data.id}`" class="flex align-items-center gap-2">
+                <NuxtLink :to="`/edit/pret-${slotProps.data.id}`"
+                  class="flex align-items-center gap-2 px-2 py-1 pr-3 font-semibold text-md">
                   {{ slotProps.data.objet.nom }}
-                  {{ slotProps.data.objet.marque }}
-                  <Button icon="pi pi-pencil" class="py-0" text rounded />
+                  <div class="text-sm text-600"> {{ slotProps.data.objet.brand.nom }}
+                  </div>
                 </NuxtLink>
               </template>
             </Column>
@@ -47,7 +45,10 @@
             <Column field="statut" header="Statut" sortable>
               <template #body="slotProps">
                 <div class="flex align-items-center gap-2">
-                  <Tag class="px-4 py-2 text-sm" :value="slotProps.data.statut" :severity="getStatus(slotProps.data)" />
+                  <NuxtLink :to="`/edit/pret-${slotProps.data.id}`">
+                    <Tag class="px-4 py-1.5 text-sm hover:bg-green-600 hover:text-white" :value="slotProps.data.statut"
+                      :severity="getStatus(slotProps.data)" />
+                  </NuxtLink>
                   <NuxtLink v-if="slotProps.data.statut === 'En attente'" :to="`/edit/pret-${slotProps.data.id}`">
                     <Button label="Répondre" size="small"
                       class="px-2 py-1.5 bg-indigo-500 text-white hover:bg-indigo-600" />
@@ -58,15 +59,20 @@
 
             <Column field="user_created.last_name" header="A qui ?" sortable>
               <template #body="slotProps">
-                <Chip class="mb-1 bg-slate-50  px-3" :label="slotProps.data.user_created.first_name +
-                  ' ' +
-                  slotProps.data.user_created.last_name
-                  "
-                  :image="`https://bibob.rubidiumweb.fr/assets/${slotProps.data.user_created.avatar}?fit=cover&width=50&height=50&quality=20`" />
+                <div class="flex flex-column gap-2">
+                  <Chip class="mb-1 bg-slate-50  px-3" :label="slotProps.data.user_created.first_name +
+                    ' ' +
+                    slotProps.data.user_created.last_name
+                    "
+                    :image="`https://bibob.rubidiumweb.fr/assets/${slotProps.data.user_created.avatar}?fit=cover&width=50&height=50&quality=20`" />
+                  <Button v-if="slotProps.data.statut === 'Validé'" icon="pi pi-eye" label="Infos Emprunteur"
+                    size="small" class="px-2 py-1.5 bg-indigo-500 text-white hover:bg-indigo-600" severity="help"
+                    outlined @click="showContact(slotProps.data.user_created)" />
+                </div>
               </template>
             </Column>
 
-            <Column header="Refuser">
+            <Column header="Supprimer">
               <template #body="slotProps">
                 <Button icon="pi pi-trash" class="p-button-lg p-button-rounded p-button-info"
                   @click="confirmDelete(slotProps.data.id)" />
@@ -85,6 +91,22 @@
       </div>
     </div>
   </div>
+  <Dialog v-model:visible="displayContact" modal header="Coordonnées de l'emprunteur" :style="{ width: '25rem' }">
+    <div class="flex align-items-center gap-3 mb-3" v-if="selectedContact">
+      <Avatar :image="`https://bibob.rubidiumweb.fr/assets/${selectedContact.avatar}`" shape="circle" size="large" />
+      <span class="font-bold">{{ selectedContact.first_name }} {{ selectedContact.last_name }}</span>
+    </div>
+    <div class="mb-3">
+      <i class="pi pi-phone mr-2 text-primary"></i>
+      <span class="font-semibold">Téléphone:</span>
+      <span class="ml-2">{{ selectedContact.telephone || 'Non renseigné' }}</span>
+    </div>
+    <div class="mb-3">
+      <i class="pi pi-map-marker mr-2 text-primary"></i>
+      <span class="font-semibold">Adresse:</span>
+      <span class="ml-2">{{ selectedContact.location || 'Non renseigné' }}</span>
+    </div>
+  </Dialog>
   <ConfirmDialog />
 </template>
 
@@ -106,6 +128,7 @@ async function mesPrets() {
     // If not authenticated, we can stop here. 
     // Ideally we might want to redirect or show a message, 
     // but the template handles the !resa.data case or we can set completed=true
+
     completed.value = true;
     return;
   }
@@ -115,7 +138,7 @@ async function mesPrets() {
   try {
     const result = await directus.request(readItems("reservation", {
       fields: [
-        "id", "debut", "fin", "statut", "user_created.last_name", "user_created.first_name", "user_created.avatar", "objet.id", "objet.nom", "objet.marque", "objet.proprietaire",
+        "id", "debut", "fin", "statut", "user_created.last_name", "user_created.first_name", "user_created.avatar", "user_created.telephone", "user_created.location", "objet.id", "objet.nom", "objet.brand.nom", "objet.proprietaire"
       ],
       filter: {
         objet: {
@@ -134,6 +157,14 @@ async function mesPrets() {
   }
   completed.value = true;
 }
+
+const displayContact = ref(false);
+const selectedContact = ref({});
+
+const showContact = (user) => {
+  selectedContact.value = user;
+  displayContact.value = true;
+};
 
 // Function to confirm and delete a reservation
 const confirm = useConfirm();

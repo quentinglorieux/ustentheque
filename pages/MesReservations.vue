@@ -53,11 +53,15 @@
 
             <Column field="objet.proprietaire.last_name" header="Propriétaire" sortable>
               <template #body="slotProps">
-                <Chip v-if="slotProps.data.objet" class="mb-1 bg-slate-50  px-3" :label="slotProps.data.objet.proprietaire.first_name +
-                  ' ' +
-                  slotProps.data.objet.proprietaire.last_name
-                  "
-                  :image="`https://bibob.rubidiumweb.fr/assets/${slotProps.data.objet.proprietaire.avatar}?fit=cover&width=50&height=50&quality=20`" />
+                <div class="flex flex-column gap-2">
+                  <Chip v-if="slotProps.data.objet" class="mb-1 bg-slate-50  px-3" :label="slotProps.data.objet.proprietaire.first_name +
+                    ' ' +
+                    slotProps.data.objet.proprietaire.last_name
+                    "
+                    :image="`https://bibob.rubidiumweb.fr/assets/${slotProps.data.objet.proprietaire.avatar}?fit=cover&width=50&height=50&quality=20`" />
+                  <Button v-if="slotProps.data.statut === 'Validé'" icon="pi pi-eye" label="Voir Contact" size="small"
+                    severity="help" outlined @click="showContact(slotProps.data.objet.proprietaire)" />
+                </div>
               </template>
             </Column>
 
@@ -81,6 +85,22 @@
       </div>
     </div>
   </div>
+  <Dialog v-model:visible="displayContact" modal header="Coordonnées du propriétaire" :style="{ width: '25rem' }">
+    <div class="flex align-items-center gap-3 mb-3" v-if="selectedContact">
+      <Avatar :image="`https://bibob.rubidiumweb.fr/assets/${selectedContact.avatar}`" shape="circle" size="large" />
+      <span class="font-bold">{{ selectedContact.first_name }} {{ selectedContact.last_name }}</span>
+    </div>
+    <div class="mb-3">
+      <i class="pi pi-phone mr-2 text-primary"></i>
+      <span class="font-semibold">Téléphone:</span>
+      <span class="ml-2">{{ selectedContact.telephone || 'Non renseigné' }}</span>
+    </div>
+    <div class="mb-3">
+      <i class="pi pi-map-marker mr-2 text-primary"></i>
+      <span class="font-semibold">Adresse:</span>
+      <span class="ml-2">{{ selectedContact.location || 'Non renseigné' }}</span>
+    </div>
+  </Dialog>
   <ConfirmDialog />
 </template>
 
@@ -108,7 +128,7 @@ async function mesResa() {
   try {
     const result = await directus.request(readItems("reservation", {
       fields: [
-        "id", "debut", "fin", "statut", "objet.id", "objet.nom", "objet.marque", "objet.proprietaire.first_name", "objet.proprietaire.last_name", "objet.proprietaire.avatar",
+        "id", "debut", "fin", "statut", "objet.id", "objet.nom", "objet.marque", "objet.proprietaire.first_name", "objet.proprietaire.last_name", "objet.proprietaire.avatar", "objet.proprietaire.telephone", "objet.proprietaire.location",
       ],
       filter: {
         user_created: {
@@ -122,6 +142,14 @@ async function mesResa() {
   }
   completed.value = true;
 }
+
+const displayContact = ref(false);
+const selectedContact = ref({});
+
+const showContact = (user) => {
+  selectedContact.value = user;
+  displayContact.value = true;
+};
 
 // Function to confirm and delete a reservation
 async function confirmDelete(id) {

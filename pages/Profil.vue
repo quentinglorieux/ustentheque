@@ -95,6 +95,7 @@
       </div>
     </div>
   </div>
+  <Toast />
 </template>
 
 <script setup>
@@ -132,7 +133,6 @@ const uploadFile = async (event) => {
     // fetchUser(); // We might need to expose fetchUser or just update local state
     if (user.value) user.value.avatar = im.id;
 
-    console.log(image.value);
   } catch (e) {
     onFailed();
   }
@@ -148,13 +148,13 @@ const onFailed = () => {
 
 // Mise a jour de l outil
 async function updateProfile() {
+  console.log(me.value);
   try {
     await directus.request(updateMe({
       first_name: me.value.first_name,
       last_name: me.value.last_name,
       telephone: me.value.telephone,
       location: me.value.location,
-      // photo: image.value, // If photo is separate from avatar
     }));
     toast.add({
       severity: "success",
@@ -162,6 +162,7 @@ async function updateProfile() {
       detail: "Profil mis à jour.",
       life: 3000,
     });
+    console.log(me.value);
   } catch (e) {
     console.error("Error updating profile", e);
     toast.add({

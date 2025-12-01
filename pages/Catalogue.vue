@@ -3,12 +3,15 @@
         <DataView :value="outils" :layout="layout">
             <template #header>
                 <div class="flex flex-column md:flex-row justify-content-between gap-2">
-                    <div class="flex flex-column md:flex-row gap-2">
-                        <span class="p-input-icon-left">
-                            <i class="pi pi-search" />
-                            <InputText @keyup="getSearchData(searchKey)" @keyup.delete="getSearchData(searchKey)"
-                                v-model="searchKey" type="text" placeholder="Chercher..." class="p-inputtext-sm" />
-                        </span>
+                    <div class="relative w-full md:w-25rem">
+                        <i class="pi pi-search absolute left-3 text-500 z-1"
+                            style="top: 50%; transform: translateY(-50%)"></i>
+                        <InputText v-model="searchKey" @keyup="getSearchData(searchKey)"
+                            placeholder="Rechercher un outil..."
+                            class="w-full pl-7 pr-7 py-2 border-round-3xl shadow-1 focus:shadow-2 transition-all transition-duration-200" />
+                        <i v-if="searchKey"
+                            class="pi pi-times absolute right-3 text-500 hover:text-700 cursor-pointer z-1"
+                            style="top: 50%; transform: translateY(-50%)" @click="clearSearch"></i>
                     </div>
                     <div class="flex justify-end">
                         <SelectButton v-model="layout" :options="options" :allowEmpty="false">
@@ -133,7 +136,7 @@ const directusBase = useDirectusBase();
 const directus = useDirectus();
 const { isAuthenticated } = useUser();
 
-const layout = ref('grid');
+const layout = ref(typeof window !== 'undefined' && window.innerWidth < 768 ? 'list' : 'grid');
 const options = ref(['list', 'grid']);
 const outils = ref([]);
 const fullList = ref([]);
@@ -171,6 +174,11 @@ const getSearchData = (query) => {
     } else {
         fetchTools();
     }
+}
+
+const clearSearch = () => {
+    searchKey.value = '';
+    fetchTools();
 }
 
 const getSeverity = (outil) => {

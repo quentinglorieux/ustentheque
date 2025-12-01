@@ -24,6 +24,27 @@
             <Tag class="px-4 py-2 text-sm" :value="resa.statut" :severity="getStatus(resa.statut)" />
           </div>
 
+          <div v-if="resa.statut === 'Validé' && resa.objet.proprietaire" class="field col-12">
+            <div class="card bg-blue-50 border-blue-200 border-1 p-3">
+              <div class="flex align-items-center gap-3 mb-3">
+                <Avatar :image="`https://bibob.rubidiumweb.fr/assets/${resa.objet.proprietaire.avatar}`" shape="circle"
+                  size="large" />
+                <span class="font-bold text-lg">{{ resa.objet.proprietaire.first_name }} {{
+                  resa.objet.proprietaire.last_name }}</span>
+              </div>
+              <div class="mb-2">
+                <i class="pi pi-phone mr-2 text-primary"></i>
+                <span class="font-semibold">Téléphone:</span>
+                <span class="ml-2">{{ resa.objet.proprietaire.telephone || 'Non renseigné' }}</span>
+              </div>
+              <div>
+                <i class="pi pi-map-marker mr-2 text-primary"></i>
+                <span class="font-semibold">Adresse:</span>
+                <span class="ml-2">{{ resa.objet.proprietaire.location || 'Non renseigné' }}</span>
+              </div>
+            </div>
+          </div>
+
           <div class="field col-12 md:col-12">
             <Calendar v-model="dates" selectionMode="range" :manualInput="false" inline :numberOfMonths="2"
               dateFormat="dd/mm/yy" />
@@ -91,7 +112,7 @@ const isAddMode = () => {
 async function retrieveOneResa() {
   try {
     let publicData = await directus.request(readItem("reservation", route.params.id, {
-      fields: ["id,debut,fin,statut,objet.nom,objet.marque"],
+      fields: ["id,debut,fin,statut,objet.nom,objet.marque,objet.proprietaire.first_name,objet.proprietaire.last_name,objet.proprietaire.avatar,objet.proprietaire.telephone,objet.proprietaire.location"],
     }));
     resa.value = publicData;
   } catch (e) {
