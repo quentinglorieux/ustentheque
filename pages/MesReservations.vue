@@ -161,7 +161,7 @@ async function confirmDelete(id) {
       deleteResa(id);
     },
     reject: () => {
-      console.log("Suppression annulée.");
+      //console.log("Suppression annulée.");
     }
   });
 }
@@ -170,7 +170,7 @@ async function confirmDelete(id) {
 async function deleteResa(id) {
   try {
     await directus.request(deleteItem("reservation", id));
-    console.log(`Reservation ${id} deleted successfully.`);
+    //console.log(`Reservation ${id} deleted successfully.`);
 
     // Refresh the data after deleting
     mesResa();

@@ -13,7 +13,6 @@ import Button from "primevue/button";
 import Breadcrumb from "primevue/breadcrumb";
 import Calendar from "primevue/calendar";
 import Card from "primevue/card";
-import Chart from "primevue/chart";
 import CascadeSelect from "primevue/cascadeselect";
 import Carousel from "primevue/carousel";
 import Checkbox from "primevue/checkbox";
@@ -270,7 +269,6 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component("Button", Button);
   nuxtApp.vueApp.component("Calendar", Calendar);
   nuxtApp.vueApp.component("Card", Card);
-  nuxtApp.vueApp.component("Chart", Chart);
   nuxtApp.vueApp.component("Carousel", Carousel);
   nuxtApp.vueApp.component("CascadeSelect", CascadeSelect);
   nuxtApp.vueApp.component("Checkbox", Checkbox);

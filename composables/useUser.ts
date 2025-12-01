@@ -6,13 +6,13 @@ export const useUser = () => {
     const directus = useDirectus();
 
     const fetchUser = async () => {
-        console.log('useUser: fetchUser called');
+        //console.log('useUser: fetchUser called');
         loading.value = true;
         try {
             const me = await directus.request(readMe({
                 fields: ['*', 'avatar', 'role', 'first_name', 'last_name', 'email']
             }));
-            console.log('useUser: fetchUser success', me);
+            //console.log('useUser: fetchUser success', me);
             user.value = me;
         } catch (e) {
             console.error('useUser: fetchUser error', e);
@@ -23,10 +23,10 @@ export const useUser = () => {
     };
 
     const login = async (email: string, password: string) => {
-        console.log('useUser: login called');
+        //console.log('useUser: login called');
         try {
             await directus.login({ email, password });
-            console.log('useUser: directus login success, fetching user...');
+            //console.log('useUser: directus login success, fetching user...');
             await fetchUser();
             return true;
         } catch (e) {
@@ -36,7 +36,7 @@ export const useUser = () => {
     };
 
     const logout = async () => {
-        console.log('useUser: logout called');
+        //console.log('useUser: logout called');
         try {
             await directus.logout();
         } catch (e) {

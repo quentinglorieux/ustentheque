@@ -148,7 +148,7 @@ const onFailed = () => {
 
 // Mise a jour de l outil
 async function updateProfile() {
-  console.log(me.value);
+  //console.log(me.value);
   try {
     await directus.request(updateMe({
       first_name: me.value.first_name,
@@ -162,7 +162,7 @@ async function updateProfile() {
       detail: "Profil mis à jour.",
       life: 3000,
     });
-    console.log(me.value);
+    //console.log(me.value);
   } catch (e) {
     console.error("Error updating profile", e);
     toast.add({

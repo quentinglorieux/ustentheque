@@ -58,10 +58,10 @@ async function loginDirectus() {
   if (!isAuthenticated.value) {
     try {
       await login(email.value, password.value);
-      console.log("log in success");
+      //console.log("log in success");
       mesPrets();
     } catch (e) {
-      console.log("Invalid credentials", e);
+      //console.log("Invalid credentials", e);
       toast.add({
         severity: "error",
         summary: "Erreur",

@@ -108,7 +108,7 @@ import { useDirectusBase } from "@/composables/useDirectusBase";
 const route = useRoute();
 const toast = useToast();
 
-const { isAuthenticated } = useUser();
+const { isAuthenticated, user } = useUser();
 
 const directusBase = useDirectusBase();
 const directus = useDirectus();
@@ -151,7 +151,7 @@ async function retrieveOneObjet() {
   try {
     const publicData = await directus.request(readItem("objet", route.params.id, {
       fields: [
-        "id", "nom", "marque", "photo", "prix_indicatif", "conseils", "etat", "consommable", "proprietaire.first_name", "proprietaire.last_name", "proprietaire.avatar", "reservation.debut", "reservation.fin", "reservation.statut",
+        "id", "nom", "marque", "photo", "prix_indicatif", "conseils", "etat", "consommable", "proprietaire.first_name", "proprietaire.last_name", "proprietaire.avatar", "proprietaire.email", "reservation.debut", "reservation.fin", "reservation.statut",
       ],
     }));
     objet.value = publicData;
@@ -222,6 +222,27 @@ async function createOneResa() {
       statut: "En attente",
       objet: objet.value.id,
     }));
+
+    // Send notification to owner
+    if (proprio.value?.email) {
+      try {
+        await $fetch('/api/loans/notify-request', {
+          method: 'POST',
+          body: {
+            ownerEmail: proprio.value.email,
+            borrowerName: (user.value?.first_name || '') + ' ' + (user.value?.last_name || ''),
+            borrowerPhone: user.value?.telephone || 'Non renseigné',
+            itemName: objet.value.nom,
+            startDate: new Date(dates.value[0]).toLocaleDateString('fr-FR'),
+            endDate: new Date(dates.value[1]).toLocaleDateString('fr-FR')
+          }
+        });
+      } catch (emailError) {
+        console.error("Failed to send notification email", emailError);
+
+      }
+    }
+
     toast.add({
       severity: "success",
       summary: "Merci",
@@ -229,7 +250,7 @@ async function createOneResa() {
       life: 3000,
     });
   } catch (e) {
-    console.log("Erreur", e);
+    //console.log("Erreur", e);
     toast.add({
       severity: "error",
       summary: "Erreur",

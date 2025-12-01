@@ -250,7 +250,7 @@ async function updateOneObjet() {
 // Add a new marque to Directus after confirmation
 const handleBrandInput = async () => {
   const typedMarque = selectedMarque.value;
-  console.log(typedMarque);
+  //console.log(typedMarque);
   if (
     typedMarque &&
     !fieldsMarque.value.some((item) => item.nom === typedMarque)
@@ -323,7 +323,7 @@ const uploadFile = async (event) => {
   try {
     const im = await directus.request(uploadFiles(form));
     image.value = im.id;
-    console.log(image.value);
+    //console.log(image.value);
   } catch (e) {
     onFailed();
   }

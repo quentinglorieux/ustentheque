@@ -160,7 +160,7 @@ async function createOneResa() {
       life: 3000,
     });
   } catch (e) {
-    console.log("Erreur", e);
+    //console.log("Erreur", e);
     toast.add({
       severity: "error",
       summary: "Erreur",
@@ -177,7 +177,7 @@ async function updateOneResa() {
       debut: dates.value[0],
       fin: dates.value[1],
     }));
-    console.log("U");
+    //console.log("U");
     retrieveOneResa();
     toast.add({
       severity: "success",
@@ -186,7 +186,7 @@ async function updateOneResa() {
       life: 3000,
     });
   } catch (e) {
-    console.log("Erreur", e);
+    //console.log("Erreur", e);
     toast.add({
       severity: "error",
       summary: "Erreur",
@@ -200,7 +200,7 @@ async function updateOneResa() {
 async function deleteOneResa() {
   try {
     await directus.request(deleteItem("reservation", route.params.id));
-    console.log("del");
+    //console.log("del");
     toast.add({
       severity: "success",
       summary: "Merci",
@@ -208,7 +208,7 @@ async function deleteOneResa() {
       life: 3000,
     });
   } catch (e) {
-    console.log("Erreur", e);
+    //console.log("Erreur", e);
     toast.add({
       severity: "error",
       summary: "Erreur",

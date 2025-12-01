@@ -119,26 +119,18 @@ import { useToast } from "primevue/usetoast";
 import { formatDate, isDateInPast } from '@/utils/dateUtils';
 // import { useDirectusBase } from "@/composables/useDirectusBase";
 
-// const { user } = useUser();
-
+const { user } = useUser();
 const toast = useToast();
-// const directusBase = useDirectusBase();
 const directus = useDirectus();
-
-// const addMode = ref(false);
-
 const route = useRoute();
 const resa = ref("");
-// const resaList = ref("");
-// const dates = ref("");
-
 
 // La resa
 async function retrieveOneResa() {
   try {
     const publicData = await directus.request(readItem("reservation", route.params.id, {
       fields: [
-        "id", "debut", "fin", "statut", "message", "user_created.first_name", "user_created.last_name", "user_created.avatar", "user_created.location", "user_created.telephone", "objet.nom", "objet.brand.nom", "objet.prix_indicatif", "objet.photo", "objet.etat",
+        "id", "debut", "fin", "statut", "message", "user_created.first_name", "user_created.last_name", "user_created.avatar", "user_created.location", "user_created.telephone", "user_created.email", "objet.nom", "objet.brand.nom", "objet.prix_indicatif", "objet.photo", "objet.etat",
       ],
     }));
     resa.value = publicData;
@@ -153,6 +145,25 @@ async function acceptOneResa() {
     await directus.request(updateItem("reservation", route.params.id, {
       statut: "Validé",
     }));
+
+    // Send notification to borrower
+    if (resa.value?.user_created?.email) {
+      try {
+        await $fetch('/api/loans/notify-validation', {
+          method: 'POST',
+          body: {
+            borrowerEmail: resa.value.user_created.email,
+            itemName: resa.value.objet.nom,
+            ownerName: (user.value?.first_name || '') + ' ' + (user.value?.last_name || ''),
+            ownerPhone: user.value?.telephone || 'Non renseigné',
+            ownerLocation: user.value?.location || 'Non renseigné'
+          }
+        });
+      } catch (emailError) {
+        console.error("Failed to send notification email", emailError);
+      }
+    }
+
     retrieveOneResa();
     toast.add({
       severity: "success",
@@ -161,7 +172,7 @@ async function acceptOneResa() {
       life: 3000,
     });
   } catch (e) {
-    console.log("Erreur", e);
+    //console.log("Erreur", e);
     toast.add({
       severity: "error",
       summary: "Erreur",
@@ -185,7 +196,7 @@ async function refuseOneResa() {
       life: 3000,
     });
   } catch (e) {
-    console.log("Erreur", e);
+    //console.log("Erreur", e);
     toast.add({
       severity: "error",
       summary: "Erreur",
@@ -209,7 +220,7 @@ async function resetResaStatus() {
       life: 3000,
     });
   } catch (e) {
-    console.log("Erreur", e);
+    //console.log("Erreur", e);
     toast.add({
       severity: "error",
       summary: "Erreur",

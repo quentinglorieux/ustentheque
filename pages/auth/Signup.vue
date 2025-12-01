@@ -18,6 +18,7 @@ const directusBase = useDirectusBase();
 const directus = useDirectus();
 
 const toast = useToast();
+const router = useRouter();
 
 onMounted(() => {
 });
@@ -49,6 +50,7 @@ async function registerDirectus() {
 
   if (charte.value == "valide") {
     try {
+      // 1. Create User
       await directus.request(createUser({
         first_name: first_name.value,
         last_name: last_name.value,
@@ -58,14 +60,30 @@ async function registerDirectus() {
         location: ville.value,
         role: '62de0e16-3453-45fc-bc57-89ca548930f8'
       }));
-      console.log('Succes');
-      succes.value = true;
+
+      // 2. Send Verification Email
+      const { data, error } = await useFetch('/api/auth/send-verification', {
+        method: 'POST',
+        body: { email: email.value }
+      });
+
+      if (error.value) throw error.value;
+
+      // 3. Redirect to Verify Page with hash
+      router.push({
+        path: '/auth/verify-email',
+        query: {
+          email: email.value,
+          hash: data.value.hash
+        }
+      });
+
     } catch (e) {
-      console.log('Erreur', e);
+      //console.log('Erreur', e);
       toast.add({
         severity: "error",
         summary: "Erreur.",
-        detail: "Merci de recommencer",
+        detail: "Erreur lors de l'inscription. Vérifiez que l'email n'est pas déjà utilisé.",
         life: 3000,
       });
     }
@@ -79,10 +97,6 @@ async function registerDirectus() {
     })
   }
 }
-
-
-
-
 </script>
 <template>
   <Toast />

@@ -6,6 +6,11 @@ export default defineNuxtConfig({
     "@nuxtjs/tailwindcss"],
 
   runtimeConfig: {
+    smtpHost: process.env.NUXT_SMTP_HOST,
+    smtpPort: process.env.NUXT_SMTP_PORT,
+    smtpUser: process.env.NUXT_SMTP_USER,
+    smtpPass: process.env.NUXT_SMTP_PASS,
+    smtpFrom: process.env.NUXT_SMTP_FROM,
     public: {
       directusBase: DIRECTUS_BASE,
     },
