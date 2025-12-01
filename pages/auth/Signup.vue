@@ -51,15 +51,18 @@ async function registerDirectus() {
   if (charte.value == "valide") {
     try {
       // 1. Create User
-      await directus.request(createUser({
-        first_name: first_name.value,
-        last_name: last_name.value,
-        email: email.value,
-        password: password.value,
-        telephone: telephone.value,
-        location: ville.value,
-        role: '62de0e16-3453-45fc-bc57-89ca548930f8'
-      }));
+      // 1. Create User via Server Endpoint
+      await $fetch('/api/auth/register', {
+        method: 'POST',
+        body: {
+          first_name: first_name.value,
+          last_name: last_name.value,
+          email: email.value,
+          password: password.value,
+          telephone: telephone.value,
+          location: ville.value,
+        }
+      });
 
       // 2. Send Verification Email
       const { data, error } = await useFetch('/api/auth/send-verification', {

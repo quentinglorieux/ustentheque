@@ -10,6 +10,8 @@ export const sendEmail = async (to: string, subject: string, text?: string, html
         });
     }
 
+    console.log(`[Mailer] Initializing transporter with host: ${config.smtpHost}, port: ${config.smtpPort}, user: ${config.smtpUser}`);
+
     const transporter = nodemailer.createTransport({
         host: config.smtpHost,
         port: Number(config.smtpPort) || 587,

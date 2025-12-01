@@ -11,6 +11,7 @@ export default defineNuxtConfig({
     smtpUser: process.env.NUXT_SMTP_USER,
     smtpPass: process.env.NUXT_SMTP_PASS,
     smtpFrom: process.env.NUXT_SMTP_FROM,
+    directusAdminToken: process.env.DIRECTUS_ADMIN_TOKEN,
     public: {
       directusBase: DIRECTUS_BASE,
     },
