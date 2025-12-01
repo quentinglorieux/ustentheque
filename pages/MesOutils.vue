@@ -1,7 +1,7 @@
 <template>
   <div class="grid">
     <div class="col-12">
-      <div class="card">
+      <div class="card px-0 md:px-3">
         <!-- res----- {{ reservation }} -->
 
         <div v-if="error" class="p-4 mb-4 text-white bg-red-500 rounded">
@@ -17,26 +17,30 @@
             </NuxtLink>
           </div>
 
-          <DataTable v-if="me.objet" :value="me.objet" v-model:expandedRows="expandedRows" sortField="nom"
-            :sortOrder="1" tableStyle="min-width: 50rem">
+          <DataTable v-if="me.objet" :value="me.objet" v-model:expandedRows="expandedRows" resizableColumns
+            sortField="nom" :sortOrder="1" tableStyle="min-width: 100%">
             <template #header>
               <div class="flex flex-wrap align-items-center justify-content-between gap-2">
                 <span class="text-xl text-900 font-bold">Mes outils</span>
-                <div class="flex items-center gap-2">
-                  Nouvel outil
-                  <NuxtLink :to="`/edit/outil-add`">
-                    <Button icon="pi pi-plus" rounded raised />
-                  </NuxtLink>
-                </div>
+                <NuxtLink :to="`/edit/outil-add`">
+                  <div
+                    class="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-700 transition-colors text-white rounded-xl px-2 py-0">
+                    Nouvel outil
+                    <Button icon="pi pi-plus" rounded />
+
+                  </div>
+                </NuxtLink>
               </div>
             </template>
-            <Column expander style="width: 5rem" />
-            <Column field="nom" header="Objet" sortable>
+            <Column expander class="w-2rem md:w-5rem p-0 md:p-3" />
+            <Column field="nom" header="Objet" sortable class="p-1 md:p-3">
               <template #body="slotProps">
-                <div>
-                  <NuxtLink :to="`/edit/outil-${slotProps.data.id}`" class="flex align-items-center gap-2">
+                <div class="">
+                  <NuxtLink :to="`/edit/outil-${slotProps.data.id}`"
+                    class="flex gap-2 justify-between text-md md:text-base">
                     {{ slotProps.data.nom }}
-                    <Button icon="pi pi-pencil" class="py-0" text rounded />
+                    <Button icon="pi pi-pencil" class="p-2 max-w-8 max-h-8 md:w-8  md:h-8 bg-indigo-500 text-white "
+                      rounded />
                   </NuxtLink>
                 </div>
               </template>
@@ -55,24 +59,24 @@
               </template>
             </Column>
 
-            <Column field="etat" header="Etat" sortable>
+            <Column field="etat" header="Etat" class="hidden md:block">
               <template #body="slotProps">
                 <Rating :modelValue="convertToGrade(slotProps.data.etat)" readonly :cancel="false" />
               </template>
             </Column>
 
-            <Column field="dispo" header="Dispo" sortable>
+            <Column field="dispo" header="Dispo" sortable class="p-1 md:p-3">
               <template #body="slotProps">
-                <Tag v-if="!checkAvailabilityForToday(slotProps.data.reservation)" class="px-4 py-2" value="Reservé"
-                  severity="danger" />
-                <Tag v-if="checkAvailabilityForToday(slotProps.data.reservation)" class="px-4 py-2" value="Disponible"
-                  severity="success" />
+                <Tag v-if="!checkAvailabilityForToday(slotProps.data.reservation)"
+                  class="px-2 py-1 md:px-4 md:py-2 text-xs md:text-base" value="Reservé" severity="danger" />
+                <Tag v-if="checkAvailabilityForToday(slotProps.data.reservation)"
+                  class="px-2 py-1 md:px-4 md:py-2 text-xs md:text-base" value="Disponible" severity="success" />
               </template>
             </Column>
 
 
             <template #expansion="slotProps">
-              <div class="p-3 bg-slate-100">
+              <div class="md:p-3 p-1 bg-slate-100">
                 <h6>Réservations et prets</h6>
                 <DataTable :value="slotProps.data.reservation">
                   <!-- {{ slotProps.data.reservation }} -->

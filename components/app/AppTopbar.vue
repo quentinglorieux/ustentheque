@@ -5,7 +5,7 @@
       <span>BibOB {{ version }}</span>
     </router-link>
 
-    <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
+    <button class="p-link layout-menu-button layout-topbar-button hidden md:block" @click="onMenuToggle()">
       <i class="pi pi-bars"></i>
     </button>
 
@@ -14,36 +14,92 @@
     </button>
 
     <div class="layout-topbar-menu" :class="topbarMenuClasses">
-      <div v-if="avatar">
-        <router-link to="/mesreservations"> <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
-            <i class="pi pi-download"></i>
+      <!-- Menu pour utilisateurs connectés -->
+      <div v-if="avatar" class="flex flex-column md:flex-row gap-2">
+        <router-link to="/catalogue">
+          <button @click="onTopBarMenuButton()"
+            class="p-link layout-topbar-button flex align-items-center gap-2 block md:hidden">
+            <i class="pi pi-list"></i>
+            <span class="font-bold">Catalogue</span>
+          </button>
+        </router-link>
+        <router-link to="/edit/outil-add">
+          <button @click="onTopBarMenuButton()"
+            class="p-link layout-topbar-button flex align-items-center gap-2 block md:hidden">
+            <i class="pi pi-plus-circle"></i>
+            <span class="font-bold">Ajouter un outil</span>
           </button>
         </router-link>
 
-        <router-link to="/mesprets"> <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
+        <router-link to="/mesreservations">
+          <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button flex align-items-center gap-2">
+            <i class="pi pi-download"></i>
+            <span class="block md:hidden font-bold">Mes Emprunts</span>
+          </button>
+        </router-link>
+
+        <router-link to="/mesprets">
+          <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button flex align-items-center gap-2">
             <i class="pi pi-upload"></i>
+            <span class="block md:hidden font-bold">Mes Prêts</span>
+          </button>
+        </router-link>
+
+        <router-link to="/mesoutils">
+          <button @click="onTopBarMenuButton()"
+            class="p-link layout-topbar-button flex align-items-center gap-2 block md:hidden">
+            <i class="pi pi-briefcase"></i>
+            <span class="font-bold">Mes Outils</span>
+          </button>
+        </router-link>
+
+        <button @click="logoutDirectus()"
+          class="p-link layout-topbar-button flex align-items-center gap-2 block md:hidden">
+          <i class="pi pi-sign-out text-red-500"></i>
+          <span class="font-bold text-red-500">Se déconnecter</span>
+        </button>
+      </div>
+
+      <!-- Menu pour utilisateurs non connectés -->
+      <div v-else class="flex flex-column md:flex-row gap-2">
+        <router-link to="/catalogue">
+          <button @click="onTopBarMenuButton()"
+            class="p-link layout-topbar-button flex align-items-center gap-2 block md:hidden">
+            <i class="pi pi-list"></i>
+            <span class="font-bold">Catalogue</span>
           </button>
         </router-link>
       </div>
 
 
-      <router-link to="/profil">
-        <div class="pt-3 pl-3"> {{ first_name }}</div>
-      </router-link>
-
-      <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
-        <router-link to="/auth/login"> <i v-if="!avatar" class="pi pi-user"></i></router-link>
-        <router-link to="/profil">
-
-          <div class="relative inline-block">
-            <Avatar v-if="avatar" :image="`https://bibob.rubidiumweb.fr/assets/${avatar}`" class="hover:border-2"
-              size="large" shape="circle" />
-
-          </div>
-
+      <div class="flex flex-row md:flex-row align-items-center gap-2">
+        <router-link v-if="first_name" to="/profil" class="block md:hidden">
+          <div class="font-bold"> {{ first_name }}</div>
         </router-link>
 
-      </button>
+        <router-link v-if="first_name" to="/profil" class="hidden md:block">
+          <div class="pt-3 pl-3"> {{ first_name }}</div>
+        </router-link>
+
+        <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
+          <router-link to="/auth/login">
+            <div v-if="!avatar" class="flex align-items-center gap-2">
+              <i class="pi pi-user"></i>
+              <span class="block md:hidden font-bold">Se connecter</span>
+            </div>
+          </router-link>
+          <router-link to="/profil">
+
+            <div class="relative inline-block">
+              <Avatar v-if="avatar" :image="`https://bibob.rubidiumweb.fr/assets/${avatar}`" class="hover:border-2"
+                size="large" shape="circle" />
+
+            </div>
+
+          </router-link>
+
+        </button>
+      </div>
 
 
       <router-link v-if="pendingRequests > 0" to="/mesprets" class="ml-3">
@@ -64,8 +120,15 @@
 <script setup>
 const directus = useDirectus();
 const { layoutConfig, onMenuToggle, contextPath } = useLayout();
-const { user } = useUser();
+const { user, logout } = useUser();
 import { readItems } from "@directus/sdk";
+const router = useRouter();
+
+async function logoutDirectus() {
+  await logout();
+  router.push('/auth/login');
+  onTopBarMenuButton(); // Close menu
+};
 
 const first_name = computed(() => user.value?.first_name);
 const avatar = computed(() => user.value?.avatar);
@@ -98,7 +161,7 @@ watch(() => user.value, () => {
   }
 }, { immediate: true });
 
-const version = "2.0.beta.0";
+const version = "2.0";
 
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);

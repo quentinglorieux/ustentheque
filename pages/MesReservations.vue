@@ -66,7 +66,7 @@
             </Column>
 
             <!-- Delete Column -->
-            <Column header="Supprimer">
+            <Column header="Supprimer" class="hidden md:block">
               <template #body="slotProps">
                 <Button icon="pi pi-trash" class="p-button-sm p-button-rounded p-button-info"
                   @click="confirmDelete(slotProps.data.id)" />

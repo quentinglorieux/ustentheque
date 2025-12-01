@@ -24,6 +24,29 @@ onMounted(() => {
 
 
 async function registerDirectus() {
+  // Basic validation for empty fields
+  if (!telephone.value || !ville.value) {
+    toast.add({
+      severity: "error",
+      summary: "Erreur.",
+      detail: "Veuillez renseigner votre téléphone et votre adresse.",
+      life: 3000,
+    });
+    return;
+  }
+
+  // Phone format validation (French format: 10 digits starting with 0)
+  const phoneRegex = /^0[1-9]([-. ]?[0-9]{2}){4}$/;
+  if (!phoneRegex.test(telephone.value)) {
+    toast.add({
+      severity: "error",
+      summary: "Format invalide",
+      detail: "Veuillez entrer un numéro de téléphone valide (ex: 06 12 34 56 78).",
+      life: 3000,
+    });
+    return;
+  }
+
   if (charte.value == "valide") {
     try {
       await directus.request(createUser({
@@ -54,10 +77,7 @@ async function registerDirectus() {
       detail: "Veuillez accepter la charte",
       life: 3000,
     })
-
-
   }
-
 }
 
 
@@ -69,8 +89,8 @@ async function registerDirectus() {
   <div v-if="succes" class="text-center p-4">
     Vous êtes bien inscrit. Merci de vous connecter.
     <NuxtLink to="/auth/login">
-      <Button label="Connexion" icon="pi pi-sign-in" severity="info"
-        class="font-bold w-full sm:w-auto px-4 py-2"></Button>
+      <Button label="Connexion" icon="pi pi-sign-in"
+        class="font-bold w-full sm:w-auto px-4 py-2 bg-indigo-500 text-white"></Button>
     </NuxtLink>
   </div>
   <div v-if="!succes" class="col-12 p-2 sm:p-4">
@@ -107,12 +127,14 @@ async function registerDirectus() {
             inputClass="w-full"></Password>
         </div>
         <div class="field col-12 flex items-start">
-          <Checkbox class="mt-1" v-model="charte" inputId="charte1" name="charte" value="valide" />
+          <Checkbox class="mt-2 bg-indigo-500 text-white" v-model="charte" inputId="charte1" name="charte"
+            value="valide" />
           <label for="charte1" class="ml-2 text-sm">Je m'engage à souscrire aux principes de la charte de la
             BibOb.</label>
         </div>
         <div class="field col-12 sm:col-6 sm:col-offset-3 mt-4">
-          <Button @click="registerDirectus()" label="Inscription" class="w-full p-3 text-lg"></Button>
+          <Button @click="registerDirectus()" label="Inscription"
+            class="w-full p-3 text-lg bg-indigo-500 text-white"></Button>
         </div>
       </div>
     </div>

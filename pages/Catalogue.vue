@@ -24,10 +24,10 @@
             </template>
 
             <template #list="slotProps">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mx-auto">
                     <div v-for="(item, index) in slotProps.items" :key="index" class="h-full">
                         <div
-                            class="flex flex-row items-start p-3 gap-4 border border-surface-200 dark:border-surface-700 rounded h-full bg-surface-0 dark:bg-surface-900 hover:bg-zinc-100 hover:cursor-pointer hover:border-zinc-300">
+                            class="flex flex-row items-start p-3 gap-4 border border-surface-200 dark:border-surface-700 rounded h-full bg-surface-0 dark:bg-surface-900 hover:bg-zinc-100 hover:cursor-pointer hover:border-zinc-300 mx-auto">
                             <div class="w-32 shrink-0 relative">
                                 <NuxtLink :to="`/outil-${item.id}`">
                                     <img v-if="item.photo" class="block rounded w-full object-cover aspect-square"
@@ -47,11 +47,13 @@
                                     <div>
                                         <span class="font-bold text-surface-500 dark:text-surface-400 text-sm">{{
                                             item.brand?.nom || 'Sans marque' }}</span>
-                                        <div class="text-base font-medium mt-1 line-clamp-2 w-24">{{ item.nom }}</div>
+                                        <div class="text-base font-medium mt-1 line-clamp-2 w-full md:w-24">{{ item.nom
+                                        }}</div>
                                     </div>
                                     <div class="flex flex-col gap-2 mt-auto">
-                                        <div class="flex justify-content-between items-center">
-                                            <span class="text-lg font-semibold">{{ item.prix_indicatif }} €</span>
+                                        <div class="flex justify-content-between flex-wrap items-center">
+                                            <span class="text-lg font-semibold md:w-24 w-20">{{ item.prix_indicatif }}
+                                                €</span>
                                             <div class="flex gap-2">
                                                 <Button icon="pi pi-eye" label="Voir" size="small"
                                                     class="p-button-rounded p-button-text"></Button>

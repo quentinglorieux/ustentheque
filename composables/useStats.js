@@ -7,62 +7,35 @@ export const useStats = () => {
     const userBorrowed = ref(0);
     const userLent = ref(0);
     const totalItems = ref(0);
-    const returnChartData = ref({
-        labels: ["Retourné", "En cours"],
-        datasets: [
-            {
-                data: [0, 0],
-                backgroundColor: ["#42A5F5", "#FFCDD2"],
-            },
-        ],
-    });
-    const activityChartData = ref({
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        datasets: [
-            {
-                label: "Emprunts",
-                backgroundColor: "#42A5F5",
-                data: Array(12).fill(0),
-            },
-            {
-                label: "Prêts",
-                backgroundColor: "#FFA726",
-                data: Array(12).fill(0),
-            },
-        ],
-    });
-
-    const populateChartData = (borrowedData, lentData) => {
-        const borrowedCountPerMonth = Array(12).fill(0);
-        const lentCountPerMonth = Array(12).fill(0);
-
-        borrowedData.forEach(item => {
-            const month = new Date(item.debut).getMonth();
-            borrowedCountPerMonth[month] += 1;
-        });
-
-        lentData.forEach(item => {
-            const month = new Date(item.debut).getMonth();
-            lentCountPerMonth[month] += 1;
-        });
-
-        activityChartData.value.datasets[0].data = borrowedCountPerMonth;
-        activityChartData.value.datasets[1].data = lentCountPerMonth;
-    };
+    const userTools = ref(0);
 
     const fetchUserStats = async (userId) => {
         try {
-            // Fetch total borrowed items for the user
+            const today = new Date().toISOString().split('T')[0];
+
+            // 1. Mes Emprunts (Demandes): Active requests made by the user
+            // Status is 'En attente' OR ('Validé' AND not finished)
             const borrowedResponse = await directus.request(readItems("reservation", {
                 filter: {
                     user_created: {
                         _eq: userId,
                     },
+                    _or: [
+                        { statut: { _eq: "En attente" } },
+                        {
+                            _and: [
+                                { statut: { _eq: "Validé" } },
+                                { fin: { _gte: today } }
+                            ]
+                        }
+                    ]
                 },
+                aggregate: { count: "*" }
             }));
-            userBorrowed.value = borrowedResponse.length;
+            userBorrowed.value = borrowedResponse[0]?.count || 0;
 
-            // Fetch total lent items by the user
+            // 2. Mes Prêts (Prêts en cours): Active requests received by the user (as owner)
+            // Status is 'En attente' OR ('Validé' AND not finished)
             const lentResponse = await directus.request(readItems("reservation", {
                 filter: {
                     objet: {
@@ -70,26 +43,37 @@ export const useStats = () => {
                             _eq: userId,
                         },
                     },
+                    _or: [
+                        { statut: { _eq: "En attente" } },
+                        {
+                            _and: [
+                                { statut: { _eq: "Validé" } },
+                                { fin: { _gte: today } }
+                            ]
+                        }
+                    ]
                 },
+                aggregate: { count: "*" }
             }));
-            userLent.value = lentResponse.length;
+            userLent.value = lentResponse[0]?.count || 0;
 
-            // Fetch total items owned by the user
+            // 3. Catalogue Elements: Total items in the catalogue
             const totalItemsResponse = await directus.request(readItems("objet", {
+                aggregate: { count: "*" }
+            }));
+            totalItems.value = totalItemsResponse[0]?.count || 0;
+
+            // 4. User Tools: Total items owned by the user
+            const userToolsResponse = await directus.request(readItems("objet", {
                 filter: {
                     proprietaire: {
                         _eq: userId,
                     },
                 },
+                aggregate: { count: "*" }
             }));
-            totalItems.value = totalItemsResponse.length;
+            userTools.value = userToolsResponse[0]?.count || 0;
 
-            // Populate activityChartData with real data
-            populateChartData(borrowedResponse, lentResponse);
-
-            // Update the return percentage for the doughnut chart
-            const returnedItems = lentResponse.filter(item => item.statut === "Rendu").length;
-            returnChartData.value.datasets[0].data = [returnedItems, lentResponse.length - returnedItems];
         } catch (error) {
             console.error("Error fetching user stats:", error);
         }
@@ -99,8 +83,7 @@ export const useStats = () => {
         userBorrowed,
         userLent,
         totalItems,
-        returnChartData,
-        activityChartData,
+        userTools,
         fetchUserStats
     };
 };

@@ -7,6 +7,7 @@
           <Button label="Connectez-vous ici" icon="pi pi-sign-in" severity="primary" size="large" raised
             rounded></Button>
         </NuxtLink>
+
       </div>
 
       <div v-else class="grid nested-grid">

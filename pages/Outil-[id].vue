@@ -42,6 +42,10 @@
           <Button label="Retour au Catalogue" class="mr-2 mb-2 bg-indigo-500 p-2 text-white"></Button>
         </NuxtLink>
       </div>
+      <NuxtLink to="/catalogue" class="mt-3 block md:hidden">
+        <Button label="Retour au catalogue" icon="pi pi-arrow-left" class="mr-2 mb-2 bg-indigo-500 p-2 text-white"
+          text></Button>
+      </NuxtLink>
     </div>
 
 
