@@ -1,7 +1,10 @@
 <script setup>
 import AppMenuItem from "./AppMenuItem.vue";
 
-const { pendingRequests } = useNotifications();
+const resa = computed(() => 0);
+
+const { isAuthenticated, logout } = useUser();
+const router = useRouter();
 
 const model = computed(() => [
   {
