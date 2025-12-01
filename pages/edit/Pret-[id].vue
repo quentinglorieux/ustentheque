@@ -51,7 +51,7 @@
             <div class="mb-3 flex align-items-center gap-2">
               <i class="pi pi-user text-primary text-xl"></i>
               <span class="font-bold text-lg">{{ resa.user_created.first_name }} {{ resa.user_created.last_name
-              }}</span>
+                }}</span>
             </div>
             <div class="mb-2">
               <i class="pi pi-phone mr-2 text-primary"></i>
