@@ -170,8 +170,12 @@ async function retrieveOneObjet() {
 // Create an array of dates from debut/fin (reservations - filteredResaList)
 const generateDisabledDateArray = (array) => {
   const dateArray = array.reduce((accumulator, obj) => {
-    const debutDate = new Date(obj.debut);
-    const finDate = new Date(obj.fin);
+    // Parse strings manually to ensure Local Time (YYYY-MM-DD)
+    const [dYear, dMonth, dDay] = obj.debut.split('-').map(Number);
+    const debutDate = new Date(dYear, dMonth - 1, dDay);
+
+    const [fYear, fMonth, fDay] = obj.fin.split('-').map(Number);
+    const finDate = new Date(fYear, fMonth - 1, fDay);
 
     const currentArray = [];
     const currentDate = new Date(debutDate);
@@ -188,16 +192,21 @@ const generateDisabledDateArray = (array) => {
 
 
 // Function to check if the selected range overlaps with disabled dates
+// Function to check if the selected range overlaps with disabled dates
 const verifyAvailability = (selectedDates, disabledDates) => {
   if (!selectedDates[1]) { return; }
   const [startDate, endDate] = selectedDates;
+
+  // Normalize start and end dates to midnight to compare only dates
+  const startDateTime = new Date(startDate).setHours(0, 0, 0, 0);
+  const endDateTime = new Date(endDate).setHours(0, 0, 0, 0);
 
   for (const disabledDate of disabledDates) {
     const disabledDateTime = new Date(disabledDate).setHours(0, 0, 0, 0);
 
     if (
-      startDate.getTime() <= disabledDateTime &&
-      endDate.getTime() >= disabledDateTime
+      startDateTime <= disabledDateTime &&
+      endDateTime >= disabledDateTime
     ) {
       dates.value = '';
       toast.add({
@@ -212,13 +221,23 @@ const verifyAvailability = (selectedDates, disabledDates) => {
   return true; // No overlapping dates found
 };
 
+// Helper to format Date to YYYY-MM-DD (Local Time)
+const formatDateForAPI = (date) => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 // Création de l outil
 async function createOneResa() {
   dates.value[1] = dates.value[1] ? dates.value[1] : dates.value[0];
+
   try {
     await directus.request(createItem("reservation", {
-      debut: dates.value[0],
-      fin: dates.value[1],
+      debut: formatDateForAPI(dates.value[0]),
+      fin: formatDateForAPI(dates.value[1]),
       statut: "En attente",
       objet: objet.value.id,
     }));
