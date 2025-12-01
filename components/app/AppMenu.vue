@@ -41,7 +41,7 @@ const model = computed(() => [
         label: "Je prête",
         icon: "pi pi-fw pi-upload",
         to: "/mesprets",
-        badge: pendingRequests.value > 0 ? pendingRequests.value : null,
+        val: resa,
         visible: isAuthenticated.value
       },
       {
