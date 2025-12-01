@@ -48,7 +48,7 @@
                                         <span class="font-bold text-surface-500 dark:text-surface-400 text-sm">{{
                                             item.brand?.nom || 'Sans marque' }}</span>
                                         <div class="text-base font-medium mt-1 line-clamp-2 w-full md:w-24">{{ item.nom
-                                        }}</div>
+                                            }}</div>
                                     </div>
                                     <div class="flex flex-col gap-2 mt-auto">
                                         <div class="flex justify-content-between flex-wrap items-center">
@@ -135,7 +135,7 @@ import { readItems } from '@directus/sdk';
 import { useDirectusBase } from '@/composables/useDirectusBase';
 
 const directusBase = useDirectusBase();
-const directus = useDirectus();
+const directus = usePublicDirectus();
 const { isAuthenticated } = useUser();
 
 const layout = ref(typeof window !== 'undefined' && window.innerWidth < 768 ? 'list' : 'grid');

@@ -3,11 +3,13 @@ import { ref } from "vue";
 
 export const useStats = () => {
     const directus = useDirectus();
+    const publicDirectus = usePublicDirectus();
 
     const userBorrowed = ref(0);
     const userLent = ref(0);
     const totalItems = ref(0);
     const userTools = ref(0);
+    const pendingRequests = ref(0);
 
     const fetchUserStats = async (userId) => {
         try {
@@ -57,8 +59,8 @@ export const useStats = () => {
             }));
             userLent.value = lentResponse[0]?.count || 0;
 
-            // 3. Catalogue Elements: Total items in the catalogue
-            const totalItemsResponse = await directus.request(readItems("objet", {
+            // 3. Catalogue Elements: Total items in the catalogue (Public)
+            const totalItemsResponse = await publicDirectus.request(readItems("objet", {
                 aggregate: { count: "*" }
             }));
             totalItems.value = totalItemsResponse[0]?.count || 0;
@@ -74,6 +76,20 @@ export const useStats = () => {
             }));
             userTools.value = userToolsResponse[0]?.count || 0;
 
+            // 5. Pending Requests: Requests received by the user (as owner) that are 'En attente'
+            const pendingResponse = await directus.request(readItems('reservation', {
+                filter: {
+                    statut: { _eq: 'En attente' },
+                    objet: {
+                        proprietaire: {
+                            _eq: userId
+                        }
+                    }
+                },
+                aggregate: { count: '*' }
+            }));
+            pendingRequests.value = pendingResponse[0]?.count || 0;
+
         } catch (error) {
             console.error("Error fetching user stats:", error);
         }
@@ -84,6 +100,7 @@ export const useStats = () => {
         userLent,
         totalItems,
         userTools,
+        pendingRequests,
         fetchUserStats
     };
 };

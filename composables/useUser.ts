@@ -15,7 +15,7 @@ export const useUser = () => {
             //console.log('useUser: fetchUser success', me);
             user.value = me;
         } catch (e) {
-            console.error('useUser: fetchUser error', e);
+            // console.error('useUser: fetchUser error', e);
             user.value = null;
         } finally {
             loading.value = false;

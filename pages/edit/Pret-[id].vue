@@ -51,7 +51,7 @@
             <div class="mb-3 flex align-items-center gap-2">
               <i class="pi pi-user text-primary text-xl"></i>
               <span class="font-bold text-lg">{{ resa.user_created.first_name }} {{ resa.user_created.last_name
-                }}</span>
+              }}</span>
             </div>
             <div class="mb-2">
               <i class="pi pi-phone mr-2 text-primary"></i>
@@ -120,6 +120,7 @@ import { formatDate, isDateInPast } from '@/utils/dateUtils';
 // import { useDirectusBase } from "@/composables/useDirectusBase";
 
 const { user } = useUser();
+const { fetchUserStats } = useStats();
 const toast = useToast();
 const directus = useDirectus();
 const route = useRoute();
@@ -165,6 +166,11 @@ async function acceptOneResa() {
     }
 
     retrieveOneResa();
+    // Refresh stats to update the badge
+    if (user.value?.id) {
+      fetchUserStats(user.value.id);
+    }
+
     toast.add({
       severity: "success",
       summary: "Merci",
@@ -189,6 +195,12 @@ async function refuseOneResa() {
       statut: "Refusé",
     }));
     retrieveOneResa();
+
+    // Refresh stats to update the badge
+    if (user.value?.id) {
+      fetchUserStats(user.value.id);
+    }
+
     toast.add({
       severity: 'warn',
       summary: "Mis à jour",

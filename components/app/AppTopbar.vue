@@ -1,7 +1,6 @@
 <template>
   <div class="layout-topbar">
     <router-link to="/" class="layout-topbar-logo">
-      <img :src="logoUrl" alt="" />
       <span>BibOB {{ version }}</span>
     </router-link>
 
@@ -132,32 +131,11 @@ async function logoutDirectus() {
 
 const first_name = computed(() => user.value?.first_name);
 const avatar = computed(() => user.value?.avatar);
-const pendingRequests = ref(0);
-
-const fetchPendingRequests = async () => {
-  if (!user.value?.id) return;
-  try {
-    const requests = await directus.request(readItems('reservation', {
-      filter: {
-        statut: { _eq: 'En attente' },
-        objet: {
-          proprietaire: {
-            _eq: user.value.id
-          }
-        }
-      },
-      aggregate: { count: '*' }
-    }));
-    // Directus aggregate returns an array of objects
-    pendingRequests.value = requests[0]?.count || 0;
-  } catch (e) {
-    console.error("Error fetching pending requests", e);
-  }
-};
+const { pendingRequests, fetchUserStats } = useStats();
 
 watch(() => user.value, () => {
-  if (user.value) {
-    fetchPendingRequests();
+  if (user.value?.id) {
+    fetchUserStats(user.value.id);
   }
 }, { immediate: true });
 
@@ -180,10 +158,10 @@ onBeforeUnmount(() => {
   unbindOutsideClickListener();
 });
 
-const logoUrl = computed(() => {
-  return `${contextPath}layout/images/${layoutConfig.darkTheme.value ? "logo-white" : "logo-dark"
-    }.svg`;
-});
+// const logoUrl = computed(() => {
+//   return `${contextPath}layout/images/${layoutConfig.darkTheme.value`
+//     }.svg`;
+// });
 
 const onTopBarMenuButton = () => {
   topbarMenuActive.value = !topbarMenuActive.value;
